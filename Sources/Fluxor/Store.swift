@@ -15,11 +15,11 @@ public struct InitialAction: Action {
 }
 
 public class Store<State: Encodable>: ObservableObject {
-    @Published internal private(set) var state: State
-    @Published internal private(set) var action: Action
-    private var reducers = [Reducer<State, Action>]()
-    private var effectCancellables = Set<AnyCancellable>()
-    private var interceptors = [AnyStoreInterceptor<State>]()
+    @Published internal var state: State
+    @Published internal var action: Action
+    internal var reducers = [Reducer<State, Action>]()
+    internal var effectCancellables = Set<AnyCancellable>()
+    internal var interceptors = [AnyStoreInterceptor<State>]()
 
     public init(initialState: State) {
         state = initialState
