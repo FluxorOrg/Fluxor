@@ -1,6 +1,9 @@
 name: Test
 
-on:  
+on:
+  push:
+    branches:
+    - master
   pull_request:
     branches:
     - master
@@ -13,4 +16,9 @@ jobs:
     - name: Build
       run: swift build -v
     - name: Test
-      run: swift test -v
+      run: swift test -v --enable-code-coverage
+    - name: Codecov
+      uses: codecov/codecov-action@v1.0.4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: .build/debug/codecov/Fluxor.json
