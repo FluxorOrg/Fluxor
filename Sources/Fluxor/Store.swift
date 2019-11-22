@@ -27,11 +27,11 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     public func dispatch(action: Action) {
-        self.action = action
         state = reducers.reduce(state) { $1.reduce($0, action) }
         interceptors.forEach { interceptor in
             interceptor.actionDispatched(action: action, newState: state)
         }
+        self.action = action
     }
 
     public func register(reducer: Reducer<State, Action>) {
