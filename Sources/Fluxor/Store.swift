@@ -48,7 +48,7 @@ public class Store<State: Encodable>: ObservableObject {
         interceptors.append(AnyStoreInterceptor<State>(interceptor))
     }
 
-    public func select<T>(_ selector: @escaping (State) -> T) -> Publishers.Map<Published<State>.Publisher, T> {
-        return $state.map(selector)
+    public func select<T>(_ selector: @escaping (State) -> T) -> AnyPublisher<T, Never> {
+        return $state.map(selector).eraseToAnyPublisher()
     }
 }
