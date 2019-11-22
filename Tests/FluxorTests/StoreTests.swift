@@ -13,12 +13,12 @@ import XCTest
 // swiftlint:disable force_cast
 
 class StoreTests: XCTestCase {
-    var store: Store<State>!
-    var reducer: ((State, Action) -> State)!
+    var store: Store<TestState>!
+    var reducer: ((TestState, Action) -> TestState)!
 
     override func setUp() {
         super.setUp()
-        store = Store(initialState: State(type: .initial, lastAction: nil))
+        store = Store(initialState: TestState(type: .initial, lastAction: nil))
     }
 
     // Does dispatching set the new action?
@@ -44,13 +44,13 @@ class StoreTests: XCTestCase {
         let action = TestAction()
         XCTAssertEqual(store.state.type, .initial)
         XCTAssertNil(store.state.lastAction)
-        store.register(reducer: Reducer<State, Action>(reduce: { state, action in
+        store.register(reducer: Reducer<TestState, Action>(reduce: { state, action in
             var state = state
             state.type = .modified
             state.lastAction = String(describing: action)
             return state
         }))
-        store.register(reducer: Reducer<State, Action>(reduce: { state, action in
+        store.register(reducer: Reducer<TestState, Action>(reduce: { state, action in
             var state = state
             state.type = .modifiedAgain
             state.lastAction = String(describing: action)
@@ -86,13 +86,48 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(dispatchedActions[3] as! TestGenerateAction, TestEffects.generateAction)
         XCTAssertNotNil(cancellable)
     }
+
+    // Does the interceptor receive the right action and modified state?
+    func testInterceptors() {
+        // Given
+        let action = TestAction()
+        let interceptor = TestStoreInterceptor()
+        store.register(interceptor: interceptor)
+        store.register(reducer: Reducer<TestState, Action>(reduce: { state, action in
+            var state = state
+            state.type = .modified
+            state.lastAction = String(describing: action)
+            return state
+        }))
+        XCTAssertEqual(interceptor.dispatchedActionsAndStates.count, 0)
+        // When
+        store.dispatch(action: action)
+        // Then
+        XCTAssertEqual(interceptor.dispatchedActionsAndStates.count, 1)
+        XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].action as! TestAction, action)
+        XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].newState, store.state)
+    }
+
+    func testSelect() {
+        // Given
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil))
+        let expectation = XCTestExpectation(description: debugDescription)
+        // When
+        let cancellable = store.select { $0.type }.sink {
+            XCTAssertEqual($0, store.state.type)
+            expectation.fulfill()
+        }
+        // Then
+        wait(for: [expectation], timeout: 5)
+        XCTAssertNotNil(cancellable)
+    }
 }
 
 struct TestAction: Action, Equatable {}
 struct TestResponseAction: Action, Equatable {}
 struct TestGenerateAction: Action, Equatable {}
 
-struct State: Encodable {
+struct TestState: Encodable, Equatable {
     var type: TestType
     var lastAction: String?
 
@@ -127,4 +162,13 @@ class TestEffects: Effects {
             .flatMap { _ in Just(Self.generateAction) }
             .eraseToAnyPublisher()
     }()
+}
+
+class TestStoreInterceptor: StoreInterceptor {
+    typealias State = TestState
+    var dispatchedActionsAndStates: [(action: Action, newState: TestState)] = []
+
+    func actionDispatched(action: Action, newState: TestState) {
+        dispatchedActionsAndStates.append((action, newState))
+    }
 }
