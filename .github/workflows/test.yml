@@ -18,4 +18,4 @@ jobs:
       uses: codecov/codecov-action@v1.0.4
       with:
         token: $CODECOV_TOKEN
-        file: build/debug/codecov/Fluxor.json
+        file: .build/debug/codecov/Fluxor.json
