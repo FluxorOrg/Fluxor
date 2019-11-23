@@ -9,7 +9,7 @@
 import Combine
 
 extension Publisher where Output == Action {
-    public func ofType<T>(_ typeToMatch: T.Type) -> Publishers.Filter<Self> {
-        filter { type(of: $0) == typeToMatch }
+    public func ofType<T>(_ typeToMatch: T.Type) -> AnyPublisher<T, Self.Failure> {
+        compactMap { $0 as? T }.eraseToAnyPublisher()
     }
 }
