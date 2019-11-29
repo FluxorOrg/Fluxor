@@ -3,5 +3,7 @@ import XCTest
 import FluxorTests
 
 var tests = [XCTestCaseEntry]()
-tests += FluxorTests.allTests()
+tests += ActionTests.allTests()
+tests += PublisherOfTypeTests.allTests()
+tests += StoreTests.allTests()
 XCTMain(tests)
