@@ -17,7 +17,7 @@ public struct InitialAction: Action {
 public class Store<State: Encodable>: ObservableObject {
     @Published internal var state: State
     @Published internal var action: Action
-    internal var reducers = [Reducer<State, Action>]()
+    internal var reducers = [Reducer<State>]()
     internal var effectCancellables = Set<AnyCancellable>()
     internal var interceptors = [AnyStoreInterceptor<State>]()
 
@@ -34,7 +34,7 @@ public class Store<State: Encodable>: ObservableObject {
         self.action = action
     }
 
-    public func register(reducer: Reducer<State, Action>) {
+    public func register(reducer: Reducer<State>) {
         reducers.append(reducer)
     }
 
@@ -48,7 +48,7 @@ public class Store<State: Encodable>: ObservableObject {
         interceptors.append(AnyStoreInterceptor<State>(interceptor))
     }
 
-    public func select<T>(_ selector: @escaping (State) -> T) -> AnyPublisher<T, Never> {
+    public func select<Value>(_ selector: @escaping (State) -> Value) -> AnyPublisher<Value, Never> {
         return $state.map(selector).eraseToAnyPublisher()
     }
 }

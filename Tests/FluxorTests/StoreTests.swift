@@ -44,13 +44,13 @@ class StoreTests: XCTestCase {
         let action = TestAction()
         XCTAssertEqual(store.state.type, .initial)
         XCTAssertNil(store.state.lastAction)
-        store.register(reducer: Reducer<TestState, Action>(reduce: { state, action in
+        store.register(reducer: Reducer<TestState>(reduce: { state, action in
             var state = state
             state.type = .modified
             state.lastAction = String(describing: action)
             return state
         }))
-        store.register(reducer: Reducer<TestState, Action>(reduce: { state, action in
+        store.register(reducer: Reducer<TestState>(reduce: { state, action in
             var state = state
             state.type = .modifiedAgain
             state.lastAction = String(describing: action)
@@ -93,7 +93,7 @@ class StoreTests: XCTestCase {
         let action = TestAction()
         let interceptor = TestStoreInterceptor()
         store.register(interceptor: interceptor)
-        store.register(reducer: Reducer<TestState, Action>(reduce: { state, action in
+        store.register(reducer: Reducer<TestState>(reduce: { state, action in
             var state = state
             state.type = .modified
             state.lastAction = String(describing: action)
