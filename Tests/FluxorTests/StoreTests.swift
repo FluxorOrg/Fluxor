@@ -108,15 +108,24 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].newState, store.state)
     }
 
+    // Does a change in state publish new substate for selectors?
     func testSelect() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
+        store.register(reducer: Reducer<TestState>(reduce: { state, action -> TestState in
+            var state = state
+            state.type = .modified
+            state.lastAction = String(describing: action)
+            return state
+        }))
         let expectation = XCTestExpectation(description: debugDescription)
-        // When
         let cancellable = store.select { $0.type }.sink {
-            XCTAssertEqual($0, store.state.type)
-            expectation.fulfill()
+            if $0 == .modified {
+                expectation.fulfill()
+            }
         }
+        // When
+        store.dispatch(action: TestAction())
         // Then
         wait(for: [expectation], timeout: 5)
         XCTAssertNotNil(cancellable)
