@@ -6,10 +6,10 @@
 //  Copyright © 2019 MoGee. All rights reserved.
 //
 
-public struct Reducer<S, A> {
-    let reduce: (S, A) -> S
+public struct Reducer<State> {
+    public let reduce: (State, Action) -> State
 
-    public init(reduce: @escaping (S, A) -> S) {
+    public init(reduce: @escaping (State, Action) -> State) {
         self.reduce = reduce
     }
 }
