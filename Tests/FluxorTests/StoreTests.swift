@@ -108,8 +108,8 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].newState, store.state)
     }
 
-    // Does a change in state publish new substate for selectors?
-    func testSelectPublisher() {
+    // Does a change in state publish new substate for selector?
+    func testSelectMapPublisher() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
         store.register(reducer: Reducer<TestState>(reduce: { state, action in
@@ -130,8 +130,50 @@ class StoreTests: XCTestCase {
         wait(for: [expectation], timeout: 5)
         XCTAssertNotNil(cancellable)
     }
-    
-    // Can we select the current substate?
+
+    // Does a change in state publish new substate for key path?
+    func testSelectKeyPathPublisher() {
+        // Given
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil))
+        store.register(reducer: Reducer<TestState>(reduce: { state, action in
+            var state = state
+            state.type = .modified
+            state.lastAction = String(describing: action)
+            return state
+        }))
+        let expectation = XCTestExpectation(description: debugDescription)
+        let cancellable = store.select(\.type).sink {
+            if $0 == .modified {
+                expectation.fulfill()
+            }
+        }
+        // When
+        store.dispatch(action: TestAction())
+        // Then
+        wait(for: [expectation], timeout: 5)
+        XCTAssertNotNil(cancellable)
+    }
+
+    // Can we select the current substate for selector?
+    func testSelectMap() {
+        // Given
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil))
+        store.register(reducer: Reducer<TestState>(reduce: { state, action in
+            var state = state
+            state.type = .modified
+            state.lastAction = String(describing: action)
+            return state
+        }))
+        let valueBeforeAction = store.selectCurrent { $0.type }
+        XCTAssertEqual(valueBeforeAction, .initial)
+        // When
+        store.dispatch(action: TestAction())
+        // Then
+        let valueAfterAction = store.selectCurrent { $0.type }
+        XCTAssertEqual(valueAfterAction, .modified)
+    }
+
+    // Can we select the current substate for key path?
     func testSelectKeyPath() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
@@ -141,12 +183,12 @@ class StoreTests: XCTestCase {
             state.lastAction = String(describing: action)
             return state
         }))
-        let valueBeforeAction = store.select(\.type)
+        let valueBeforeAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueBeforeAction, .initial)
         // When
         store.dispatch(action: TestAction())
         // Then
-        let valueAfterAction = store.select(\.type)
+        let valueAfterAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueAfterAction, .modified)
     }
 }

@@ -52,7 +52,17 @@ public class Store<State: Encodable>: ObservableObject {
         return $state.map(selector).eraseToAnyPublisher()
     }
 
-    public func select<Value>(_ keyPath: KeyPath<State, Value>) -> Value {
+    public func select<Value>(_ keyPath: KeyPath<State, Value>) -> AnyPublisher<Value, Never> {
+        return select { (state: State) -> Value in
+            state[keyPath: keyPath]
+        }
+    }
+    
+    public func selectCurrent<Value>(_ selector: @escaping (State) -> Value) -> Value {
+        return selector(state)
+    }
+    
+    public func selectCurrent<Value>(_ keyPath: KeyPath<State, Value>) -> Value {
         return state[keyPath: keyPath]
     }
 }

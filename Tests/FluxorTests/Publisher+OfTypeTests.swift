@@ -39,9 +39,7 @@ class PublisherOfTypeTests: XCTestCase {
         expectation.isInverted = true
         let cancellable = actions
             .ofType(Action2.self)
-            .sink { _ in
-                expectation.fulfill()
-            }
+            .sink { _ in expectation.fulfill() }
         // When
         actions.send(Action1())
         // Then
