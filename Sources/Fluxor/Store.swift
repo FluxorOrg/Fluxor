@@ -8,6 +8,7 @@
 
 import AnyCodable
 import Combine
+import Foundation
 
 public struct InitialAction: Action {
     public var encodablePayload: [String: AnyEncodable]?
@@ -40,7 +41,11 @@ public class Store<State: Encodable>: ObservableObject {
 
     public func register(effects: Effects.Type) {
         effects.init($action).effects.forEach {
-            $0.sink(receiveValue: dispatch(action:)).store(in: &effectCancellables)
+            $0.sink(receiveValue: { action in
+                DispatchQueue.main.async {
+                    self.dispatch(action: action)
+                }
+            }).store(in: &effectCancellables)
         }
     }
 
@@ -57,11 +62,11 @@ public class Store<State: Encodable>: ObservableObject {
             state[keyPath: keyPath]
         }
     }
-    
+
     public func selectCurrent<Value>(_ selector: @escaping (State) -> Value) -> Value {
         return selector(state)
     }
-    
+
     public func selectCurrent<Value>(_ keyPath: KeyPath<State, Value>) -> Value {
         return state[keyPath: keyPath]
     }
