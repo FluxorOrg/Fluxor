@@ -70,6 +70,7 @@ class StoreTests: XCTestCase {
         expectation.expectedFulfillmentCount = 4
         var dispatchedActions: [Action] = []
         let cancellable = store.$action.sink { receivedAction in
+            XCTAssertEqual(Thread.current, Thread.main)
             dispatchedActions.append(receivedAction)
             expectation.fulfill()
         }
@@ -222,6 +223,7 @@ fileprivate class TestEffects: Effects {
     lazy var testEffect: Effect = {
         actions
             .ofType(TestAction.self)
+            .receive(on: DispatchQueue.global())
             .flatMap { _ in Just(Self.responseAction) }
             .eraseToAnyPublisher()
     }()
