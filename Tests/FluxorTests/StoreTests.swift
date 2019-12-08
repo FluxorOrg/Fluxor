@@ -13,8 +13,8 @@ import XCTest
 // swiftlint:disable force_cast
 
 class StoreTests: XCTestCase {
-    var store: Store<TestState>!
-    var reducer: ((TestState, Action) -> TestState)!
+    fileprivate var store: Store<TestState>!
+    fileprivate var reducer: ((TestState, Action) -> TestState)!
 
     override func setUp() {
         super.setUp()
@@ -91,7 +91,7 @@ class StoreTests: XCTestCase {
     func testInterceptors() {
         // Given
         let action = TestAction()
-        let interceptor = TestStoreInterceptor()
+        let interceptor = TestStoreInterceptor<TestState>()
         store.register(interceptor: interceptor)
         store.register(reducer: Reducer<TestState>(reduce: { state, action in
             var state = state
@@ -193,11 +193,11 @@ class StoreTests: XCTestCase {
     }
 }
 
-struct TestAction: Action, Equatable {}
-struct TestResponseAction: Action, Equatable {}
-struct TestGenerateAction: Action, Equatable {}
+fileprivate struct TestAction: Action, Equatable {}
+fileprivate struct TestResponseAction: Action, Equatable {}
+fileprivate struct TestGenerateAction: Action, Equatable {}
 
-struct TestState: Encodable, Equatable {
+fileprivate struct TestState: Encodable, Equatable {
     var type: TestType
     var lastAction: String?
 
@@ -208,7 +208,7 @@ struct TestState: Encodable, Equatable {
     }
 }
 
-class TestEffects: Effects {
+fileprivate class TestEffects: Effects {
     lazy var effects: [Effect] = [testEffect, anotherTestEffect]
     let actions: ActionPublisher
 
@@ -232,13 +232,4 @@ class TestEffects: Effects {
             .flatMap { _ in Just(Self.generateAction) }
             .eraseToAnyPublisher()
     }()
-}
-
-class TestStoreInterceptor: StoreInterceptor {
-    typealias State = TestState
-    var dispatchedActionsAndStates: [(action: Action, newState: TestState)] = []
-
-    func actionDispatched(action: Action, newState: TestState) {
-        dispatchedActionsAndStates.append((action, newState))
-    }
 }

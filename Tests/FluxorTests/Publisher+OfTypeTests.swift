@@ -48,5 +48,5 @@ class PublisherOfTypeTests: XCTestCase {
     }
 }
 
-struct Action1: Action {}
-struct Action2: Action {}
+fileprivate struct Action1: Action {}
+fileprivate struct Action2: Action {}

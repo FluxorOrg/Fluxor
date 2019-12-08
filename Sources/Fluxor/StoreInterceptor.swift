@@ -22,3 +22,13 @@ struct AnyStoreInterceptor<State>: StoreInterceptor {
         _actionDispatched(action, newState)
     }
 }
+
+public class TestStoreInterceptor<State>: StoreInterceptor {
+    public private(set) var dispatchedActionsAndStates: [(action: Action, newState: State)] = []
+
+    public init() {}
+
+    public func actionDispatched(action: Action, newState: State) {
+        dispatchedActionsAndStates.append((action, newState))
+    }
+}

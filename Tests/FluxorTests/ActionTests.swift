@@ -15,4 +15,4 @@ class ActionTests: XCTestCase {
     }
 }
 
-struct EmptyAction: Action {}
+fileprivate struct EmptyAction: Action {}
