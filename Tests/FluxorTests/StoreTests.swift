@@ -233,12 +233,3 @@ class TestEffects: Effects {
             .eraseToAnyPublisher()
     }()
 }
-
-class TestStoreInterceptor: StoreInterceptor {
-    typealias State = TestState
-    var dispatchedActionsAndStates: [(action: Action, newState: TestState)] = []
-
-    func actionDispatched(action: Action, newState: TestState) {
-        dispatchedActionsAndStates.append((action, newState))
-    }
-}
