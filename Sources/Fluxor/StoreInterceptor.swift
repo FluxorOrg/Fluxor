@@ -8,27 +8,27 @@
 
 public protocol StoreInterceptor {
     associatedtype State
-    func actionDispatched(action: Action, newState: State)
+    func actionDispatched(action: Action, oldState: State, newState: State)
 }
 
 struct AnyStoreInterceptor<State>: StoreInterceptor {
-    private let _actionDispatched: (Action, State) -> Void
+    private let _actionDispatched: (Action, State, State) -> Void
 
     init<S: StoreInterceptor>(_ storeInterceptor: S) where S.State == State {
         _actionDispatched = storeInterceptor.actionDispatched
     }
 
-    func actionDispatched(action: Action, newState: State) {
-        _actionDispatched(action, newState)
+    func actionDispatched(action: Action, oldState: State, newState: State) {
+        _actionDispatched(action, oldState, newState)
     }
 }
 
 public class TestStoreInterceptor<State>: StoreInterceptor {
-    public private(set) var dispatchedActionsAndStates: [(action: Action, newState: State)] = []
+    public private(set) var dispatchedActionsAndStates: [(action: Action, oldState: State, newState: State)] = []
 
     public init() {}
 
-    public func actionDispatched(action: Action, newState: State) {
-        dispatchedActionsAndStates.append((action, newState))
+    public func actionDispatched(action: Action, oldState: State, newState: State) {
+        dispatchedActionsAndStates.append((action, oldState, newState))
     }
 }
