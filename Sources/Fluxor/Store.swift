@@ -6,12 +6,10 @@
 //  Copyright © 2019 MoGee. All rights reserved.
 //
 
-import AnyCodable
 import Combine
 import Dispatch
 
 public struct InitialAction: Action {
-    public var encodablePayload: [String: AnyEncodable]?
     public init() {}
 }
 
