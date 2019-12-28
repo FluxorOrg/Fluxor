@@ -45,7 +45,7 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     public func register<S: StoreInterceptor>(interceptor: S) where S.State == State {
-        interceptors.append(AnyStoreInterceptor<State>(interceptor))
+        interceptors.append(AnyStoreInterceptor(interceptor))
     }
 
     public func select<Value>(_ selector: @escaping (State) -> Value) -> AnyPublisher<Value, Never> {
