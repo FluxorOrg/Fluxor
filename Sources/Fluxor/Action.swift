@@ -6,4 +6,4 @@
 //  Copyright © 2019 MoGee. All rights reserved.
 //
 
-public protocol Action {}
+public typealias Action = Encodable
