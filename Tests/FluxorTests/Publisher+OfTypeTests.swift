@@ -23,9 +23,7 @@ class PublisherOfTypeTests: XCTestCase {
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = actions
             .ofType(Action1.self)
-            .sink { _ in
-                expectation.fulfill()
-            }
+            .sink { _ in expectation.fulfill() }
         // When
         actions.send(Action1())
         // Then
@@ -48,5 +46,5 @@ class PublisherOfTypeTests: XCTestCase {
     }
 }
 
-fileprivate struct Action1: Action {}
-fileprivate struct Action2: Action {}
+private struct Action1: Action {}
+private struct Action2: Action {}
