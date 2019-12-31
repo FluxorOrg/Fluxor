@@ -6,4 +6,14 @@
 //  Copyright © 2019 MoGee. All rights reserved.
 //
 
-public typealias Action = Encodable
+import Foundation
+
+public protocol Action: Encodable {
+    func encode(with encoder: JSONEncoder) -> Data?
+}
+
+public extension Action where Self: Encodable {
+    func encode(with encoder: JSONEncoder) -> Data? {
+        return try? encoder.encode(self)
+    }
+}

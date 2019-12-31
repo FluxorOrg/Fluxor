@@ -9,9 +9,7 @@
 import Combine
 import Dispatch
 
-public struct InitialAction: Action {
-    public init() {}
-}
+public struct InitialAction: Action {}
 
 public class Store<State: Encodable>: ObservableObject {
     @Published internal var state: State

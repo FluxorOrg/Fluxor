@@ -6,8 +6,8 @@
 //  Copyright © 2019 MoGee. All rights reserved.
 //
 
-import XCTest
 @testable import Fluxor
+import XCTest
 
 class StoreInterceptorTests: XCTestCase {
     func testDispatchedActionsAndStates() {
@@ -29,8 +29,6 @@ class StoreInterceptorTests: XCTestCase {
     }
 }
 
-fileprivate struct TestState: Encodable, Equatable {}
+private struct TestState: Encodable, Equatable {}
 
-fileprivate struct TestAction: Action, Equatable {
-    let id = UUID()
-}
+private struct TestAction: Action, Equatable {}

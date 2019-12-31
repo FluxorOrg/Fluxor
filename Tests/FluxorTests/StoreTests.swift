@@ -194,11 +194,11 @@ class StoreTests: XCTestCase {
     }
 }
 
-fileprivate struct TestAction: Action, Equatable {}
-fileprivate struct TestResponseAction: Action, Equatable {}
-fileprivate struct TestGenerateAction: Action, Equatable {}
+private struct TestAction: Action, Equatable {}
+private struct TestResponseAction: Action, Equatable {}
+private struct TestGenerateAction: Action, Equatable {}
 
-fileprivate struct TestState: Encodable, Equatable {
+private struct TestState: Encodable, Equatable {
     var type: TestType
     var lastAction: String?
 
@@ -209,7 +209,7 @@ fileprivate struct TestState: Encodable, Equatable {
     }
 }
 
-fileprivate class TestEffects: Effects {
+private class TestEffects: Effects {
     lazy var effects: [Effect] = [testEffect, anotherTestEffect]
     let actions: ActionPublisher
 
