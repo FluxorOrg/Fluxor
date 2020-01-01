@@ -36,9 +36,15 @@ public class Store<State: Encodable>: ObservableObject {
 
     public func register(effects: Effects.Type) {
         effects.init($action).effects.forEach {
-            $0.receive(on: DispatchQueue.main)
-                .sink(receiveValue: self.dispatch(action:))
-                .store(in: &effectCancellables)
+            if case Effect.dispatching(let publisher) = $0 {
+                publisher
+                    .receive(on: DispatchQueue.main)
+                    .sink(receiveValue: self.dispatch(action:))
+                    .store(in: &effectCancellables)
+            } else if case Effect.nonDispatching(let cancellable) = $0 {
+                cancellable
+                    .store(in: &effectCancellables)
+            }
         }
     }
 

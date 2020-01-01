@@ -85,6 +85,8 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(dispatchedActions[1] as! TestAction, firstAction)
         XCTAssertEqual(dispatchedActions[2] as! TestResponseAction, TestEffects.responseAction)
         XCTAssertEqual(dispatchedActions[3] as! TestGenerateAction, TestEffects.generateAction)
+        XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
+        wait(for: [TestEffects.expectation], timeout: 5)
         XCTAssertNotNil(cancellable)
     }
 
@@ -210,28 +212,38 @@ private struct TestState: Encodable, Equatable {
 }
 
 private class TestEffects: Effects {
-    lazy var effects: [Effect] = [testEffect, anotherTestEffect]
+    lazy var effects: [Effect] = [testEffect, anotherTestEffect, yetAnotherTestEffect]
     let actions: ActionPublisher
 
     static let responseAction = TestResponseAction()
     static let generateAction = TestGenerateAction()
+    static let expectation = XCTestExpectation()
+    static var lastAction: TestGenerateAction?
 
     required init(_ actions: ActionPublisher) {
         self.actions = actions
     }
 
     lazy var testEffect: Effect = {
-        actions
+        .dispatching(actions
             .ofType(TestAction.self)
-            .receive(on: DispatchQueue.global())
             .flatMap { _ in Just(Self.responseAction) }
-            .eraseToAnyPublisher()
+            .eraseToAnyPublisher())
     }()
 
     lazy var anotherTestEffect: Effect = {
-        actions
+        .dispatching(actions
             .ofType(TestResponseAction.self)
             .flatMap { _ in Just(Self.generateAction) }
-            .eraseToAnyPublisher()
+            .eraseToAnyPublisher())
+    }()
+
+    lazy var yetAnotherTestEffect: Effect = {
+        .nonDispatching(actions
+            .ofType(TestGenerateAction.self)
+            .sink(receiveValue: { action in
+                TestEffects.lastAction = action
+                TestEffects.expectation.fulfill()
+        }))
     }()
 }
