@@ -212,39 +212,38 @@ private struct TestState: Encodable, Equatable {
 }
 
 private class TestEffects: Effects {
-    lazy var dispatchingEffects: [DispatchingEffect] = [testEffect, anotherTestEffect]
-    lazy var nonDispatchingEffects: [NonDispatchingEffect] = [yetAnotherTestEffect]
+    lazy var effects: [Effect] = [testEffect, anotherTestEffect, yetAnotherTestEffect]
     let actions: ActionPublisher
 
     static let responseAction = TestResponseAction()
     static let generateAction = TestGenerateAction()
     static let expectation = XCTestExpectation()
-    static var lastAction: TestGenerateAction? = nil
+    static var lastAction: TestGenerateAction?
 
     required init(_ actions: ActionPublisher) {
         self.actions = actions
     }
 
-    lazy var testEffect: DispatchingEffect = {
-        actions
+    lazy var testEffect: Effect = {
+        .dispatching(actions
             .ofType(TestAction.self)
             .flatMap { _ in Just(Self.responseAction) }
-            .eraseToAnyPublisher()
+            .eraseToAnyPublisher())
     }()
 
-    lazy var anotherTestEffect: DispatchingEffect = {
-        actions
+    lazy var anotherTestEffect: Effect = {
+        .dispatching(actions
             .ofType(TestResponseAction.self)
             .flatMap { _ in Just(Self.generateAction) }
-            .eraseToAnyPublisher()
+            .eraseToAnyPublisher())
     }()
 
-    lazy var yetAnotherTestEffect: NonDispatchingEffect = {
-        actions
+    lazy var yetAnotherTestEffect: Effect = {
+        .nonDispatching(actions
             .ofType(TestGenerateAction.self)
             .sink(receiveValue: { action in
                 TestEffects.lastAction = action
                 TestEffects.expectation.fulfill()
-            })
+        }))
     }()
 }
