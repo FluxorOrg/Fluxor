@@ -35,10 +35,13 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     public func register(effects: Effects.Type) {
-        effects.init($action).effects.forEach {
+        effects.init($action).dispatchingEffects.forEach {
             $0.receive(on: DispatchQueue.main)
                 .sink(receiveValue: self.dispatch(action:))
                 .store(in: &effectCancellables)
+        }
+        effects.init($action).nonDispatchingEffects.forEach {
+            $0.store(in: &effectCancellables)
         }
     }
 

@@ -9,9 +9,11 @@
 import Combine
 
 public typealias ActionPublisher = Published<Action>.Publisher
-public typealias Effect = AnyPublisher<Action, Never>
+public typealias DispatchingEffect = AnyPublisher<Action, Never>
+public typealias NonDispatchingEffect = AnyCancellable
 
 public protocol Effects: AnyObject  {
-    var effects: [Effect] { get }
+    var dispatchingEffects: [DispatchingEffect] { get }
+    var nonDispatchingEffects: [NonDispatchingEffect] { get }
     init(_ actions: ActionPublisher)
 }
