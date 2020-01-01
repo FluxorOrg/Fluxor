@@ -10,7 +10,7 @@ import Combine
 
 public typealias ActionPublisher = Published<Action>.Publisher
 
-public protocol Effects: AnyObject  {
+public protocol Effects: AnyObject {
     var effects: [Effect] { get }
     init(_ actions: ActionPublisher)
 }
