@@ -1,10 +1,8 @@
-//
-//  Action.swift
-//  Fluxor
-//
-//  Created by Morten Bjerg Gregersen on 18/09/2019.
-//  Copyright © 2019 MoGee. All rights reserved.
-//
+/**
+* Fluxor
+*  Copyright (c) Morten Bjerg Gregersen 2020
+*  MIT license, see LICENSE file for details
+*/
 
 import Foundation
 
