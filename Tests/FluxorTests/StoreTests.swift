@@ -1,10 +1,9 @@
-//
-//  StoreTests.swift
-//  FluxorTests
-//
-//  Created by Morten Bjerg Gregersen on 18/09/2019.
-//  Copyright © 2019 MoGee. All rights reserved.
-//
+/**
+* FluxorTests
+*  Copyright (c) Morten Bjerg Gregersen 2020
+*  MIT license, see LICENSE file for details
+*/
+
 
 import Combine
 @testable import Fluxor

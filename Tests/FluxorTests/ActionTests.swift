@@ -1,10 +1,8 @@
-//
-//  File.swift
-//  FluxorTests
-//
-//  Created by Morten Bjerg Gregersen on 31/12/2019.
-//  Copyright © 2019 MoGee. All rights reserved.
-//
+/**
+* FluxorTests
+*  Copyright (c) Morten Bjerg Gregersen 2020
+*  MIT license, see LICENSE file for details
+*/
 
 import Fluxor
 import XCTest
