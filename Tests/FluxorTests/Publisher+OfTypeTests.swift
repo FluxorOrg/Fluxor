@@ -1,10 +1,8 @@
-//
-//  Publisher+OfTypeTests.swift
-//  FluxorTests
-//
-//  Created by Morten Bjerg Gregersen on 21/11/2019.
-//  Copyright © 2019 MoGee. All rights reserved.
-//
+/**
+ * FluxorTests
+ *  Copyright (c) Morten Bjerg Gregersen 2020
+ *  MIT license, see LICENSE file for details
+ */
 
 import Combine
 import Fluxor
@@ -18,6 +16,7 @@ class PublisherOfTypeTests: XCTestCase {
         actions = .init()
     }
 
+    /// Does the operator let the `Action` pass if it matches?
     func testMatchingType() {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
@@ -31,6 +30,7 @@ class PublisherOfTypeTests: XCTestCase {
         XCTAssertNotNil(cancellable)
     }
 
+    /// Does the operator block the `Action` if it doesn't match?
     func testNonMatchingType() {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)

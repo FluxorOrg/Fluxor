@@ -1,14 +1,23 @@
-//
-//  Publisher+OfType.swift
-//  Fluxor
-//
-//  Created by Morten Bjerg Gregersen on 31/10/2019.
-//  Copyright © 2019 MoGee. All rights reserved.
-//
+/**
+ * Fluxor
+ *  Copyright (c) Morten Bjerg Gregersen 2020
+ *  MIT license, see LICENSE file for details
+ */
 
 import Combine
 
 extension Publisher where Output == Action {
+    /**
+     Only lets actions of a certain type get through the stream.
+
+         actions
+             .ofType(FetchTodosAction.self)
+             .sink(receiveValue: { action in
+                 print("This is a FetchTodosAction: \(action)")
+             })
+
+     - Parameter typeToMatch: A type of `Action`to match
+     */
     public func ofType<T>(_ typeToMatch: T.Type) -> AnyPublisher<T, Self.Failure> {
         compactMap { $0 as? T }.eraseToAnyPublisher()
     }

@@ -1,10 +1,8 @@
-//
-//  StoreTests.swift
-//  FluxorTests
-//
-//  Created by Morten Bjerg Gregersen on 18/09/2019.
-//  Copyright © 2019 MoGee. All rights reserved.
-//
+/**
+ * FluxorTests
+ *  Copyright (c) Morten Bjerg Gregersen 2020
+ *  MIT license, see LICENSE file for details
+ */
 
 import Combine
 @testable import Fluxor
@@ -21,7 +19,7 @@ class StoreTests: XCTestCase {
         store = Store(initialState: TestState(type: .initial, lastAction: nil))
     }
 
-    // Does dispatching set the new action?
+    /// Does dispatching set the new `Action`?
     func testDispatchSetsAction() {
         // Given
         let action = TestAction()
@@ -38,7 +36,7 @@ class StoreTests: XCTestCase {
         XCTAssertNotNil(cancellable)
     }
 
-    // Does dispatching use the registered reducers?
+    /// Does dispatching use the registered `Reducer`s?
     func testDispatchUsesReducers() {
         // Given
         let action = TestAction()
@@ -63,7 +61,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.lastAction, String(describing: action))
     }
 
-    // Does the effects get registered?
+    /// Does the `Effects` get registered?
     func testEffects() {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
@@ -90,7 +88,7 @@ class StoreTests: XCTestCase {
         XCTAssertNotNil(cancellable)
     }
 
-    // Does the interceptor receive the right action and modified state?
+    /// Does the `StoreInterceptor` receive the right `Action` and modified `State`?
     func testInterceptors() {
         // Given
         let action = TestAction()
@@ -111,7 +109,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].newState, store.state)
     }
 
-    // Does a change in state publish new substate for selector?
+    /// Does a change in `State` publish new value for selector?
     func testSelectMapPublisher() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
@@ -134,7 +132,7 @@ class StoreTests: XCTestCase {
         XCTAssertNotNil(cancellable)
     }
 
-    // Does a change in state publish new substate for key path?
+    /// Does a change in `State` publish new value for key path?
     func testSelectKeyPathPublisher() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
@@ -157,7 +155,7 @@ class StoreTests: XCTestCase {
         XCTAssertNotNil(cancellable)
     }
 
-    // Can we select the current substate for selector?
+    /// Can we select the current value for selector?
     func testSelectMap() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
@@ -176,7 +174,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(valueAfterAction, .modified)
     }
 
-    // Can we select the current substate for key path?
+    /// Can we select the current value for key path?
     func testSelectKeyPath() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
