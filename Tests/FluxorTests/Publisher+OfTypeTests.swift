@@ -16,6 +16,7 @@ class PublisherOfTypeTests: XCTestCase {
         actions = .init()
     }
 
+    /// Does the operator let the `Action` pass if it matches?
     func testMatchingType() {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
@@ -29,6 +30,7 @@ class PublisherOfTypeTests: XCTestCase {
         XCTAssertNotNil(cancellable)
     }
 
+    /// Does the operator block the `Action` if it doesn't match?
     func testNonMatchingType() {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
