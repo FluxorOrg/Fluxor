@@ -9,7 +9,7 @@ import Foundation
 /**
  An event happening in an application.
 
- `Action`s are dispatched on the `Store`. They often contain a payload.
+ `Action`s are dispatched on the `Store`.
  */
 public protocol Action: Encodable {
     /**
