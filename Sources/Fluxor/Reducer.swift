@@ -4,6 +4,7 @@
 *  MIT license, see LICENSE file for details
 */
 
+/// A pure functions which takes the current `State` and an `Action` and returns a new `State`.
 public struct Reducer<State> {
     public let reduce: (State, Action) -> State
 
