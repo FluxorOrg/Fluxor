@@ -27,7 +27,7 @@ public struct InitialAction: Action {}
 public class Store<State: Encodable>: ObservableObject {
     @Published internal var state: State
     @Published internal var action: Action
-    internal var reducers = [Reducer<State>]()
+    internal var reducers = [AnyReducer<State>]()
     internal var effectCancellables = Set<AnyCancellable>()
     internal var interceptors = [AnyStoreInterceptor<State>]()
 
@@ -51,7 +51,7 @@ public class Store<State: Encodable>: ObservableObject {
      */
     public func dispatch(action: Action) {
         let oldState = state
-        state = reducers.reduce(state) { $1.reduce($0, action) }
+        state = reducers.reduce(state) { $1.reduce(state: $0, action: action) }
         interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: state) }
         self.action = action
     }
@@ -61,8 +61,8 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter reducer: The reducer to register
      */
-    public func register(reducer: Reducer<State>) {
-        reducers.append(reducer)
+    public func register<R: Reducer>(reducer: R) where R.State == State {
+        reducers.append(AnyReducer(reducer))
     }
 
     /**

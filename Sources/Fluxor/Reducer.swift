@@ -4,11 +4,22 @@
  *  MIT license, see LICENSE file for details
  */
 
-/// A pure functions which takes the current `State` and an `Action` and returns a new `State`.
-public struct Reducer<State> {
-    public let reduce: (State, Action) -> State
+/// A type which takes the current `State` and an `Action` and returns a new `State`.
+public protocol Reducer {
+    associatedtype State
+    /// The function called when an `Action` is dispatched on a `Store`.
+    func reduce(state: State, action: Action) -> State
+}
 
-    public init(reduce: @escaping (State, Action) -> State) {
-        self.reduce = reduce
+/// A type-erased `Reducer` used to store all `Reducer`s in an array in the `Store`.
+struct AnyReducer<State>: Reducer {
+    private let _reduce: (State, Action) -> State
+
+    init<R: Reducer>(_ reducer: R) where R.State == State {
+        _reduce = reducer.reduce
+    }
+
+    func reduce(state: State, action: Action) -> State {
+        return _reduce(state, action)
     }
 }

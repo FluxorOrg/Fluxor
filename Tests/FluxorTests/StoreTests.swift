@@ -42,18 +42,8 @@ class StoreTests: XCTestCase {
         let action = TestAction()
         XCTAssertEqual(store.state.type, .initial)
         XCTAssertNil(store.state.lastAction)
-        store.register(reducer: Reducer<TestState>(reduce: { state, action in
-            var state = state
-            state.type = .modified
-            state.lastAction = String(describing: action)
-            return state
-        }))
-        store.register(reducer: Reducer<TestState>(reduce: { state, action in
-            var state = state
-            state.type = .modifiedAgain
-            state.lastAction = String(describing: action)
-            return state
-        }))
+        store.register(reducer: TestReducer())
+        store.register(reducer: OtherTestReducer())
         // When
         store.dispatch(action: action)
         // Then
@@ -94,12 +84,7 @@ class StoreTests: XCTestCase {
         let action = TestAction()
         let interceptor = TestStoreInterceptor<TestState>()
         store.register(interceptor: interceptor)
-        store.register(reducer: Reducer<TestState>(reduce: { state, action in
-            var state = state
-            state.type = .modified
-            state.lastAction = String(describing: action)
-            return state
-        }))
+        store.register(reducer: TestReducer())
         XCTAssertEqual(interceptor.dispatchedActionsAndStates.count, 0)
         // When
         store.dispatch(action: action)
@@ -113,12 +98,7 @@ class StoreTests: XCTestCase {
     func testSelectMapPublisher() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
-        store.register(reducer: Reducer<TestState>(reduce: { state, action in
-            var state = state
-            state.type = .modified
-            state.lastAction = String(describing: action)
-            return state
-        }))
+        store.register(reducer: TestReducer())
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = store.select { $0.type }.sink {
             if $0 == .modified {
@@ -136,12 +116,7 @@ class StoreTests: XCTestCase {
     func testSelectKeyPathPublisher() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
-        store.register(reducer: Reducer<TestState>(reduce: { state, action in
-            var state = state
-            state.type = .modified
-            state.lastAction = String(describing: action)
-            return state
-        }))
+        store.register(reducer: TestReducer())
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = store.select(\.type).sink {
             if $0 == .modified {
@@ -159,12 +134,7 @@ class StoreTests: XCTestCase {
     func testSelectMap() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
-        store.register(reducer: Reducer<TestState>(reduce: { state, action in
-            var state = state
-            state.type = .modified
-            state.lastAction = String(describing: action)
-            return state
-        }))
+        store.register(reducer: TestReducer())
         let valueBeforeAction = store.selectCurrent { $0.type }
         XCTAssertEqual(valueBeforeAction, .initial)
         // When
@@ -178,12 +148,7 @@ class StoreTests: XCTestCase {
     func testSelectKeyPath() {
         // Given
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
-        store.register(reducer: Reducer<TestState>(reduce: { state, action in
-            var state = state
-            state.type = .modified
-            state.lastAction = String(describing: action)
-            return state
-        }))
+        store.register(reducer: TestReducer())
         let valueBeforeAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueBeforeAction, .initial)
         // When
@@ -206,6 +171,28 @@ private struct TestState: Encodable, Equatable {
         case initial
         case modified
         case modifiedAgain
+    }
+}
+
+private struct TestReducer: Reducer {
+    typealias State = TestState
+
+    func reduce(state: TestState, action: Action) -> State {
+        var state = state
+        state.type = .modified
+        state.lastAction = String(describing: action)
+        return state
+    }
+}
+
+private struct OtherTestReducer: Reducer {
+    typealias State = TestState
+
+    func reduce(state: TestState, action: Action) -> State {
+        var state = state
+        state.type = .modifiedAgain
+        state.lastAction = String(describing: action)
+        return state
     }
 }
 
