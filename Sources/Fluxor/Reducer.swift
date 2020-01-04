@@ -30,7 +30,7 @@ public struct AnonymousReducer<State>: Reducer {
 }
 
 /// A type-erased `Reducer` used to store all `Reducer`s in an array in the `Store`.
-struct AnyReducer<State>: Reducer {
+internal struct AnyReducer<State>: Reducer {
     private let _reduce: (State, Action) -> State
 
     init<R: Reducer>(_ reducer: R) where R.State == State {
