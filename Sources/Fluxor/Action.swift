@@ -26,3 +26,35 @@ public extension Action {
         return try? encoder.encode(self)
     }
 }
+
+/**
+ Creates an `Action` without payload.
+ */
+public func createAction(id: String) -> AnonymousAction {
+    return AnonymousAction(id: id)
+}
+
+/**
+ Creates an `Action` with a payload.
+
+ - Parameter payload: The payload to create an `Action` with
+ */
+public func createAction<Payload: Encodable>(id: String, payload: Payload) -> AnonymousActionWithPayload<Payload> {
+    return AnonymousActionWithPayload(id: id, payload: payload)
+}
+
+/// An `Action` with an identifier.
+public protocol IdentifiableAction: Action {
+    var id: String { get }
+}
+
+/// An anonymous `Action` without payload.
+public struct AnonymousAction: IdentifiableAction {
+    public let id: String
+}
+
+/// An anonymous `Action` with a payload.
+public struct AnonymousActionWithPayload<Payload: Encodable>: IdentifiableAction {
+    public let id: String
+    let payload: Payload
+}

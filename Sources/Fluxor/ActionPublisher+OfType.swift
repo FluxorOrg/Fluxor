@@ -19,6 +19,7 @@ extension Publisher where Output == Action {
      - Parameter typeToMatch: A type of `Action`to match
      */
     public func ofType<T>(_ typeToMatch: T.Type) -> AnyPublisher<T, Self.Failure> {
-        compactMap { $0 as? T }.eraseToAnyPublisher()
+        compactMap { $0 as? T }
+            .eraseToAnyPublisher()
     }
 }

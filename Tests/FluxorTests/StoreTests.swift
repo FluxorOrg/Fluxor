@@ -43,7 +43,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.type, .initial)
         XCTAssertNil(store.state.lastAction)
         store.register(reducer: TestReducer())
-        store.register(reducer: createReducer(reduce: { state, action  in
+        store.register(reducer: createReducer(reduce: { state, action in
             var state = state
             state.type = .modifiedAgain
             state.lastAction = String(describing: action)
@@ -76,8 +76,8 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertTrue(dispatchedActions[0] is InitialAction)
         XCTAssertEqual(dispatchedActions[1] as! TestAction, firstAction)
-        XCTAssertEqual(dispatchedActions[2] as! TestResponseAction, TestEffects.responseAction)
-        XCTAssertEqual(dispatchedActions[3] as! TestGenerateAction, TestEffects.generateAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction, TestEffects.responseAction)
+        XCTAssertEqual(dispatchedActions[3] as! AnonymousActionWithPayload, TestEffects.generateAction)
         XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
         wait(for: [TestEffects.expectation], timeout: 5)
         XCTAssertNotNil(cancellable)
@@ -165,8 +165,18 @@ class StoreTests: XCTestCase {
 }
 
 private struct TestAction: Action, Equatable {}
-private struct TestResponseAction: Action, Equatable {}
-private struct TestGenerateAction: Action, Equatable {}
+
+extension AnonymousAction: Equatable {
+    public static func == (lhs: AnonymousAction, rhs: AnonymousAction) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+extension AnonymousActionWithPayload: Equatable where Payload == Int {
+    public static func == (lhs: AnonymousActionWithPayload<Payload>, rhs: AnonymousActionWithPayload<Payload>) -> Bool {
+        lhs.id == rhs.id && lhs.payload == rhs.payload
+    }
+}
 
 private struct TestState: Encodable, Equatable {
     var type: TestType
@@ -194,10 +204,12 @@ private class TestEffects: Effects {
     lazy var effects: [Effect] = [testEffect, anotherTestEffect, yetAnotherTestEffect]
     let actions: ActionPublisher
 
-    static let responseAction = TestResponseAction()
-    static let generateAction = TestGenerateAction()
+    static let responseActionIdentifier = "TestResponseAction"
+    static let responseAction = createAction(id: TestEffects.responseActionIdentifier)
+    static let generateActionIdentifier = "TestGenerateAction"
+    static let generateAction = createAction(id: TestEffects.generateActionIdentifier, payload: 42)
     static let expectation = XCTestExpectation()
-    static var lastAction: TestGenerateAction?
+    static var lastAction: AnonymousActionWithPayload<Int>?
 
     required init(_ actions: ActionPublisher) {
         self.actions = actions
@@ -212,16 +224,16 @@ private class TestEffects: Effects {
 
     lazy var anotherTestEffect = createEffect(
         actions
-            .ofType(TestResponseAction.self)
+            .withIdentifier(TestEffects.responseActionIdentifier)
             .flatMap { _ in Just(Self.generateAction) }
             .eraseToAnyPublisher()
     )
 
     lazy var yetAnotherTestEffect = createEffect(
         actions
-            .ofType(TestGenerateAction.self)
+            .withIdentifier(TestEffects.generateActionIdentifier)
             .sink(receiveValue: { action in
-                TestEffects.lastAction = action
+                TestEffects.lastAction = (action as! AnonymousActionWithPayload<Int>)
                 TestEffects.expectation.fulfill()
             })
     )
