@@ -222,26 +222,26 @@ private class TestEffects: Effects {
         self.actions = actions
     }
 
-    lazy var testEffect: Effect = {
-        .dispatching(actions
+    lazy var testEffect = createEffect(
+        actions
             .ofType(TestAction.self)
             .flatMap { _ in Just(Self.responseAction) }
-            .eraseToAnyPublisher())
-    }()
+            .eraseToAnyPublisher()
+    )
 
-    lazy var anotherTestEffect: Effect = {
-        .dispatching(actions
+    lazy var anotherTestEffect = createEffect(
+        actions
             .ofType(TestResponseAction.self)
             .flatMap { _ in Just(Self.generateAction) }
-            .eraseToAnyPublisher())
-    }()
+            .eraseToAnyPublisher()
+    )
 
-    lazy var yetAnotherTestEffect: Effect = {
-        .nonDispatching(actions
+    lazy var yetAnotherTestEffect = createEffect(
+        actions
             .ofType(TestGenerateAction.self)
             .sink(receiveValue: { action in
                 TestEffects.lastAction = action
                 TestEffects.expectation.fulfill()
-        }))
-    }()
+            })
+    )
 }
