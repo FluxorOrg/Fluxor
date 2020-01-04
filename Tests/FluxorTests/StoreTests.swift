@@ -43,7 +43,12 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.type, .initial)
         XCTAssertNil(store.state.lastAction)
         store.register(reducer: TestReducer())
-        store.register(reducer: OtherTestReducer())
+        store.register(reducer: createReducer(reduce: { state, action  in
+            var state = state
+            state.type = .modifiedAgain
+            state.lastAction = String(describing: action)
+            return state
+        }))
         // When
         store.dispatch(action: action)
         // Then
@@ -180,17 +185,6 @@ private struct TestReducer: Reducer {
     func reduce(state: TestState, action: Action) -> State {
         var state = state
         state.type = .modified
-        state.lastAction = String(describing: action)
-        return state
-    }
-}
-
-private struct OtherTestReducer: Reducer {
-    typealias State = TestState
-
-    func reduce(state: TestState, action: Action) -> State {
-        var state = state
-        state.type = .modifiedAgain
         state.lastAction = String(describing: action)
         return state
     }

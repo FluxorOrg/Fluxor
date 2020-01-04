@@ -11,6 +11,24 @@ public protocol Reducer {
     func reduce(state: State, action: Action) -> State
 }
 
+/**
+ Creates a `Reducer` from a `reduce` function.
+ 
+ - Parameter reduce: The `reduce` function to create a `Reducer` from
+ */
+public func createReducer<State>(reduce: @escaping (State, Action) -> State) -> AnonymousReducer<State> {
+    return AnonymousReducer(reduce: reduce)
+}
+
+/// An anonymous `Reducer` created from a `reduce` function.
+public struct AnonymousReducer<State>: Reducer {
+    let reduce: (State, Action) -> State
+    
+    public func reduce(state: State, action: Action) -> State {
+        return self.reduce(state, action)
+    }
+}
+
 /// A type-erased `Reducer` used to store all `Reducer`s in an array in the `Store`.
 struct AnyReducer<State>: Reducer {
     private let _reduce: (State, Action) -> State
