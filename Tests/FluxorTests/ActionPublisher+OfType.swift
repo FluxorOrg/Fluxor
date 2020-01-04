@@ -8,7 +8,7 @@ import Combine
 import Fluxor
 import XCTest
 
-class PublisherOfTypeTests: XCTestCase {
+class ActionPublisherOfTypeTests: XCTestCase {
     var actions: PassthroughSubject<Action, Never>!
 
     override func setUp() {
