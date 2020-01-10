@@ -14,9 +14,9 @@ public protocol Selector {
 // MARK: - Functions
 
 public func createRootSelector<State, Value>(
-    projector: @escaping (State) -> Value
+    keyPath: KeyPath<State, Value>
 ) -> RootSelector<State, Value> {
-    return RootSelector(projector: projector)
+    return RootSelector(keyPath: keyPath)
 }
 
 public func createSelector<State, S1, R1, Value>(
@@ -40,10 +40,10 @@ public func createSelector<State, S1, S2, S3, R1, R2, R3, Value>(
 // MARK: - Types
 
 public struct RootSelector<State, Value>: Selector {
-    internal let projector: (State) -> Value
+    internal let keyPath: KeyPath<State, Value>
 
     public func map(_ state: State) -> Value {
-        return projector(state)
+        return state[keyPath: keyPath]
     }
 }
 

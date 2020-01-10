@@ -138,7 +138,7 @@ class StoreTests: XCTestCase {
     /// Can we select the current value for `Selector`?
     func testSelectMap() {
         // Given
-        let selector: RootSelector<TestState, TestType> = createRootSelector { $0.type }
+        let selector = createRootSelector(keyPath: \TestState.type)
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
         store.register(reducer: TestReducer())
         let valueBeforeAction = store.selectCurrent(selector)

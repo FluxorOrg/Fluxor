@@ -17,7 +17,7 @@ class SelectorTests: XCTestCase {
                                                         country: "USA"))
 
     func testCreateRootSelector() {
-        let nameSelector: RootSelector<TestState, NameState> = createRootSelector { $0.name }
+        let nameSelector = createRootSelector(keyPath: \TestState.name)
         XCTAssertEqual(nameSelector.map(state), state.name)
     }
 }
