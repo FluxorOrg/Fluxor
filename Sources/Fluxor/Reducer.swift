@@ -4,7 +4,7 @@
  *  MIT license, see LICENSE file for details
  */
 
-/// A type which takes the current `State` and an `Action` and returns a new `State`.
+/// A pure function which takes the current `State` and an `Action` and returns a new `State`.
 public protocol Reducer {
     associatedtype State
     /// The function called when an `Action` is dispatched on a `Store`.

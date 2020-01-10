@@ -120,8 +120,9 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter selector: The closure to use when getting the value in the `State`
      */
-    public func selectCurrent<Value>(_ selector: @escaping (State) -> Value) -> Value {
-        return selector(state)
+    public func selectCurrent<Value, S>(_ selector: S) -> Value
+        where S:Selector, S.State == State, S.Value == Value {
+        return selector.map(state)
     }
 
     /**
