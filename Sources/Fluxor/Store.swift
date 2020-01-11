@@ -98,10 +98,11 @@ public class Store<State: Encodable>: ObservableObject {
     /**
      Creates a `Publisher` for a selector.
 
-     - Parameter selector: The closure to use when getting the value in the `State`
+     - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
-    public func select<Value>(_ selector: @escaping (State) -> Value) -> AnyPublisher<Value, Never> {
-        return $state.map(selector).eraseToAnyPublisher()
+    public func select<Value, S>(_ selector: S) -> AnyPublisher<Value, Never>
+        where S: Selector, S.State == State, S.Value == Value {
+        return $state.map(selector.map).eraseToAnyPublisher()
     }
 
     /**
@@ -110,18 +111,17 @@ public class Store<State: Encodable>: ObservableObject {
      - Parameter keyPath: The key path to use when getting the value in the `State`
      */
     public func select<Value>(_ keyPath: KeyPath<State, Value>) -> AnyPublisher<Value, Never> {
-        return select { (state: State) -> Value in
-            state[keyPath: keyPath]
-        }
+        return $state.map(keyPath).eraseToAnyPublisher()
     }
 
     /**
      Gets the current value in the `State` for a selector.
 
-     - Parameter selector: The closure to use when getting the value in the `State`
+     - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
-    public func selectCurrent<Value>(_ selector: @escaping (State) -> Value) -> Value {
-        return selector(state)
+    public func selectCurrent<Value, S>(_ selector: S) -> Value
+        where S: Selector, S.State == State, S.Value == Value {
+        return selector.map(state)
     }
 
     /**

@@ -99,13 +99,14 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].newState, store.state)
     }
 
-    /// Does a change in `State` publish new value for selector?
+    /// Does a change in `State` publish new value for `Selector`?
     func testSelectMapPublisher() {
         // Given
+        let selector = createRootSelector(keyPath: \TestState.type)
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
         store.register(reducer: TestReducer())
         let expectation = XCTestExpectation(description: debugDescription)
-        let cancellable = store.select { $0.type }.sink {
+        let cancellable = store.select(selector).sink {
             if $0 == .modified {
                 expectation.fulfill()
             }
@@ -135,17 +136,18 @@ class StoreTests: XCTestCase {
         XCTAssertNotNil(cancellable)
     }
 
-    /// Can we select the current value for selector?
+    /// Can we select the current value for `Selector`?
     func testSelectMap() {
         // Given
+        let selector = createRootSelector(keyPath: \TestState.type)
         let store = Store(initialState: TestState(type: .initial, lastAction: nil))
         store.register(reducer: TestReducer())
-        let valueBeforeAction = store.selectCurrent { $0.type }
+        let valueBeforeAction = store.selectCurrent(selector)
         XCTAssertEqual(valueBeforeAction, .initial)
         // When
         store.dispatch(action: TestAction())
         // Then
-        let valueAfterAction = store.selectCurrent { $0.type }
+        let valueAfterAction = store.selectCurrent(selector)
         XCTAssertEqual(valueAfterAction, .modified)
     }
 
@@ -181,12 +183,12 @@ extension AnonymousActionWithPayload: Equatable where Payload == Int {
 private struct TestState: Encodable, Equatable {
     var type: TestType
     var lastAction: String?
+}
 
-    enum TestType: String, Encodable {
-        case initial
-        case modified
-        case modifiedAgain
-    }
+private enum TestType: String, Encodable {
+    case initial
+    case modified
+    case modifiedAgain
 }
 
 private struct TestReducer: Reducer {
