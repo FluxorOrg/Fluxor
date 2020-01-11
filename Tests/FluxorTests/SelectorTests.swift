@@ -15,10 +15,17 @@ class SelectorTests: XCTestCase {
                                                           day: 1),
                                   address: AddressState(address: "One Apple Park Way",
                                                         city: "Cupertino",
-                                                        country: "USA"))
+                                                        country: "USA"),
+                                  scandals: ScandalsState(iphone: "Bendgate",
+                                                          other: "Apple Maps launch"),
+                                  newProducts: NewProductState(products: [
+                                      "Watch", "HomePod", "AirPods"
+                                  ]))
     private let nameSelector = createRootSelector(keyPath: \TestState.name)
     private let birthdaySelector = createRootSelector(keyPath: \TestState.birthday)
     private let addressSelector = createRootSelector(keyPath: \TestState.address)
+    private let scandalsSelector = createRootSelector(keyPath: \TestState.scandals)
+    private let newProductsSelector = createRootSelector(keyPath: \TestState.newProducts)
 
     private lazy var fullNameSelector = createSelector(nameSelector) {
         "\($0.firstName) \($0.lastName)"
@@ -57,24 +64,60 @@ class SelectorTests: XCTestCase {
     }
 
     func testCreateSelector3() {
-        let bioSelector = createSelector(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector) {
-            fullName, formattedBirthday, formattedAddress in
+        let newestProductSelector = createSelector(newProductsSelector) {
+            $0.products.last!
+        }
+        let productLaunchSelector = createSelector(fullNameSelector, newestProductSelector, formattedAddressSelector) {
+            fullName, newestProduct, formattedAddress in
+            "Yesterday \(fullName) presented the newest \(newestProduct) at a Town Hall Meeting at Apple (\(formattedAddress))"
+        }
+
+        XCTAssertEqual(productLaunchSelector.map(state), "Yesterday Tim Cook presented the newest AirPods at a Town Hall Meeting at Apple (One Apple Park Way, Cupertino, USA)")
+        XCTAssertEqual(productLaunchSelector.projector("Steve Jobs", "iPad", "One Infinite Loop, Cupertino, USA"),
+                       "Yesterday Steve Jobs presented the newest iPad at a Town Hall Meeting at Apple (One Infinite Loop, Cupertino, USA)")
+    }
+
+    func testCreateSelector4() {
+        let iphoneScandalSelector = createSelector(scandalsSelector) {
+            $0.iphone
+        }
+        let scandalMeetingSelector = createSelector(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, iphoneScandalSelector) {
+            fullName, formattedBirthday, formattedAddress, iphoneScandal in
+            "Today \(fullName) (born \(formattedBirthday)) held a Town Hall Meeting at Apple (\(formattedAddress)) about \(iphoneScandal)"
+        }
+
+        XCTAssertEqual(scandalMeetingSelector.map(state), "Today Tim Cook (born November 1, 1960) held a Town Hall Meeting at Apple (One Apple Park Way, Cupertino, USA) about Bendgate")
+        XCTAssertEqual(scandalMeetingSelector.projector("Steve Jobs", "February 24, 1955", "One Infinite Loop, Cupertino, USA", "Antennagate"),
+                       "Today Steve Jobs (born February 24, 1955) held a Town Hall Meeting at Apple (One Infinite Loop, Cupertino, USA) about Antennagate")
+    }
+
+    func testCreateSelector5() {
+        let bioSelector = createSelector(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, scandalsSelector, newProductsSelector) {
+            fullName, formattedBirthday, formattedAddress, scandals, newProducts in
             """
             Full name: \(fullName)
             Birthday: \(formattedBirthday)
             Work address: \(formattedAddress)
+            Scandals: \(scandals.iphone) and \(scandals.other)
+            New products: \(newProducts.products.joined(separator: ", "))
             """
         }
         XCTAssertEqual(bioSelector.map(state), """
         Full name: Tim Cook
         Birthday: November 1, 1960
         Work address: One Apple Park Way, Cupertino, USA
+        Scandals: Bendgate and Apple Maps launch
+        New products: Watch, HomePod, AirPods
         """)
-        XCTAssertEqual(bioSelector.projector("Steve Jobs", "February 24, 1955", "One Infinite Loop, Cupertino, USA"), """
-        Full name: Steve Jobs
-        Birthday: February 24, 1955
-        Work address: One Infinite Loop, Cupertino, USA
-        """)
+        XCTAssertEqual(bioSelector.projector("Steve Jobs", "February 24, 1955", "One Infinite Loop, Cupertino, USA",
+                                             ScandalsState(iphone: "Antennagate", other: "Lost iPhone 4 prototype"),
+                                             NewProductState(products: ["Mac", "iPod", "iPhone", "iPad"])), """
+            Full name: Steve Jobs
+            Birthday: February 24, 1955
+            Work address: One Infinite Loop, Cupertino, USA
+            Scandals: Antennagate and Lost iPhone 4 prototype
+            New products: Mac, iPod, iPhone, iPad
+            """)
     }
 }
 
@@ -82,6 +125,8 @@ private struct TestState: Equatable {
     let name: NameState
     let birthday: BirthdayState
     let address: AddressState
+    let scandals: ScandalsState
+    let newProducts: NewProductState
 }
 
 private struct NameState: Equatable {
@@ -99,4 +144,13 @@ private struct AddressState: Equatable {
     let address: String
     let city: String
     let country: String
+}
+
+private struct ScandalsState: Equatable {
+    let iphone: String
+    let other: String
+}
+
+private struct NewProductState: Equatable {
+    let products: [String]
 }
