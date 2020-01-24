@@ -122,7 +122,7 @@ public struct Selector1<State, S1, Value>: Selector where
     }
 }
 
-/// A `Selector` based on a two other `Selector`.
+/// A `Selector` based on a two other `Selector`s.
 public struct Selector2<State, S1, S2, Value>: Selector where
     S1: Selector, S1.State == State,
     S2: Selector, S2.State == State {
@@ -136,7 +136,7 @@ public struct Selector2<State, S1, S2, Value>: Selector where
     }
 }
 
-/// A `Selector` based on a three other `Selector`.
+/// A `Selector` based on a three other `Selector`s.
 public struct Selector3<State, S1, S2, S3, Value>: Selector where
     S1: Selector, S1.State == State,
     S2: Selector, S2.State == State,
@@ -152,7 +152,7 @@ public struct Selector3<State, S1, S2, S3, Value>: Selector where
     }
 }
 
-/// A `Selector` based on a four  other `Selector`.
+/// A `Selector` based on a four  other `Selector`s.
 public struct Selector4<State, S1, S2, S3, S4, Value>: Selector where
     S1: Selector, S1.State == State,
     S2: Selector, S2.State == State,
@@ -170,7 +170,7 @@ public struct Selector4<State, S1, S2, S3, S4, Value>: Selector where
     }
 }
 
-/// A `Selector` based on a five other `Selector`.
+/// A `Selector` based on a five other `Selector`s.
 public struct Selector5<State, S1, S2, S3, S4, S5, Value>: Selector where
     S1: Selector, S1.State == State,
     S2: Selector, S2.State == State,
