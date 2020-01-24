@@ -96,7 +96,7 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     /**
-     Creates a `Publisher` for a selector.
+     Creates a `Publisher` for a `Selector`.
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
@@ -106,7 +106,7 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     /**
-     Creates a `Publisher` for a key path in the `State`.
+     Creates a `Publisher` for a `KeyPath` in the `State`.
 
      - Parameter keyPath: The key path to use when getting the value in the `State`
      */
@@ -115,7 +115,7 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     /**
-     Gets the current value in the `State` for a selector.
+     Gets the current value in the `State` for a `Selector`.
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
@@ -125,7 +125,7 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     /**
-     Gets the current value in the `State` for a key path..
+     Gets the current value in the `State` for a `Key path`.
 
      - Parameter keyPath: The key path to use when getting the value in the `State`
      */
