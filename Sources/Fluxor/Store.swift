@@ -6,6 +6,7 @@
 
 import Combine
 import Dispatch
+import Foundation.NSUUID
 
 /// An empty action used for initializing the `Store`.
 public struct InitialAction: Action {}
@@ -19,17 +20,18 @@ public struct InitialAction: Action {}
  To update the `State` callers dispatch `Action`s on the `Store`.
 
  # Interceptors
- It is possible to intercept all `Action`s and the `State` changes by registering an `StoreInterceptor`.
+ It is possible to intercept all `Action`s and `State` changes by registering an `StoreInterceptor`.
 
  # Selecting
  To select a value in the `State` the callers can either use a selector (closure) or a key path. It is possible to get a `Publisher` for the value or just to selec the current value.
  */
 public class Store<State: Encodable>: ObservableObject {
-    @Published internal var state: State
-    @Published internal var action: Action
-    internal var reducers = [AnyReducer<State>]()
-    internal var effectCancellables = Set<AnyCancellable>()
-    internal var interceptors = [AnyStoreInterceptor<State>]()
+    internal private(set) var stateHash = UUID()
+    @Published internal fileprivate(set) var state: State { willSet { stateHash = UUID() } }
+    @Published internal private(set) var action: Action = InitialAction()
+    internal private(set) var reducers = [AnyReducer<State>]()
+    internal private(set) var effectCancellables = Set<AnyCancellable>()
+    internal private(set) var interceptors = [AnyStoreInterceptor<State>]()
 
     /**
      Initializes the `Store` with an initial state and an `InitialAction`.
@@ -38,7 +40,6 @@ public class Store<State: Encodable>: ObservableObject {
      */
     public init(initialState: State) {
         state = initialState
-        action = InitialAction()
     }
 
     /**
@@ -100,9 +101,8 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
-    public func select<Value, S>(_ selector: S) -> AnyPublisher<Value, Never>
-        where S: Selector, S.State == State, S.Value == Value {
-        return $state.map(selector.map).eraseToAnyPublisher()
+    public func select<Value>(_ selector: MemoizedSelector<State, Value>) -> AnyPublisher<Value, Never> {
+        return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
     }
 
     /**
@@ -119,9 +119,8 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
-    public func selectCurrent<Value, S>(_ selector: S) -> Value
-        where S: Selector, S.State == State, S.Value == Value {
-        return selector.map(state)
+    public func selectCurrent<Value>(_ selector: MemoizedSelector<State, Value>) -> Value {
+        return selector.map(state, stateHash: stateHash)
     }
 
     /**

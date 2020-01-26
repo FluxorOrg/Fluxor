@@ -10,7 +10,6 @@ import Foundation
 public protocol Selector {
     associatedtype State
     associatedtype Value
-    var id: UUID { get }
     /// The function called when selecting from a `Store`.
     func map(_ state: State) -> Value
 }
@@ -101,83 +100,109 @@ public func createSelector<State, S1, S2, S3, S4, S5, Value>(
 
  Use it as a starting point in one of the other `Selector`s.
  */
-public struct RootSelector<State, Value>: Selector {
-    public let id = UUID()
+public class RootSelector<State, Value>: MemoizedSelector<State, Value> {
     internal let keyPath: KeyPath<State, Value>
 
-    public func map(_ state: State) -> Value {
+    public init(keyPath: KeyPath<State, Value>) {
+        self.keyPath = keyPath
+    }
+
+    public override func map(_ state: State) -> Value {
         return state[keyPath: keyPath]
     }
 }
 
 /// A `Selector` based on a one other `Selector`.
-public struct Selector1<State, S1, Value>: Selector where
+public class Selector1<State, S1, Value>: MemoizedSelector<State, Value> where
     S1: Selector, S1.State == State {
-    public let id = UUID()
     internal let selector1: S1
     public let projector: (S1.Value) -> Value
 
-    public func map(_ state: State) -> Value {
+    public init(selector1: S1, projector: @escaping (S1.Value) -> Value) {
+        self.selector1 = selector1
+        self.projector = projector
+    }
+
+    public override func map(_ state: State) -> Value {
         return projector(selector1.map(state))
     }
 }
 
 /// A `Selector` based on a two other `Selector`s.
-public struct Selector2<State, S1, S2, Value>: Selector where
+public class Selector2<State, S1, S2, Value>: MemoizedSelector<State, Value> where
     S1: Selector, S1.State == State,
     S2: Selector, S2.State == State {
-    public let id = UUID()
     internal let selector1: S1
     internal let selector2: S2
     public let projector: (S1.Value, S2.Value) -> Value
 
-    public func map(_ state: State) -> Value {
+    public init(selector1: S1, selector2: S2, projector: @escaping (S1.Value, S2.Value) -> Value) {
+        self.selector1 = selector1
+        self.selector2 = selector2
+        self.projector = projector
+    }
+
+    public override func map(_ state: State) -> Value {
         return projector(selector1.map(state), selector2.map(state))
     }
 }
 
 /// A `Selector` based on a three other `Selector`s.
-public struct Selector3<State, S1, S2, S3, Value>: Selector where
+public class Selector3<State, S1, S2, S3, Value>: MemoizedSelector<State, Value> where
     S1: Selector, S1.State == State,
     S2: Selector, S2.State == State,
     S3: Selector, S3.State == State {
-    public let id = UUID()
     internal let selector1: S1
     internal let selector2: S2
     internal let selector3: S3
     public let projector: (S1.Value, S2.Value, S3.Value) -> Value
 
-    public func map(_ state: State) -> Value {
+    public init(selector1: S1, selector2: S2, selector3: S3,
+                projector: @escaping (S1.Value, S2.Value, S3.Value) -> Value) {
+        self.selector1 = selector1
+        self.selector2 = selector2
+        self.selector3 = selector3
+        self.projector = projector
+    }
+
+    public override func map(_ state: State) -> Value {
         return projector(selector1.map(state), selector2.map(state), selector3.map(state))
     }
 }
 
 /// A `Selector` based on a four  other `Selector`s.
-public struct Selector4<State, S1, S2, S3, S4, Value>: Selector where
+public class Selector4<State, S1, S2, S3, S4, Value>: MemoizedSelector<State, Value> where
     S1: Selector, S1.State == State,
     S2: Selector, S2.State == State,
     S3: Selector, S3.State == State,
     S4: Selector, S4.State == State {
-    public let id = UUID()
     internal let selector1: S1
     internal let selector2: S2
     internal let selector3: S3
     internal let selector4: S4
     public let projector: (S1.Value, S2.Value, S3.Value, S4.Value) -> Value
 
-    public func map(_ state: State) -> Value {
+    public init(selector1: S1, selector2: S2, selector3: S3, selector4: S4,
+                projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value) -> Value) {
+        self.selector1 = selector1
+        self.selector2 = selector2
+        self.selector3 = selector3
+        self.selector4 = selector4
+        self.projector = projector
+    }
+
+    public override func map(_ state: State) -> Value {
         return projector(selector1.map(state), selector2.map(state), selector3.map(state), selector4.map(state))
     }
 }
 
 /// A `Selector` based on a five other `Selector`s.
-public struct Selector5<State, S1, S2, S3, S4, S5, Value>: Selector where
+public class Selector5<State, S1, S2, S3, S4, S5, Value>: MemoizedSelector<State, Value> where
     S1: Selector, S1.State == State,
     S2: Selector, S2.State == State,
     S3: Selector, S3.State == State,
     S4: Selector, S4.State == State,
     S5: Selector, S5.State == State {
-    public let id = UUID()
     internal let selector1: S1
     internal let selector2: S2
     internal let selector3: S3
@@ -185,7 +210,38 @@ public struct Selector5<State, S1, S2, S3, S4, S5, Value>: Selector where
     internal let selector5: S5
     public let projector: (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value
 
-    public func map(_ state: State) -> Value {
+    public init(selector1: S1, selector2: S2, selector3: S3, selector4: S4, selector5: S5,
+                projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value) {
+        self.selector1 = selector1
+        self.selector2 = selector2
+        self.selector3 = selector3
+        self.selector4 = selector4
+        self.selector5 = selector5
+        self.projector = projector
+    }
+
+    public override func map(_ state: State) -> Value {
         return projector(selector1.map(state), selector2.map(state), selector3.map(state), selector4.map(state), selector5.map(state))
+    }
+}
+
+public class MemoizedSelector<State, Value>: Selector {
+    internal var result: (stateHash: UUID?, value: Value)?
+
+    internal func setResult(value: Value, forStateHash stateHash: UUID? = nil) {
+        result = (stateHash: stateHash, value: value)
+    }
+
+    internal func map(_ state: State, stateHash: UUID) -> Value {
+        if let result = result, result.stateHash == nil || result.stateHash == stateHash {
+            return result.value
+        }
+        let value = map(state)
+        setResult(value: value, forStateHash: stateHash)
+        return value
+    }
+
+    public func map(_ state: State) -> Value {
+        fatalError("Must be implemented in subclass")
     }
 }

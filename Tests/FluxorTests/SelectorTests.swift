@@ -4,11 +4,11 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Fluxor
+@testable import Fluxor
 import XCTest
 
 class SelectorTests: XCTestCase {
-    private let state = TestState(name: NameState(firstName: "Tim",
+    private var state = TestState(name: NameState(firstName: "Tim",
                                                   lastName: "Cook"),
                                   birthday: BirthdayState(year: 1960,
                                                           month: "November",
@@ -119,10 +119,49 @@ class SelectorTests: XCTestCase {
             New products: Mac, iPod, iPhone, iPad
             """)
     }
+
+    func testMemoizedSelectorMapSetsResult() {
+        // Given
+        let initialStateHash = UUID()
+        let selector = fullNameSelector
+        XCTAssertNil(selector.result)
+        // When
+        XCTAssertEqual(selector.map(state, stateHash: initialStateHash), "Tim Cook")
+        // Then
+        XCTAssertEqual(selector.result?.value, "Tim Cook")
+        XCTAssertEqual(selector.result?.stateHash, initialStateHash)
+
+        // When
+        state.name = NameState(firstName: "Steve", lastName: "Jobs")
+        XCTAssertEqual(selector.map(state, stateHash: initialStateHash), "Tim Cook")
+        // Then
+        XCTAssertEqual(selector.result?.value, "Tim Cook")
+        XCTAssertEqual(selector.result?.stateHash, initialStateHash)
+
+        // Given
+        let changedStateHash = UUID()
+        XCTAssertEqual(selector.map(state, stateHash: changedStateHash), "Steve Jobs")
+        // Then
+        XCTAssertEqual(selector.result?.value, "Steve Jobs")
+        XCTAssertEqual(selector.result?.stateHash, changedStateHash)
+    }
+    
+    func testMemoizedSelectorSetsResult() {
+        // Given
+        let initialStateHash = UUID()
+        let selector = fullNameSelector
+        XCTAssertNil(selector.result)
+        selector.setResult(value: "Phil Schiller")
+        // When
+        XCTAssertEqual(selector.map(state, stateHash: initialStateHash), "Phil Schiller")
+        // Then
+        XCTAssertEqual(selector.result?.value, "Phil Schiller")
+        XCTAssertEqual(selector.result?.stateHash, nil)
+    }
 }
 
 private struct TestState: Equatable {
-    let name: NameState
+    var name: NameState
     let birthday: BirthdayState
     let address: AddressState
     let scandals: ScandalsState
