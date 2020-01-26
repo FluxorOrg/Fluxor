@@ -132,3 +132,13 @@ public class Store<State: Encodable>: ObservableObject {
         return state[keyPath: keyPath]
     }
 }
+
+public class MockStore<State: Encodable>: Store<State> {
+    func setState(newState: State) {
+        state = newState
+    }
+
+    func overrideSelector<Value>(_ selector: MemoizedSelector<State, Value>, value: Value) {
+        selector.setResult(value: value)
+    }
+}
