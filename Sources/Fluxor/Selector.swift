@@ -225,13 +225,33 @@ public class Selector5<State, S1, S2, S3, S4, S5, Value>: MemoizedSelector<State
     }
 }
 
+/// A `Selector` which remembers the last result to speed up mapping
 public class MemoizedSelector<State, Value>: Selector {
+    /// The latest value for a state hash.
     internal var result: (stateHash: UUID?, value: Value)?
 
+    /**
+     Sets the value and the corresponding `stateHash`.
+
+     If the selector is overriden in a `MockStore` the `stateHash` will be nil and the `map` will always return the `value`.
+
+     - Parameter value: The value to save
+     - Parameter stateHash: The hash of the state the value was selected from
+     */
     internal func setResult(value: Value, forStateHash stateHash: UUID? = nil) {
         result = (stateHash: stateHash, value: value)
     }
 
+    /**
+     Selects the `Value` from the `State` based on the subclass's `map` function and saves the result.
+
+     - If a value is already saved and the saved state hash matches the passed, the saved value is returned.
+     - If a value is already saved but the saved state hash is nil it means that the selector is overriden and it will always return the saved value
+     - If a value is already saved but the saved state hash doesn't match the passed a new value is selected and saved along with the passed state hash
+
+     - Parameter state: The `State` to select from
+     - Parameter stateHash: The hash of the state to select from
+     */
     internal func map(_ state: State, stateHash: UUID) -> Value {
         if let result = result, result.stateHash == nil || result.stateHash == stateHash {
             return result.value
@@ -241,6 +261,11 @@ public class MemoizedSelector<State, Value>: Selector {
         return value
     }
 
+    /**
+     The function called when selecting from a `Store`. This should be overriden in a subclass with logic for how to select the `Value` from the `State`.
+
+     - Parameter state: The `State` to select from
+     */
     public func map(_ state: State) -> Value {
         fatalError("Must be implemented in subclass")
     }

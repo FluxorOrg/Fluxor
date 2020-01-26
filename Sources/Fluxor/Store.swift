@@ -133,11 +133,27 @@ public class Store<State: Encodable>: ObservableObject {
     }
 }
 
+/**
+ A `Mockstore` is intended to be used in unit tests where you want to want to set a new `State` directly or overwrite the value coming out of `Selector`s.
+ */
 public class MockStore<State: Encodable>: Store<State> {
+    /**
+     Sets a new `State` on the `Store`.
+
+     - Parameter newState: The new `State` to set on the `Store`
+     */
     func setState(newState: State) {
         state = newState
     }
 
+    /**
+     Overrides the `Selector` with a 'default' value.
+
+     When a `Selector` is overriden it will always give the same value.
+
+     - Parameter selector: The `Selector` to override
+     - Parameter value: The value the `Selector` should give
+     */
     func overrideSelector<Value>(_ selector: MemoizedSelector<State, Value>, value: Value) {
         selector.setResult(value: value)
     }
