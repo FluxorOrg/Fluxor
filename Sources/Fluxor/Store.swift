@@ -142,7 +142,7 @@ public class MockStore<State: Encodable>: Store<State> {
 
      - Parameter newState: The new `State` to set on the `Store`
      */
-    func setState(newState: State) {
+    public func setState(newState: State) {
         state = newState
     }
 
@@ -154,7 +154,7 @@ public class MockStore<State: Encodable>: Store<State> {
      - Parameter selector: The `Selector` to override
      - Parameter value: The value the `Selector` should give
      */
-    func overrideSelector<Value>(_ selector: MemoizedSelector<State, Value>, value: Value) {
+    public func overrideSelector<Value>(_ selector: MemoizedSelector<State, Value>, value: Value) {
         selector.setResult(value: value)
     }
 }
