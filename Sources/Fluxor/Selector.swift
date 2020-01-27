@@ -4,7 +4,7 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Foundation
+import Foundation.NSUUID
 
 /// A pure function which takes a `State` and returns a `Value` based on it.
 public protocol Selector {
