@@ -22,6 +22,9 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: e658ce73b71169fa83b630cca94f8e1c4252243575add58d28533fb5dba1a7a8
       with:
-        coverageCommand: swift test -v --enable-code-coverage
+        coverageCommand:
+          swift test -v --enable-code-coverage
+          gem install slather
+          slather coverage -s
         coverageLocations: .build/debug/codecov/Fluxor.json
         debug: true
