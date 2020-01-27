@@ -18,9 +18,10 @@ jobs:
     - name: Build
       run: swift build -v
     - name: Test
-      run: swift test -v --enable-code-coverage
-    - name: Codecov
-      uses: codecov/codecov-action@v1.0.4
+      uses: paambaati/codeclimate-action@v2.4.0
+      env:
+        CC_TEST_REPORTER_ID: e658ce73b71169fa83b630cca94f8e1c4252243575add58d28533fb5dba1a7a8
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: .build/debug/codecov/Fluxor.json
+        coverageCommand: swift test -v --enable-code-coverage
+        coverageLocations: .build/debug/codecov/Fluxor.json
+        debug: true
