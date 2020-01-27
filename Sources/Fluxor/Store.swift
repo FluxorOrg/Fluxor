@@ -6,6 +6,7 @@
 
 import Combine
 import Dispatch
+import Foundation.NSUUID
 
 /// An empty action used for initializing the `Store`.
 public struct InitialAction: Action {}
@@ -19,17 +20,18 @@ public struct InitialAction: Action {}
  To update the `State` callers dispatch `Action`s on the `Store`.
 
  # Interceptors
- It is possible to intercept all `Action`s and the `State` changes by registering an `StoreInterceptor`.
+ It is possible to intercept all `Action`s and `State` changes by registering an `StoreInterceptor`.
 
  # Selecting
  To select a value in the `State` the callers can either use a selector (closure) or a key path. It is possible to get a `Publisher` for the value or just to selec the current value.
  */
 public class Store<State: Encodable>: ObservableObject {
-    @Published internal var state: State
-    @Published internal var action: Action
-    internal var reducers = [AnyReducer<State>]()
-    internal var effectCancellables = Set<AnyCancellable>()
-    internal var interceptors = [AnyStoreInterceptor<State>]()
+    internal private(set) var stateHash = UUID()
+    @Published internal fileprivate(set) var state: State { willSet { stateHash = UUID() } }
+    @Published internal private(set) var action: Action = InitialAction()
+    internal private(set) var reducers = [AnyReducer<State>]()
+    internal private(set) var effectCancellables = Set<AnyCancellable>()
+    internal private(set) var interceptors = [AnyStoreInterceptor<State>]()
 
     /**
      Initializes the `Store` with an initial state and an `InitialAction`.
@@ -38,7 +40,6 @@ public class Store<State: Encodable>: ObservableObject {
      */
     public init(initialState: State) {
         state = initialState
-        action = InitialAction()
     }
 
     /**
@@ -96,17 +97,16 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     /**
-     Creates a `Publisher` for a selector.
+     Creates a `Publisher` for a `Selector`.
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
-    public func select<Value, S>(_ selector: S) -> AnyPublisher<Value, Never>
-        where S: Selector, S.State == State, S.Value == Value {
-        return $state.map(selector.map).eraseToAnyPublisher()
+    public func select<Value>(_ selector: MemoizedSelector<State, Value>) -> AnyPublisher<Value, Never> {
+        return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
     }
 
     /**
-     Creates a `Publisher` for a key path in the `State`.
+     Creates a `Publisher` for a `KeyPath` in the `State`.
 
      - Parameter keyPath: The key path to use when getting the value in the `State`
      */
@@ -115,21 +115,46 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     /**
-     Gets the current value in the `State` for a selector.
+     Gets the current value in the `State` for a `Selector`.
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
-    public func selectCurrent<Value, S>(_ selector: S) -> Value
-        where S: Selector, S.State == State, S.Value == Value {
-        return selector.map(state)
+    public func selectCurrent<Value>(_ selector: MemoizedSelector<State, Value>) -> Value {
+        return selector.map(state, stateHash: stateHash)
     }
 
     /**
-     Gets the current value in the `State` for a key path..
+     Gets the current value in the `State` for a `Key path`.
 
      - Parameter keyPath: The key path to use when getting the value in the `State`
      */
     public func selectCurrent<Value>(_ keyPath: KeyPath<State, Value>) -> Value {
         return state[keyPath: keyPath]
+    }
+}
+
+/**
+ A `Mockstore` is intended to be used in unit tests where you want to want to set a new `State` directly or overwrite the value coming out of `Selector`s.
+ */
+public class MockStore<State: Encodable>: Store<State> {
+    /**
+     Sets a new `State` on the `Store`.
+
+     - Parameter newState: The new `State` to set on the `Store`
+     */
+    public func setState(newState: State) {
+        state = newState
+    }
+
+    /**
+     Overrides the `Selector` with a 'default' value.
+
+     When a `Selector` is overriden it will always give the same value.
+
+     - Parameter selector: The `Selector` to override
+     - Parameter value: The value the `Selector` should give
+     */
+    public func overrideSelector<Value>(_ selector: MemoizedSelector<State, Value>, value: Value) {
+        selector.setResult(value: value)
     }
 }

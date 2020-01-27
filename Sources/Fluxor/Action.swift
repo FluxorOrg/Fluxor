@@ -4,7 +4,7 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Foundation
+import Foundation.NSData
 
 /**
  An event happening in an application.
