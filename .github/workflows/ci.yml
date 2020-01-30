@@ -19,11 +19,12 @@ jobs:
       run: swift build -v
     - name: Test
       run: swift test -v --enable-code-coverage
+    - name: Export coverage
+      run: xcrun llvm-cov export -format="lcov" -instr-profile=.build/x86_64-apple-macosx/debug/codecov/default.profdata .build/x86_64-apple-macosx/debug/FluxorPackageTests.xctest/Contents/MacOS/FluxorPackageTests > coverage.lcov
     - name: Upload coverage
       uses: paambaati/codeclimate-action@v2.4.0
       env:
         CC_TEST_REPORTER_ID: e658ce73b71169fa83b630cca94f8e1c4252243575add58d28533fb5dba1a7a8
       with:
-        coverageCommand: xcrun llvm-cov export -format="lcov" -instr-profile=.build/x86_64-apple-macosx/debug/codecov/default.profdata .build/x86_64-apple-macosx/debug/FluxorPackageTests.xctest/Contents/MacOS/FluxorPackageTests > coverage.lcov
         coverageLocations: coverage.lcov:lcov
         debug: true
