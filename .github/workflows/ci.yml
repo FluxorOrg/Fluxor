@@ -10,7 +10,8 @@ on:
 
 jobs:
   build:
-    runs-on: macOS-latest
+    name: Build and Test
+    runs-on: macos-latest
     env:
       DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
     steps:
@@ -29,3 +30,11 @@ jobs:
         coverageCommand: ls
         coverageLocations: coverage.lcov:lcov
         debug: true
+  spm:
+    name: SPM Integration
+    runs-on: macos-latest    
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v1
+      - name: SPM Build
+        run: swift build
