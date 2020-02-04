@@ -30,19 +30,6 @@ public extension Action {
 /**
  Creates an `Action` without payload.
  */
-public func createAction(id: String) -> AnonymousAction {
-    return AnonymousAction(id: id)
-}
-
-/**
- Creates an `Action` with a payload.
-
- - Parameter payload: The payload to create an `Action` with
- */
-public func createAction<Payload: Encodable>(id: String, payload: Payload) -> AnonymousActionWithPayload<Payload> {
-    return AnonymousActionWithPayload(id: id, payload: payload)
-}
-
 /**
  Creates an `ActionCreator` with the specified `id` which can't hold a payload.
  */

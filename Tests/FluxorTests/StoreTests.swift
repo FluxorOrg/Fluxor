@@ -207,9 +207,11 @@ private class TestEffects: Effects {
     let actions: ActionPublisher
 
     static let responseActionIdentifier = "TestResponseAction"
-    static let responseAction = createAction(id: TestEffects.responseActionIdentifier)
+    static let responseActionCreator = createActionCreator(id: TestEffects.responseActionIdentifier)
+    static let responseAction = TestEffects.responseActionCreator.create()
     static let generateActionIdentifier = "TestGenerateAction"
-    static let generateAction = createAction(id: TestEffects.generateActionIdentifier, payload: 42)
+    static let generateActionCreator = createActionCreator(id: TestEffects.generateActionIdentifier, payloadType: Int.self)
+    static let generateAction = TestEffects.generateActionCreator.create(payload: 42)
     static let expectation = XCTestExpectation()
     static var lastAction: AnonymousActionWithPayload<Int>?
 
