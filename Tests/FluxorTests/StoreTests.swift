@@ -11,8 +11,8 @@ import XCTest
 // swiftlint:disable force_cast
 
 class StoreTests: XCTestCase {
-    fileprivate var store: Store<TestState>!
-    fileprivate var reducer: ((TestState, Action) -> TestState)!
+    private var store: Store<TestState>!
+    private var reducer: ((TestState, Action) -> TestState)!
 
     override func setUp() {
         super.setUp()
@@ -164,9 +164,72 @@ class StoreTests: XCTestCase {
         let valueAfterAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueAfterAction, .modified)
     }
-}
 
-private struct TestAction: Action, Equatable {}
+    private struct TestAction: Action, Equatable {}
+
+    private struct TestState: Encodable, Equatable {
+        var type: TestType
+        var lastAction: String?
+    }
+
+    private enum TestType: String, Encodable {
+        case initial
+        case modified
+        case modifiedAgain
+    }
+
+    private struct TestReducer: Reducer {
+        typealias State = TestState
+
+        func reduce(state: TestState, action: Action) -> State {
+            var state = state
+            state.type = .modified
+            state.lastAction = String(describing: action)
+            return state
+        }
+    }
+
+    private class TestEffects: Effects {
+        lazy var effects: [Effect] = [testEffect, anotherTestEffect, yetAnotherTestEffect]
+        let actions: ActionPublisher
+
+        static let responseActionIdentifier = "TestResponseAction"
+        static let responseActionCreator = createActionCreator(id: TestEffects.responseActionIdentifier)
+        static let responseAction = TestEffects.responseActionCreator.createAction()
+        static let generateActionIdentifier = "TestGenerateAction"
+        static let generateActionCreator = createActionCreator(id: TestEffects.generateActionIdentifier, payloadType: Int.self)
+        static let generateAction = TestEffects.generateActionCreator.createAction(payload: 42)
+        static let expectation = XCTestExpectation()
+        static var lastAction: AnonymousActionWithPayload<Int>?
+
+        required init(_ actions: ActionPublisher) {
+            self.actions = actions
+        }
+
+        lazy var testEffect = createEffect(
+            actions
+                .ofType(TestAction.self)
+                .flatMap { _ in Just(Self.responseAction) }
+                .eraseToAnyPublisher()
+        )
+
+        lazy var anotherTestEffect = createEffect(
+            actions
+                .withIdentifier(TestEffects.responseActionIdentifier)
+                .flatMap { _ in Just(Self.generateAction) }
+                .eraseToAnyPublisher()
+        )
+
+        lazy var yetAnotherTestEffect = createEffect(
+            actions
+                .withIdentifier(TestEffects.generateActionIdentifier)
+                .sink(receiveValue: { action in
+                    TestEffects.lastAction = (action as! AnonymousActionWithPayload<Int>)
+                    TestEffects.expectation.fulfill()
+                })
+        )
+    }
+}
 
 extension AnonymousAction: Equatable {
     public static func == (lhs: AnonymousAction, rhs: AnonymousAction) -> Bool {
@@ -178,67 +241,4 @@ extension AnonymousActionWithPayload: Equatable where Payload == Int {
     public static func == (lhs: AnonymousActionWithPayload<Payload>, rhs: AnonymousActionWithPayload<Payload>) -> Bool {
         lhs.id == rhs.id && lhs.payload == rhs.payload
     }
-}
-
-private struct TestState: Encodable, Equatable {
-    var type: TestType
-    var lastAction: String?
-}
-
-private enum TestType: String, Encodable {
-    case initial
-    case modified
-    case modifiedAgain
-}
-
-private struct TestReducer: Reducer {
-    typealias State = TestState
-
-    func reduce(state: TestState, action: Action) -> State {
-        var state = state
-        state.type = .modified
-        state.lastAction = String(describing: action)
-        return state
-    }
-}
-
-private class TestEffects: Effects {
-    lazy var effects: [Effect] = [testEffect, anotherTestEffect, yetAnotherTestEffect]
-    let actions: ActionPublisher
-
-    static let responseActionIdentifier = "TestResponseAction"
-    static let responseActionCreator = createActionCreator(id: TestEffects.responseActionIdentifier)
-    static let responseAction = TestEffects.responseActionCreator.create()
-    static let generateActionIdentifier = "TestGenerateAction"
-    static let generateActionCreator = createActionCreator(id: TestEffects.generateActionIdentifier, payloadType: Int.self)
-    static let generateAction = TestEffects.generateActionCreator.create(payload: 42)
-    static let expectation = XCTestExpectation()
-    static var lastAction: AnonymousActionWithPayload<Int>?
-
-    required init(_ actions: ActionPublisher) {
-        self.actions = actions
-    }
-
-    lazy var testEffect = createEffect(
-        actions
-            .ofType(TestAction.self)
-            .flatMap { _ in Just(Self.responseAction) }
-            .eraseToAnyPublisher()
-    )
-
-    lazy var anotherTestEffect = createEffect(
-        actions
-            .withIdentifier(TestEffects.responseActionIdentifier)
-            .flatMap { _ in Just(Self.generateAction) }
-            .eraseToAnyPublisher()
-    )
-
-    lazy var yetAnotherTestEffect = createEffect(
-        actions
-            .withIdentifier(TestEffects.generateActionIdentifier)
-            .sink(receiveValue: { action in
-                TestEffects.lastAction = (action as! AnonymousActionWithPayload<Int>)
-                TestEffects.expectation.fulfill()
-            })
-    )
 }

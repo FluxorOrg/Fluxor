@@ -28,9 +28,6 @@ public extension Action {
 }
 
 /**
- Creates an `Action` without payload.
- */
-/**
  Creates an `ActionCreator` with the specified `id` which can't hold a payload.
  */
 public func createActionCreator(id: String) -> ActionCreator {
@@ -53,7 +50,7 @@ public struct ActionCreator {
     /**
      Creates an `AnonymousAction` with the `ActionCreator`s `id`.
      */
-    public func create() -> AnonymousAction {
+    public func createAction() -> AnonymousAction {
         return AnonymousAction(id: id)
     }
 }
@@ -67,7 +64,7 @@ public struct ActionCreatorWithPayload<Payload: Encodable> {
 
       - Parameter payload: The payload to create the `AnonymousActionWithPayload` with
      */
-    public func create(payload: Payload) -> AnonymousActionWithPayload<Payload> {
+    public func createAction(payload: Payload) -> AnonymousActionWithPayload<Payload> {
         return AnonymousActionWithPayload(id: id, payload: payload)
     }
 }

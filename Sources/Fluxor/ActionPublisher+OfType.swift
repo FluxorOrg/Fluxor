@@ -8,7 +8,7 @@ import Combine
 
 extension Publisher where Output == Action {
     /**
-     Only lets actions of a certain type get through the stream.
+     Only lets `Action`s of a certain type get through the stream.
 
          actions
              .ofType(FetchTodosAction.self)
