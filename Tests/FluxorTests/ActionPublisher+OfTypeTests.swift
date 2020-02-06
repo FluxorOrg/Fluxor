@@ -44,7 +44,7 @@ class ActionPublisherOfTypeTests: XCTestCase {
         wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
     }
-}
 
-private struct Action1: Action {}
-private struct Action2: Action {}
+    private struct Action1: Action {}
+    private struct Action2: Action {}
+}

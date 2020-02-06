@@ -8,7 +8,7 @@
 import XCTest
 
 class MockStoreTests: XCTestCase {
-    fileprivate var store: MockStore<TestState>!
+    private var store: MockStore<TestState>!
     private let initialState = TestState(counter: 0)
 
     override func setUp() {
@@ -53,8 +53,8 @@ class MockStoreTests: XCTestCase {
         wait(for: [expectation], timeout: 5)
         XCTAssertNotNil(cancellable)
     }
-}
 
-private struct TestState: Encodable, Equatable {
-    var counter: Int
+    private struct TestState: Encodable, Equatable {
+        var counter: Int
+    }
 }

@@ -19,8 +19,28 @@ class ActionTests: XCTestCase {
         // Then
         XCTAssertEqual(json, #"{"increment":42}"#)
     }
-}
 
-private struct TestAction: Action {
-    let increment: Int
+    func testCreateActionCreator() {
+        // Given
+        let actionCreator = createActionCreator(id: "something")
+        // When
+        let action = actionCreator.createAction()
+        // Then
+        XCTAssertTrue(action.wasCreated(by: actionCreator))
+    }
+
+    func testCreateActionCreatorWithPayload() {
+        // Given
+        let actionCreator = createActionCreator(id: "something", payloadType: Int.self)
+        let payload = 42
+        // When
+        let action = actionCreator.createAction(payload: payload)
+        // Then
+        XCTAssertTrue(action.wasCreated(by: actionCreator))
+        XCTAssertEqual(action.payload, payload)
+    }
+
+    private struct TestAction: Action {
+        let increment: Int
+    }
 }

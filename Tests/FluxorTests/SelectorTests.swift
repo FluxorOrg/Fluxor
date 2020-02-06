@@ -145,7 +145,7 @@ class SelectorTests: XCTestCase {
         XCTAssertEqual(selector.result?.value, "Steve Jobs")
         XCTAssertEqual(selector.result?.stateHash, changedStateHash)
     }
-    
+
     func testMemoizedSelectorSetsResult() {
         // Given
         let initialStateHash = UUID()
@@ -158,38 +158,38 @@ class SelectorTests: XCTestCase {
         XCTAssertEqual(selector.result?.value, "Phil Schiller")
         XCTAssertEqual(selector.result?.stateHash, nil)
     }
-}
 
-private struct TestState: Equatable {
-    var name: NameState
-    let birthday: BirthdayState
-    let address: AddressState
-    let scandals: ScandalsState
-    let newProducts: NewProductState
-}
+    private struct TestState: Equatable {
+        var name: NameState
+        let birthday: BirthdayState
+        let address: AddressState
+        let scandals: ScandalsState
+        let newProducts: NewProductState
+    }
 
-private struct NameState: Equatable {
-    let firstName: String
-    let lastName: String
-}
+    private struct NameState: Equatable {
+        let firstName: String
+        let lastName: String
+    }
 
-private struct BirthdayState: Equatable {
-    let year: Int
-    let month: String
-    let day: Int
-}
+    private struct BirthdayState: Equatable {
+        let year: Int
+        let month: String
+        let day: Int
+    }
 
-private struct AddressState: Equatable {
-    let address: String
-    let city: String
-    let country: String
-}
+    private struct AddressState: Equatable {
+        let address: String
+        let city: String
+        let country: String
+    }
 
-private struct ScandalsState: Equatable {
-    let iphone: String
-    let other: String
-}
+    private struct ScandalsState: Equatable {
+        let iphone: String
+        let other: String
+    }
 
-private struct NewProductState: Equatable {
-    let products: [String]
+    private struct NewProductState: Equatable {
+        let products: [String]
+    }
 }

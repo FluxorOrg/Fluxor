@@ -8,7 +8,7 @@ import Combine
 
 extension Publisher where Output == Action {
     /**
-     Only lets anonymous actions with a certain identifier get through the stream.
+     Only lets `AnonymousAction`s with a certain identifier get through the stream.
 
          actions
              .withIdentifier("FetchTodosAction")
