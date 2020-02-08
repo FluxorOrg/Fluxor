@@ -8,3 +8,5 @@
 ![Test](https://github.com/MortenGregersen/Fluxor/workflows/CI/badge.svg)
 [![Maintainability](https://api.codeclimate.com/v1/badges/f8f269fac2ca81c09856/maintainability)](https://codeclimate.com/github/MortenGregersen/Fluxor/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f8f269fac2ca81c09856/test_coverage)](https://codeclimate.com/github/MortenGregersen/Fluxor/test_coverage)
+
+![](assets/Diagram.png)
