@@ -1,50 +1,48 @@
-//
-//  File.swift
-//
-//
-//  Created by Morten Bjerg Gregersen on 04/01/2020.
-//
+/**
+ * FluxorTests
+ *  Copyright (c) Morten Bjerg Gregersen 2020
+ *  MIT license, see LICENSE file for details
+ */
 
 import Combine
 import Fluxor
 import XCTest
 
-class ActionPublisherWithIdentifierTests: XCTestCase {
+class ActionPublisherWasCreatedByTests: XCTestCase {
     var actions: PassthroughSubject<Action, Never>!
-    let action1Identifier = "TestAction"
-    let action2Identifier = "OtherTestAction"
-    lazy var action1Creator = createActionCreator(id: action1Identifier)
-    lazy var action1 = action1Creator.createAction()
+    let creator1 = createActionCreator(id: "Action1")
+    let creator2 = createActionCreator(id: "Action2")
 
     override func setUp() {
         super.setUp()
         actions = .init()
     }
 
-    /// Does the operator let the `Action` pass if the identifier matches?
-    func testMatchingIdentifier() {
+    /// Does the operator let the `Action` pass if it matches?
+    func testMatchingCreator() {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
+        
         let cancellable = actions
-            .withIdentifier(action1Identifier)
+            .wasCreated(by: creator1)
             .sink { _ in expectation.fulfill() }
         // When
-        actions.send(action1)
+        actions.send(creator1.createAction())
         // Then
         wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
     }
 
-    /// Does the operator block the `Action` if the identifier doesn't match?
-    func testNonMatchingIdentifier() {
+    /// Does the operator block the `Action` if it doesn't match?
+    func testNonMatchingCreator() {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.isInverted = true
         let cancellable = actions
-            .withIdentifier(action2Identifier)
+            .wasCreated(by: creator2)
             .sink { _ in expectation.fulfill() }
         // When
-        actions.send(action1)
+        actions.send(creator1.createAction())
         // Then
         wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
