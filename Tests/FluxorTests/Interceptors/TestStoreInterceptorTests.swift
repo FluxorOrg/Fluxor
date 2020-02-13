@@ -22,12 +22,12 @@ class TestStoreInterceptorTests: XCTestCase {
         interceptor.actionDispatched(action: action2, oldState: oldState2, newState: newState2)
         // Then
         let first = interceptor.dispatchedActionsAndStates[0]
-        guard let firstAction = first.action as? AnonymousAction else { XCTFail(); return }
+        guard let firstAction = first.action as? AnonymousAction else { XCTFail("Invalid action"); return }
         XCTAssertEqual(firstAction, action1)
         XCTAssertEqual(first.oldState, oldState1)
         XCTAssertEqual(first.newState, newState1)
         let second = interceptor.dispatchedActionsAndStates[1]
-        guard let secondAction = second.action as? AnonymousAction else { XCTFail(); return }
+        guard let secondAction = second.action as? AnonymousAction else { XCTFail("Invalid action"); return }
         XCTAssertEqual(secondAction, action2)
         XCTAssertEqual(second.oldState, oldState2)
         XCTAssertEqual(second.newState, newState2)
