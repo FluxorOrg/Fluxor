@@ -23,9 +23,22 @@ class PrintStoreInterceptorTests: XCTestCase {
         interceptor.actionDispatched(action: action2, oldState: oldState2, newState: newState2)
         // Then
         XCTAssertEqual(printedStrings[0], "PrintStoreInterceptor<TestState> - action dispatched: TestAction")
-        XCTAssertEqual(printedStrings[1], #"PrintStoreInterceptor<TestState> - state changed to: {"counter":11}"#)
-        XCTAssertEqual(printedStrings[2], #"PrintStoreInterceptor<TestState> - action dispatched: AnonymousActionWithPayload<Int>, data: {"id":"Action2","payload":42}"#)
-        XCTAssertEqual(printedStrings[3], #"PrintStoreInterceptor<TestState> - state changed to: {"counter":22}"#)
+        XCTAssertEqual(printedStrings[1], """
+        PrintStoreInterceptor<TestState> - state changed to: {
+          "counter" : 11
+        }
+        """)
+        XCTAssertEqual(printedStrings[2], """
+        PrintStoreInterceptor<TestState> - action dispatched: AnonymousActionWithPayload<Int>, data: {
+          "id" : "Action2",
+          "payload" : 42
+        }
+        """)
+        XCTAssertEqual(printedStrings[3], """
+        PrintStoreInterceptor<TestState> - state changed to: {
+          "counter" : 22
+        }
+        """)
     }
 }
 

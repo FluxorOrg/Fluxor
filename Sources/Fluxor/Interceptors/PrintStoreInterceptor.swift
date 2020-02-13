@@ -20,13 +20,14 @@ public class PrintStoreInterceptor<State: Encodable>: StoreInterceptor {
 
     public func actionDispatched(action: Action, oldState: State, newState: State) {
         let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
         let name = String(describing: type(of: self))
 
         let actionName = String(describing: type(of: action))
         var actionLog = "\(name) - action dispatched: \(actionName)"
         if let actionData = action.encode(with: encoder),
             let actionJSON = String(data: actionData, encoding: .utf8),
-            actionJSON != "{}" {
+            actionJSON.replacingOccurrences(of: "\n", with: "") != "{}" {
             actionLog += ", data: \(actionJSON)"
         }
         print(actionLog)
