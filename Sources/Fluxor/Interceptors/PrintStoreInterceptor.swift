@@ -8,13 +8,13 @@ import Foundation
 
 /// A `StoreInterceptor` to use when debugging which `Action`s are dispatched.
 public class PrintStoreInterceptor<State: Encodable>: StoreInterceptor {
-    let print: (String) -> ()
+    let print: (String) -> Void
 
     public convenience init() {
         self.init(print: { Swift.print($0) })
     }
 
-    internal init(print: @escaping (String) -> ()) {
+    internal init(print: @escaping (String) -> Void) {
         self.print = print
     }
 
