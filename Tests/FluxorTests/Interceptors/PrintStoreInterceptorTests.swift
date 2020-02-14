@@ -40,6 +40,18 @@ class PrintStoreInterceptorTests: XCTestCase {
         }
         """)
     }
+
+    func testPublicInit() {
+        // Given
+        let interceptor = PrintStoreInterceptor<TestState>()
+        let action = TestAction()
+        let oldState = TestState(counter: 1)
+        let newState = TestState(counter: 11)
+        // When
+        interceptor.actionDispatched(action: action, oldState: oldState, newState: newState)
+        // Then
+        XCTAssertNotNil(interceptor)
+    }
 }
 
 private struct TestAction: Action {}
