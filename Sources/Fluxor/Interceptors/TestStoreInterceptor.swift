@@ -6,11 +6,17 @@
 
 /// A `StoreInterceptor` to use in unit tests, to assert specific `Action`s are dispatched.
 public class TestStoreInterceptor<State>: StoreInterceptor {
-    public private(set) var dispatchedActionsAndStates: [(action: Action, oldState: State, newState: State)] = []
+    public private(set) var dispatchedActionsAndStates: [Storage] = []
 
     public init() {}
 
     public func actionDispatched(action: Action, oldState: State, newState: State) {
-        dispatchedActionsAndStates.append((action, oldState, newState))
+        dispatchedActionsAndStates.append(.init(action: action, oldState: oldState, newState: newState))
+    }
+
+    public struct Storage {
+        public let action: Action
+        public let oldState: State
+        public let newState: State
     }
 }
