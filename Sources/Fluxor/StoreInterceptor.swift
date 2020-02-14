@@ -11,17 +11,6 @@ public protocol StoreInterceptor {
     func actionDispatched(action: Action, oldState: State, newState: State)
 }
 
-/// A `StoreInterceptor` to use in unit tests, to assert specific `Action`s are dispatched.
-public class TestStoreInterceptor<State>: StoreInterceptor {
-    public private(set) var dispatchedActionsAndStates: [(action: Action, oldState: State, newState: State)] = []
-
-    public init() {}
-
-    public func actionDispatched(action: Action, oldState: State, newState: State) {
-        dispatchedActionsAndStates.append((action, oldState, newState))
-    }
-}
-
 /// A type-erased `StoreInterceptor` used to store all `StoreInterceptor`s in an array in the `Store`.
 internal struct AnyStoreInterceptor<State>: StoreInterceptor {
     private let _actionDispatched: (Action, State, State) -> Void
