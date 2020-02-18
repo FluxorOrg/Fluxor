@@ -93,7 +93,7 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter interceptor: The interceptor to register
      */
-    public func register<S: Interceptor>(interceptor: S) where S.State == State {
+    public func register<I: Interceptor>(interceptor: I) where I.State == State {
         interceptors.append(AnyInterceptor(interceptor))
     }
 
