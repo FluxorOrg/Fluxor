@@ -83,11 +83,11 @@ class StoreTests: XCTestCase {
         XCTAssertNotNil(cancellable)
     }
 
-    /// Does the `StoreInterceptor` receive the right `Action` and modified `State`?
+    /// Does the `Interceptor` receive the right `Action` and modified `State`?
     func testInterceptors() {
         // Given
         let action = TestAction()
-        let interceptor = TestStoreInterceptor<TestState>()
+        let interceptor = TestInterceptor<TestState>()
         store.register(interceptor: interceptor)
         store.register(reducer: TestReducer())
         XCTAssertEqual(interceptor.dispatchedActionsAndStates.count, 0)

@@ -20,7 +20,7 @@ public struct InitialAction: Action {}
  To update the `State` callers dispatch `Action`s on the `Store`.
 
  # Interceptors
- It is possible to intercept all `Action`s and `State` changes by registering an `StoreInterceptor`.
+ It is possible to intercept all `Action`s and `State` changes by registering an `Interceptor`.
 
  # Selecting
  To select a value in the `State` the callers can either use a selector (closure) or a key path. It is possible to get a `Publisher` for the value or just to selec the current value.
@@ -31,7 +31,7 @@ public class Store<State: Encodable>: ObservableObject {
     @Published internal private(set) var action: Action = InitialAction()
     internal private(set) var reducers = [AnyReducer<State>]()
     internal private(set) var effectCancellables = Set<AnyCancellable>()
-    internal private(set) var interceptors = [AnyStoreInterceptor<State>]()
+    internal private(set) var interceptors = [AnyInterceptor<State>]()
 
     /**
      Initializes the `Store` with an initial state and an `InitialAction`.
@@ -93,8 +93,8 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter interceptor: The interceptor to register
      */
-    public func register<S: StoreInterceptor>(interceptor: S) where S.State == State {
-        interceptors.append(AnyStoreInterceptor(interceptor))
+    public func register<I: Interceptor>(interceptor: I) where I.State == State {
+        interceptors.append(AnyInterceptor(interceptor))
     }
 
     /**
