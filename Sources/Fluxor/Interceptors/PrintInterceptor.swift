@@ -6,8 +6,8 @@
 
 import Foundation
 
-/// A `StoreInterceptor` to use when debugging which `Action`s are dispatched.
-public class PrintStoreInterceptor<State: Encodable>: StoreInterceptor {
+/// A `Interceptor` to use when debugging which `Action`s are dispatched.
+public class PrintInterceptor<State: Encodable>: Interceptor {
     let print: (String) -> Void
 
     public convenience init() {
