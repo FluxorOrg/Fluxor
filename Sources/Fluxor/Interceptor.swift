@@ -15,8 +15,8 @@ public protocol Interceptor {
 internal struct AnyInterceptor<State>: Interceptor {
     private let _actionDispatched: (Action, State, State) -> Void
 
-    init<I: Interceptor>(_ Interceptor: I) where I.State == State {
-        _actionDispatched = Interceptor.actionDispatched
+    init<I: Interceptor>(_ interceptor: I) where I.State == State {
+        _actionDispatched = interceptor.actionDispatched
     }
 
     func actionDispatched(action: Action, oldState: State, newState: State) {
