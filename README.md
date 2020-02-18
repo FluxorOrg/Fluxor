@@ -9,19 +9,22 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/f8f269fac2ca81c09856/maintainability)](https://codeclimate.com/github/MortenGregersen/Fluxor/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f8f269fac2ca81c09856/test_coverage)](https://codeclimate.com/github/MortenGregersen/Fluxor/test_coverage)
 
-Unidirectional Data Flow in Swift - using Combine and ideal for use with SwiftUI. Fluxor is a Redux-like implementation, inspired by NgRx.
+**Unidirectional Data Flow in Swift - inspired by Redux and NgRx.** Based on Combine - ideal for use with SwiftUI.
 
 ## Why do I need Fluxor?
+When developing apps, it can quickly become difficult to keep track of the flow of data. Data flows in multiple directions and can easily become inconsistent.
+
+With Fluxor, data flows in only one direction, there is only one source of truth, updates to the state are done with pure functions, and the best part is, that it is really easy to test all the individual parts separately.
 
 ## How does it work?
 Fluxor is made up from the following types:
 
-* [**Store**](Sources/Fluxor/Store.swift) contains an immutable state (the **Single Source of Truth**)
-* [**Actions**](Sources/Fluxor/Action.swift) are dispatched on the **Store** to update the state
-* [**Reducers**](Sources/Fluxor/Reducer.swift) gives the **Store** a new state based on the **Actions** dispatched
-* [**Selectors**](Sources/Fluxor/Selector.swift) selects (and eventually transform) part(s) of the state to use (eg. in views)
-* [**Effects**](Sources/Fluxor/Effects.swift) gets triggered by **Actions**, and can perform async task which in turn can dispatch new **Actions**
-* [**Interceptors**](Sources/Fluxor/StoreInterceptor.swift) intercepts every dispatched **Action** and state change for easier logging and debugging
+* [**Store**](Sources/Fluxor/Store.swift) contains an immutable state (the **Single Source of Truth**).
+* [**Actions**](Sources/Fluxor/Action.swift) are dispatched on the **Store** to update the state.
+* [**Reducers**](Sources/Fluxor/Reducer.swift) gives the **Store** a new state based on the **Actions** dispatched.
+* [**Selectors**](Sources/Fluxor/Selector.swift) selects (and eventually transform) part(s) of the state to use (eg. in views).
+* [**Effects**](Sources/Fluxor/Effects.swift) gets triggered by **Actions**, and can perform async task which in turn can dispatch new **Actions**.
+* [**Interceptors**](Sources/Fluxor/Interceptor.swift) intercepts every dispatched **Action** and state change for easier debugging.
 
 ![](assets/Diagram.png)
 
@@ -63,6 +66,7 @@ let cancellable = store.select(counterSelector).sink {
 }
 
 store.dispatch(action: IncrementAction(increment: 42))
+// Will print out "Current count: 42"
 ```
 
 ### Side Effects
@@ -99,10 +103,30 @@ class TodosEffects: Effects {
 ```
 
 ### Intercepting actions and changes
-If you need read-only access to all `Actions` dispatched and state changes, `StoreInterceptor` can be used. `StoreInterceptor` is just a protocol, and instances of types conforming to this protocol will receive a callback everytime an `Action` is dispatched.
+If read-only access to all `Actions` dispatched and state changes is needed, an `Interceptor` can be used. `Interceptor` is just a protocol, and when registered in the `Store`, instances of types conforming to this protocol will receive a callback everytime an `Action` is dispatched.
 
-Fluxor comes with a `StoreInterceptor` for printing changes to the log (see [**PrintStoreInterceptor**](Sources/Fluxor/PrintStoreInterceptor.swift)).
+Fluxor comes with two implementations of `Interceptor`:
+
+* [**PrintInterceptor**](Sources/Fluxor/Interceptors/PrintInterceptor.swift) for printing actions and state changes to the log.
+* [**TestInterceptor**](Sources/Fluxor/Interceptors/TestInterceptor.swift) to help assert that specific actions was dispatched in tests.
 
 ## Debugging with FluxorExplorer
+Fluxor has a companion app, [**FluxorExplorer**](https://github.com/MortenGregersen/FluxorExplorer), which helps when debugging apps using Fluxor.
+
+<hr>
+<span style="color:red">**IMAGE OF FLUXOR EXPLORER**</span>
+<hr>
+
+### Setting up
+The only thing need, for FluxorExplorer to receive all actions and state changes from an app, is to register the [FluxorExplorerStoreInterceptor](https://github.com/MortenGregersen/FluxorExplorerStoreInterceptor) in the app's `Store`. When FluxorExplorer and the app are running on the same network (eg. running the app on the iOS Simulator), they will automatically connect and send/receive data.
+
+```swift
+let store = Store(initialState: AppState())
+#if DEBUG
+store.register(interceptor: FluxorExplorerStoreInterceptor(displayName: UIDevice.current.name))
+#endif
+```
+
+It is recommended to only register the interceptor in `DEBUG` builds.
 
 ## Sample apps
