@@ -7,11 +7,11 @@
 @testable import Fluxor
 import XCTest
 
-class PrintStoreInterceptorTests: XCTestCase {
+class PrintInterceptorTests: XCTestCase {
     func testActionDispatched() {
         // Given
         var printedStrings = [String]()
-        let interceptor = PrintStoreInterceptor<TestState> { printedStrings.append($0) }
+        let interceptor = PrintInterceptor<TestState> { printedStrings.append($0) }
         let action1 = TestAction()
         let oldState1 = TestState(counter: 1)
         let newState1 = TestState(counter: 11)
@@ -22,20 +22,20 @@ class PrintStoreInterceptorTests: XCTestCase {
         interceptor.actionDispatched(action: action1, oldState: oldState1, newState: newState1)
         interceptor.actionDispatched(action: action2, oldState: oldState2, newState: newState2)
         // Then
-        XCTAssertEqual(printedStrings[0], "PrintStoreInterceptor<TestState> - action dispatched: TestAction")
+        XCTAssertEqual(printedStrings[0], "PrintInterceptor<TestState> - action dispatched: TestAction")
         XCTAssertEqual(printedStrings[1], """
-        PrintStoreInterceptor<TestState> - state changed to: {
+        PrintInterceptor<TestState> - state changed to: {
           "counter" : 11
         }
         """)
         XCTAssertEqual(printedStrings[2], """
-        PrintStoreInterceptor<TestState> - action dispatched: AnonymousActionWithPayload<Int>, data: {
+        PrintInterceptor<TestState> - action dispatched: AnonymousActionWithPayload<Int>, data: {
           "id" : "Action2",
           "payload" : 42
         }
         """)
         XCTAssertEqual(printedStrings[3], """
-        PrintStoreInterceptor<TestState> - state changed to: {
+        PrintInterceptor<TestState> - state changed to: {
           "counter" : 22
         }
         """)
@@ -43,7 +43,7 @@ class PrintStoreInterceptorTests: XCTestCase {
 
     func testPublicInit() {
         // Given
-        let interceptor = PrintStoreInterceptor<TestState>()
+        let interceptor = PrintInterceptor<TestState>()
         let action = TestAction()
         let oldState = TestState(counter: 1)
         let newState = TestState(counter: 11)

@@ -4,8 +4,8 @@
  *  MIT license, see LICENSE file for details
  */
 
-/// A `StoreInterceptor` to use in unit tests, to assert specific `Action`s are dispatched.
-public class TestStoreInterceptor<State>: StoreInterceptor {
+/// A `Interceptor` to use in unit tests, to assert specific `Action`s are dispatched.
+public class TestInterceptor<State>: Interceptor {
     public private(set) var dispatchedActionsAndStates: [Storage] = []
 
     public init() {}

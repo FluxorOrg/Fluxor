@@ -5,18 +5,18 @@
  */
 
 /// A type which intercepts all `Action`s and the  `State` changes happening in a `Store`.
-public protocol StoreInterceptor {
+public protocol Interceptor {
     associatedtype State
     /// The function called when an `Action` is dispatched on a `Store`.
     func actionDispatched(action: Action, oldState: State, newState: State)
 }
 
-/// A type-erased `StoreInterceptor` used to store all `StoreInterceptor`s in an array in the `Store`.
-internal struct AnyStoreInterceptor<State>: StoreInterceptor {
+/// A type-erased `Interceptor` used to store all `Interceptor`s in an array in the `Store`.
+internal struct AnyInterceptor<State>: Interceptor {
     private let _actionDispatched: (Action, State, State) -> Void
 
-    init<S: StoreInterceptor>(_ storeInterceptor: S) where S.State == State {
-        _actionDispatched = storeInterceptor.actionDispatched
+    init<S: Interceptor>(_ Interceptor: S) where S.State == State {
+        _actionDispatched = Interceptor.actionDispatched
     }
 
     func actionDispatched(action: Action, oldState: State, newState: State) {

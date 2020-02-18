@@ -7,10 +7,10 @@
 import Fluxor
 import XCTest
 
-class TestStoreInterceptorTests: XCTestCase {
+class TestInterceptorTests: XCTestCase {
     func testActionDispatched() {
         // Given
-        let interceptor = TestStoreInterceptor<TestState>()
+        let interceptor = TestInterceptor<TestState>()
         let action1 = createActionCreator(id: "Action1").createAction()
         let oldState1 = TestState(counter: 1)
         let newState1 = TestState(counter: 11)
