@@ -126,9 +126,7 @@ Fluxor comes with two implementations of `Interceptor`:
 ## Debugging with FluxorExplorer
 Fluxor has a companion app, [**FluxorExplorer**](https://github.com/MortenGregersen/FluxorExplorer), which helps when debugging apps using Fluxor. FluxorExplorer lets you look through the dispatched `Action`s and state changes, to debug the data flow of the app.
 
-<hr>
-<span style="color:red">**IMAGE OF FLUXOR EXPLORER**</span>
-<hr>
+![](https://github.com/MortenGregersen/Fluxor/blob/master/Assets/FluxorExplorer.png)
 
 To learn more about how to use FluxorExplorer, [go to the repository for the app](https://github.com/MortenGregersen/FluxorExplorer).
 
