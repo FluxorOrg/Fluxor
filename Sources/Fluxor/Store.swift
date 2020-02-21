@@ -37,6 +37,8 @@ public class Store<State: Encodable>: ObservableObject {
      Initializes the `Store` with an initial state and an `InitialAction`.
 
      - Parameter initialState: The initial state for the store
+     - Parameter reducers: The `Reducer`s to register
+     - Parameter effects: The `Effect`s to register
      */
     public init(initialState: State, reducers: [Reducer<State>] = [], effects: [Effects.Type] = []) {
         state = initialState
