@@ -29,7 +29,7 @@ public class Store<State: Encodable>: ObservableObject {
     internal private(set) var stateHash = UUID()
     @Published internal fileprivate(set) var state: State { willSet { stateHash = UUID() } }
     @Published internal private(set) var action: Action = InitialAction()
-    internal private(set) var reducers: [Reducer<State>]
+    internal private(set) var reducers = [Reducer<State>]()
     internal private(set) var effectCancellables = Set<AnyCancellable>()
     internal private(set) var interceptors = [AnyInterceptor<State>]()
 
@@ -38,9 +38,10 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter initialState: The initial state for the store
      */
-    public init(initialState: State, reducers: [Reducer<State>] = []) {
+    public init(initialState: State, reducers: [Reducer<State>] = [], effects: [Effects.Type] = []) {
         state = initialState
-        self.reducers = reducers
+        reducers.forEach(register(reducer:))
+        effects.forEach(register(effects:))
     }
 
     /**
