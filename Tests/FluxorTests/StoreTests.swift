@@ -42,13 +42,13 @@ class StoreTests: XCTestCase {
         let action = TestAction()
         XCTAssertEqual(store.state.type, .initial)
         XCTAssertNil(store.state.lastAction)
-        store.register(reducer: TestReducer())
-        store.register(reducer: createReducer(reduce: { state, action in
+        store.register(reducer: testReducer)
+        store.register(reducer: createReducer { state, action in
             var state = state
             state.type = .modifiedAgain
             state.lastAction = String(describing: action)
             return state
-        }))
+        })
         // When
         store.dispatch(action: action)
         // Then
@@ -89,7 +89,7 @@ class StoreTests: XCTestCase {
         let action = TestAction()
         let interceptor = TestInterceptor<TestState>()
         store.register(interceptor: interceptor)
-        store.register(reducer: TestReducer())
+        store.register(reducer: testReducer)
         XCTAssertEqual(interceptor.dispatchedActionsAndStates.count, 0)
         // When
         store.dispatch(action: action)
@@ -103,8 +103,7 @@ class StoreTests: XCTestCase {
     func testSelectMapPublisher() {
         // Given
         let selector = createRootSelector(keyPath: \TestState.type)
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil))
-        store.register(reducer: TestReducer())
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = store.select(selector).sink {
             if $0 == .modified {
@@ -121,8 +120,7 @@ class StoreTests: XCTestCase {
     /// Does a change in `State` publish new value for key path?
     func testSelectKeyPathPublisher() {
         // Given
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil))
-        store.register(reducer: TestReducer())
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = store.select(\.type).sink {
             if $0 == .modified {
@@ -140,8 +138,7 @@ class StoreTests: XCTestCase {
     func testSelectMap() {
         // Given
         let selector = createRootSelector(keyPath: \TestState.type)
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil))
-        store.register(reducer: TestReducer())
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
         let valueBeforeAction = store.selectCurrent(selector)
         XCTAssertEqual(valueBeforeAction, .initial)
         // When
@@ -154,8 +151,7 @@ class StoreTests: XCTestCase {
     /// Can we select the current value for key path?
     func testSelectKeyPath() {
         // Given
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil))
-        store.register(reducer: TestReducer())
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
         let valueBeforeAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueBeforeAction, .initial)
         // When
@@ -178,15 +174,11 @@ class StoreTests: XCTestCase {
         case modifiedAgain
     }
 
-    private struct TestReducer: Reducer {
-        typealias State = TestState
-
-        func reduce(state: TestState, action: Action) -> State {
-            var state = state
-            state.type = .modified
-            state.lastAction = String(describing: action)
-            return state
-        }
+    private let testReducer = createReducer { (state: TestState, action) in
+        var state = state
+        state.type = .modified
+        state.lastAction = String(describing: action)
+        return state
     }
 
     private class TestEffects: Effects {

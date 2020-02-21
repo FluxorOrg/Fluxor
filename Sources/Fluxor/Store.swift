@@ -29,7 +29,7 @@ public class Store<State: Encodable>: ObservableObject {
     internal private(set) var stateHash = UUID()
     @Published internal fileprivate(set) var state: State { willSet { stateHash = UUID() } }
     @Published internal private(set) var action: Action = InitialAction()
-    internal private(set) var reducers = [AnyReducer<State>]()
+    internal private(set) var reducers = [Reducer<State>]()
     internal private(set) var effectCancellables = Set<AnyCancellable>()
     internal private(set) var interceptors = [AnyInterceptor<State>]()
 
@@ -37,9 +37,13 @@ public class Store<State: Encodable>: ObservableObject {
      Initializes the `Store` with an initial state and an `InitialAction`.
 
      - Parameter initialState: The initial state for the store
+     - Parameter reducers: The `Reducer`s to register
+     - Parameter effects: The `Effect`s to register
      */
-    public init(initialState: State) {
+    public init(initialState: State, reducers: [Reducer<State>] = [], effects: [Effects.Type] = []) {
         state = initialState
+        reducers.forEach(register(reducer:))
+        effects.forEach(register(effects:))
     }
 
     /**
@@ -52,7 +56,7 @@ public class Store<State: Encodable>: ObservableObject {
      */
     public func dispatch(action: Action) {
         let oldState = state
-        state = reducers.reduce(state) { $1.reduce(state: $0, action: action) }
+        state = reducers.reduce(state) { $1.reduce($0, action) }
         interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: state) }
         self.action = action
     }
@@ -62,8 +66,8 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter reducer: The reducer to register
      */
-    public func register<R: Reducer>(reducer: R) where R.State == State {
-        reducers.append(AnyReducer(reducer))
+    public func register(reducer: Reducer<State>) {
+        reducers.append(reducer)
     }
 
     /**
