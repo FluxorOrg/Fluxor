@@ -76,8 +76,8 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertTrue(dispatchedActions[0] is InitialAction)
         XCTAssertEqual(dispatchedActions[1] as! TestAction, firstAction)
-        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction, TestEffects.responseAction)
-        XCTAssertEqual(dispatchedActions[3] as! AnonymousActionWithPayload, TestEffects.generateAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousActionWithoutPayload, TestEffects.responseAction)
+        XCTAssertEqual(dispatchedActions[3] as! AnonymousActionWithEncodablePayload, TestEffects.generateAction)
         XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
         wait(for: [TestEffects.expectation], timeout: 5)
         XCTAssertNotNil(cancellable)
@@ -192,7 +192,7 @@ class StoreTests: XCTestCase {
         static let generateActionCreator = createActionCreator(id: TestEffects.generateActionIdentifier, payloadType: Int.self)
         static let generateAction = TestEffects.generateActionCreator.createAction(payload: 42)
         static let expectation = XCTestExpectation()
-        static var lastAction: AnonymousActionWithPayload<Int>?
+        static var lastAction: AnonymousActionWithEncodablePayload<Int>?
 
         required init(_ actions: ActionPublisher) {
             self.actions = actions
@@ -216,21 +216,21 @@ class StoreTests: XCTestCase {
             actions
                 .withIdentifier(TestEffects.generateActionIdentifier)
                 .sink(receiveValue: { action in
-                    TestEffects.lastAction = (action as! AnonymousActionWithPayload<Int>)
+                    TestEffects.lastAction = (action as! AnonymousActionWithEncodablePayload<Int>)
                     TestEffects.expectation.fulfill()
                 })
         )
     }
 }
 
-extension AnonymousAction: Equatable {
-    public static func == (lhs: AnonymousAction, rhs: AnonymousAction) -> Bool {
+extension AnonymousActionWithoutPayload: Equatable {
+    public static func == (lhs: AnonymousActionWithoutPayload, rhs: AnonymousActionWithoutPayload) -> Bool {
         lhs.id == rhs.id
     }
 }
 
-extension AnonymousActionWithPayload: Equatable where Payload == Int {
-    public static func == (lhs: AnonymousActionWithPayload<Payload>, rhs: AnonymousActionWithPayload<Payload>) -> Bool {
+extension AnonymousActionWithEncodablePayload: Equatable where Payload == Int {
+    public static func == (lhs: AnonymousActionWithEncodablePayload<Payload>, rhs: AnonymousActionWithEncodablePayload<Payload>) -> Bool {
         lhs.id == rhs.id && lhs.payload == rhs.payload
     }
 }

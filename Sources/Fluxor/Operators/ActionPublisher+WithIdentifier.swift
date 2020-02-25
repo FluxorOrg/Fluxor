@@ -13,13 +13,13 @@ extension Publisher where Output == Action {
          actions
              .withIdentifier("FetchTodosAction")
              .sink(receiveValue: { action in
-                 print("This is an IdentifiableAction with the id 'FetchTodosAction': \(action)")
+                 print("This is an AnonymousAction with the id 'FetchTodosAction': \(action)")
              })
 
      - Parameter identifierToMatch: A identifier to match
      */
     public func withIdentifier(_ identifierToMatch: String) -> AnyPublisher<Action, Self.Failure> {
-        filter { ($0 as? IdentifiableAction)?.id == identifierToMatch }
+        filter { ($0 as? AnonymousAction)?.id == identifierToMatch }
             .eraseToAnyPublisher()
     }
 }
