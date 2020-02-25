@@ -23,7 +23,8 @@ public struct InitialAction: Action {}
  It is possible to intercept all `Action`s and `State` changes by registering an `Interceptor`.
 
  # Selecting
- To select a value in the `State` the callers can either use a selector (closure) or a key path. It is possible to get a `Publisher` for the value or just to selec the current value.
+ To select a value in the `State` the callers can either use a `Selector` or a key path.
+ It is possible to get a `Publisher` for the value or just to select the current value.
  */
 public class Store<State: Encodable>: ObservableObject {
     internal private(set) var stateHash = UUID()
@@ -47,7 +48,8 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     /**
-     Dispatches an action and creates a new `State` by running the current `State` and the action through all registered reducers.
+     Dispatches an action and creates a new `State` by running the current `State` and the action
+     through all registered reducers.
 
      After the `State` is set, all registered interceptors are notified of the change.
      Lastly the action is dispatched to all registered effects.
@@ -139,7 +141,8 @@ public class Store<State: Encodable>: ObservableObject {
 }
 
 /**
- A `Mockstore` is intended to be used in unit tests where you want to want to set a new `State` directly or overwrite the value coming out of `Selector`s.
+ A `Mockstore` is intended to be used in unit tests where you want to set a new `State` directly
+ or override the value coming out of `Selector`s.
  */
 public class MockStore<State: Encodable>: Store<State> {
     /**

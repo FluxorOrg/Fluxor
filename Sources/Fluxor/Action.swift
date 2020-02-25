@@ -42,7 +42,8 @@ public func createActionCreator(id: String) -> ActionCreatorWithoutPayload {
 
  - Parameter payloadType: The type the payload of the `Action` must have
  */
-public func createActionCreator<Payload: Encodable>(id: String, payloadType: Payload.Type) -> ActionCreatorWithEncodablePayload<Payload> {
+public func createActionCreator<Payload: Encodable>(id: String, payloadType: Payload.Type)
+    -> ActionCreatorWithEncodablePayload<Payload> {
     return ActionCreatorWithEncodablePayload(id: id)
 }
 
@@ -51,7 +52,8 @@ public func createActionCreator<Payload: Encodable>(id: String, payloadType: Pay
 
  - Parameter payloadType: The type the payload of the `Action` must have
  */
-public func createActionCreator<Payload>(id: String, payloadType: Payload.Type) -> ActionCreatorWithCustomPayload<Payload> {
+public func createActionCreator<Payload>(id: String, payloadType: Payload.Type)
+    -> ActionCreatorWithCustomPayload<Payload> {
     return ActionCreatorWithCustomPayload(id: id)
 }
 

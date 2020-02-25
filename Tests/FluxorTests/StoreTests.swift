@@ -189,7 +189,8 @@ class StoreTests: XCTestCase {
         static let responseActionCreator = createActionCreator(id: TestEffects.responseActionIdentifier)
         static let responseAction = TestEffects.responseActionCreator.createAction()
         static let generateActionIdentifier = "TestGenerateAction"
-        static let generateActionCreator = createActionCreator(id: TestEffects.generateActionIdentifier, payloadType: Int.self)
+        static let generateActionCreator = createActionCreator(id: TestEffects.generateActionIdentifier,
+                                                               payloadType: Int.self)
         static let generateAction = TestEffects.generateActionCreator.createAction(payload: 42)
         static let expectation = XCTestExpectation()
         static var lastAction: AnonymousActionWithEncodablePayload<Int>?
@@ -230,7 +231,8 @@ extension AnonymousActionWithoutPayload: Equatable {
 }
 
 extension AnonymousActionWithEncodablePayload: Equatable where Payload == Int {
-    public static func == (lhs: AnonymousActionWithEncodablePayload<Payload>, rhs: AnonymousActionWithEncodablePayload<Payload>) -> Bool {
+    public static func == (lhs: AnonymousActionWithEncodablePayload<Payload>,
+                           rhs: AnonymousActionWithEncodablePayload<Payload>) -> Bool {
         lhs.id == rhs.id && lhs.payload == rhs.payload
     }
 }

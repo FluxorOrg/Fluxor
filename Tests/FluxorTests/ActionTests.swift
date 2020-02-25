@@ -29,7 +29,7 @@ class ActionTests: XCTestCase {
         XCTAssertTrue(action.wasCreated(by: actionCreator))
         XCTAssertEqual(json(from: action), #"{"id":"something"}"#)
     }
-    
+
     func testCreateActionCreatorWithEncodablePayload() {
         // Given
         let actionCreator = createActionCreator(id: "something", payloadType: Int.self)
@@ -53,6 +53,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(action.payload.name, payload.name)
         XCTAssertEqual(action.payload.address, payload.address)
         XCTAssertEqual(action.payload.age, payload.age)
+        // swiftlint:disable:next line_length
         XCTAssertEqual(json(from: action), #"{"id":"something","payload":{"address":"1 Infinite Loop","age":56,"name":"Steve Jobs"}}"#)
     }
 

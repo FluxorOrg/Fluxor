@@ -7,6 +7,8 @@
 @testable import Fluxor
 import XCTest
 
+// swiftlint:disable closure_parameter_position line_length
+
 class SelectorTests: XCTestCase {
     private var state = TestState(name: NameState(firstName: "Tim",
                                                   lastName: "Cook"),
