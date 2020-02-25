@@ -4,6 +4,7 @@
  *  MIT license, see LICENSE file for details
  */
 
+import AnyCodable
 import Foundation.NSData
 
 /**
@@ -15,7 +16,7 @@ public protocol Action: Encodable {
     /**
      To enable encoding of the `Action` this helper function is needed.
 
-     `JSONEncoder` can't encode a value an `Encodable` type unless it has the specific type.
+     `JSONEncoder` can't encode an `Encodable` type unless it has the specific type.
          By using an `extension` of the `Action` we have this specific type and can encode it.
      */
     func encode(with encoder: JSONEncoder) -> Data?
@@ -28,67 +29,127 @@ public extension Action {
 }
 
 /**
- Creates an `ActionCreator` with the specified `id` which can't hold a payload.
+ Creates an `ActionCreatorWithoutPayload` with the specified `id`.
  */
-public func createActionCreator(id: String) -> ActionCreator {
-    return ActionCreator(id: id)
+public func createActionCreator(id: String) -> ActionCreatorWithoutPayload {
+    return ActionCreatorWithoutPayload(id: id)
 }
 
 /**
- Creates an `ActionCreatorWithPayload` with the specified `id` and `payloadType`.
+ Creates an `ActionCreatorWithEncodablePayload` with the specified `id` and `payloadType`.
+
+ The `payloadType` must be `Encodable`.
 
  - Parameter payloadType: The type the payload of the `Action` must have
  */
-public func createActionCreator<Payload>(id: String, payloadType: Payload.Type) -> ActionCreatorWithPayload<Payload> {
-    return ActionCreatorWithPayload(id: id)
+public func createActionCreator<Payload: Encodable>(id: String, payloadType: Payload.Type)
+    -> ActionCreatorWithEncodablePayload<Payload> {
+    return ActionCreatorWithEncodablePayload(id: id)
+}
+
+/**
+ Creates an `ActionCreatorWithCustomPayload` with the specified `id` and `payloadType`.
+
+ - Parameter payloadType: The type the payload of the `Action` must have
+ */
+public func createActionCreator<Payload>(id: String, payloadType: Payload.Type)
+    -> ActionCreatorWithCustomPayload<Payload> {
+    return ActionCreatorWithCustomPayload(id: id)
+}
+
+/// A type creating `AnonymousAction`s.
+public protocol ActionCreator {
+    var id: String { get }
 }
 
 /// A creator for creating `AnonymousAction`s
-public struct ActionCreator {
+public struct ActionCreatorWithoutPayload: ActionCreator {
     public let id: String
 
     /**
-     Creates an `AnonymousAction` with the `ActionCreator`s `id`.
+     Creates an `AnonymousActionWithoutPayload` with the `ActionCreator`s `id`.
      */
-    public func createAction() -> AnonymousAction {
-        return AnonymousAction(id: id)
+    public func createAction() -> AnonymousActionWithoutPayload {
+        return AnonymousActionWithoutPayload(id: id)
     }
 }
 
-/// A creator for creating `AnonymousActionWithPayload`s
-public struct ActionCreatorWithPayload<Payload: Encodable> {
+/// A creator for creating `AnonymousActionWithEncodablePayload`s
+public struct ActionCreatorWithEncodablePayload<Payload: Encodable>: ActionCreator {
     public let id: String
 
     /**
-     Creates an `AnonymousAction` with the `ActionCreator`s `id` and the given `payload`.
+     Creates an `AnonymousActionWithEncodablePayload` with the `ActionCreator`s `id` and the given `payload`.
 
-      - Parameter payload: The payload to create the `AnonymousActionWithPayload` with
+      - Parameter payload: The payload to create the `AnonymousActionWithEncodablePayload` with
      */
-    public func createAction(payload: Payload) -> AnonymousActionWithPayload<Payload> {
-        return AnonymousActionWithPayload(id: id, payload: payload)
+    public func createAction(payload: Payload) -> AnonymousActionWithEncodablePayload<Payload> {
+        return AnonymousActionWithEncodablePayload(id: id, payload: payload)
+    }
+}
+
+/// A creator for creating `AnonymousActionWithCustomPayload`s
+public struct ActionCreatorWithCustomPayload<Payload>: ActionCreator {
+    public let id: String
+
+    /**
+     Creates an `AnonymousActionWithCustomPayload` with the `ActionCreator`s `id` and the given `payload`.
+
+      - Parameter payload: The payload to create the `AnonymousActionWithCustomPayload` with
+     */
+    public func createAction(payload: Payload) -> AnonymousActionWithCustomPayload<Payload> {
+        return AnonymousActionWithCustomPayload(id: id, payload: payload)
     }
 }
 
 /// An `Action` with an identifier.
-public protocol IdentifiableAction: Action {
+public protocol AnonymousAction: Action {
     var id: String { get }
+    /**
+     Check if the `AnonymousAction` was created by a given `ActionCreator`.
+
+     - Parameter actionCreator: The `ActionCreator` to check
+     */
+    func wasCreated(by actionCreator: ActionCreator) -> Bool
 }
 
-/// An anonymous `Action` without payload.
-public struct AnonymousAction: IdentifiableAction {
-    public let id: String
-
-    public func wasCreated(by actionCreator: ActionCreator) -> Bool {
+public extension AnonymousAction {
+    func wasCreated(by actionCreator: ActionCreator) -> Bool {
         return actionCreator.id == id
     }
 }
 
-/// An anonymous `Action` with a payload.
-public struct AnonymousActionWithPayload<Payload: Encodable>: IdentifiableAction {
+/// An anonymous `Action` without payload.
+public struct AnonymousActionWithoutPayload: AnonymousAction {
+    public let id: String
+}
+
+/// An anonymous `Action` with an `Encodable` payload.
+public struct AnonymousActionWithEncodablePayload<Payload: Encodable>: AnonymousAction {
     public let id: String
     public let payload: Payload
+}
 
-    public func wasCreated(by actionCreator: ActionCreatorWithPayload<Payload>) -> Bool {
-        return actionCreator.id == id
+/// An anonymous `Action` without an non-`Encodable` payload (eg. a tuple).
+public struct AnonymousActionWithCustomPayload<Payload>: AnonymousAction {
+    public let id: String
+    public let payload: Payload
+    private var encodablePayload: [String: AnyEncodable] {
+        let mirror = Mirror(reflecting: payload)
+        let dict = mirror.children.reduce(into: [String: AnyEncodable]()) {
+            $0[$1.label!] = AnyEncodable($1.value)
+        }
+        return dict
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(encodablePayload, forKey: .payload)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case payload
     }
 }

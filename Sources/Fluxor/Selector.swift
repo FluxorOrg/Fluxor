@@ -14,6 +14,8 @@ public protocol Selector {
     func map(_ state: State) -> Value
 }
 
+// swiftlint:disable function_parameter_count
+
 /**
  Creates a `RootSelector` from a `keyPath`.
 
@@ -74,9 +76,14 @@ public func createSelector<State, S1, S2, S3, Value>(
  - Parameter projector: The closure to pass the values from the `Selectors` to
  */
 public func createSelector<State, S1, S2, S3, S4, Value>(
-    _ selector1: S1, _ selector2: S2, _ selector3: S3, _ selector4: S4, _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value) -> Value
+    _ selector1: S1, _ selector2: S2, _ selector3: S3, _ selector4: S4,
+    _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value) -> Value
 ) -> Selector4<State, S1, S2, S3, S4, Value> {
-    return Selector4(selector1: selector1, selector2: selector2, selector3: selector3, selector4: selector4, projector: projector)
+    return Selector4(selector1: selector1,
+                     selector2: selector2,
+                     selector3: selector3,
+                     selector4: selector4,
+                     projector: projector)
 }
 
 /**
@@ -90,9 +97,15 @@ public func createSelector<State, S1, S2, S3, S4, Value>(
  - Parameter projector: The closure to pass the values from the `Selectors` to
  */
 public func createSelector<State, S1, S2, S3, S4, S5, Value>(
-    _ selector1: S1, _ selector2: S2, _ selector3: S3, _ selector4: S4, _ selector5: S5, _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value
+    _ selector1: S1, _ selector2: S2, _ selector3: S3, _ selector4: S4, _ selector5: S5,
+    _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value
 ) -> Selector5<State, S1, S2, S3, S4, S5, Value> {
-    return Selector5(selector1: selector1, selector2: selector2, selector3: selector3, selector4: selector4, selector5: selector5, projector: projector)
+    return Selector5(selector1: selector1,
+                     selector2: selector2,
+                     selector3: selector3,
+                     selector4: selector4,
+                     selector5: selector5,
+                     projector: projector)
 }
 
 /**
@@ -221,7 +234,11 @@ public class Selector5<State, S1, S2, S3, S4, S5, Value>: MemoizedSelector<State
     }
 
     public override func map(_ state: State) -> Value {
-        return projector(selector1.map(state), selector2.map(state), selector3.map(state), selector4.map(state), selector5.map(state))
+        return projector(selector1.map(state),
+                         selector2.map(state),
+                         selector3.map(state),
+                         selector4.map(state),
+                         selector5.map(state))
     }
 }
 
@@ -233,7 +250,8 @@ public class MemoizedSelector<State, Value>: Selector {
     /**
      Sets the value and the corresponding `stateHash`.
 
-     If the selector is overriden in a `MockStore` the `stateHash` will be nil and the `map` will always return the `value`.
+     If the selector is overriden in a `MockStore` the `stateHash` will be nil
+     and the `map` will always return the `value`.
 
      - Parameter value: The value to save
      - Parameter stateHash: The hash of the state the value was selected from
@@ -246,8 +264,10 @@ public class MemoizedSelector<State, Value>: Selector {
      Selects the `Value` from the `State` based on the subclass's `map` function and saves the result.
 
      - If a value is already saved and the saved state hash matches the passed, the saved value is returned.
-     - If a value is already saved but the saved state hash is nil it means that the selector is overriden and it will always return the saved value
-     - If a value is already saved but the saved state hash doesn't match the passed a new value is selected and saved along with the passed state hash
+     - If a value is already saved but the saved state hash is nil
+        it means that the selector is overriden and it will always return the saved value
+     - If a value is already saved but the saved state hash doesn't match the passed
+        a new value is selected and saved along with the passed state hash
 
      - Parameter state: The `State` to select from
      - Parameter stateHash: The hash of the state to select from
@@ -262,7 +282,8 @@ public class MemoizedSelector<State, Value>: Selector {
     }
 
     /**
-     The function called when selecting from a `Store`. This should be overriden in a subclass with logic for how to select the `Value` from the `State`.
+     The function called when selecting from a `Store`.
+     This should be overriden in a subclass with logic for how to select the `Value` from the `State`.
 
      - Parameter state: The `State` to select from
      */

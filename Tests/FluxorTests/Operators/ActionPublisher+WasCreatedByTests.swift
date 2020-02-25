@@ -22,7 +22,7 @@ class ActionPublisherWasCreatedByTests: XCTestCase {
     func testMatchingCreator() {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
-        
+
         let cancellable = actions
             .wasCreated(by: creator1)
             .sink { _ in expectation.fulfill() }

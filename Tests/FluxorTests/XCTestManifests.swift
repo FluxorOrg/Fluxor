@@ -11,7 +11,7 @@ public func allTests() -> [XCTestCaseEntry] {
         testCase(TestInterceptorTests.allTests),
         testCase(ActionPublisherOfTypeTests.allTests),
         testCase(ActionPublisherWasCreatedByTests.allTests),
-        testCase(ActionPublisherWithIdentifierTests.allTests),
+        testCase(ActionPublisherWithIdentifierTests.allTests)
     ]
 }
 #endif

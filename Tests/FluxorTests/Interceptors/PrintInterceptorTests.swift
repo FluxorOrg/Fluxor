@@ -29,7 +29,7 @@ class PrintInterceptorTests: XCTestCase {
         }
         """)
         XCTAssertEqual(printedStrings[2], """
-        PrintInterceptor<TestState> - action dispatched: AnonymousActionWithPayload<Int>, data: {
+        PrintInterceptor<TestState> - action dispatched: AnonymousActionWithEncodablePayload<Int>, data: {
           "id" : "Action2",
           "payload" : 42
         }

@@ -14,10 +14,15 @@ let package = Package(
             name: "Fluxor",
             targets: ["Fluxor"]),
     ],
+    dependencies: [
+        .package(
+            url: "https://github.com/Flight-School/AnyCodable",
+            from: "0.2.3"),
+    ],
     targets: [
         .target(
             name: "Fluxor",
-            dependencies: []),
+            dependencies: ["AnyCodable"]),
         .testTarget(
             name: "FluxorTests",
             dependencies: ["Fluxor"]),
