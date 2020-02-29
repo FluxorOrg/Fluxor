@@ -17,6 +17,7 @@ class ReducerTests: XCTestCase {
         let reducer = createReducer { state, action -> TestState in
             var state = state
             state.counter = 1337
+            // swiftlint:disable:next force_cast
             XCTAssertEqual(action as! TestAction, incrementAction)
             expectation.fulfill()
             return state
