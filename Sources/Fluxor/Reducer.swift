@@ -16,9 +16,5 @@ public func createReducer<State>(_ reduce: @escaping (State, Action) -> State) -
 
 /// An `Reducer` created from a `reduce` function.
 public struct Reducer<State> {
-    let reduce: (State, Action) -> State
-
-    public func reduce(state: State, action: Action) -> State {
-        return self.reduce(state, action)
-    }
+    public let reduce: (State, Action) -> State
 }
