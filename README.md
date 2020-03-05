@@ -1,4 +1,4 @@
-# Fluxor
+![Fluxor: Unidirectional Data Flow in Swift](https://github.com/MortenGregersen/Fluxor/blob/master/Assets/Fluxor-logo.png)
 
 **Unidirectional Data Flow in Swift - inspired by Redux and NgRx.** Based on Combine - ideal for use with SwiftUI.
 
