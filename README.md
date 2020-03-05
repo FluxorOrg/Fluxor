@@ -85,7 +85,7 @@ store.dispatch(action: IncrementAction(increment: 42))
 ### Side Effects
 The above example is a simple use case, where an `Action` is dispatched and the state is updated by a `Reducer`. In cases where something should happen when an `Action` is dispatched (eg. fetching data from the internet or some system service), Fluxor provides `Effects`.
 
-`Effects` are registered in the `Store` and will receive all `Actions` dispatched. An `Effect` will in most cases be a `Publisher` mapped from the disptched `Actions` - the mapped `Action` will be dispatched on the `Store`.
+`Effects` are registered in the `Store` and will receive all `Actions` dispatched. An `Effect` will in most cases be a `Publisher` mapped from the dispatched `Actions` - the mapped `Action` will be dispatched on the `Store`.
 
 Alternatively an `Effect` can also be a `Cancellable` when it don't need to have an `Action` dispatched.
 
