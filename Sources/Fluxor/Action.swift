@@ -111,11 +111,55 @@ public protocol AnonymousAction: Action {
      - Parameter actionCreator: The `ActionCreator` to check
      */
     func wasCreated(by actionCreator: ActionCreator) -> Bool
+
+    /**
+     Cast the action to an `AnonymousActionWithoutPayload` if it was created by the given `ActionCreatorWithoutPayload`.
+
+     - Parameter actionCreator: The `ActionCreatorWithoutPayload` to match on
+     */
+    func asCreated(by actionCreator: ActionCreatorWithoutPayload) -> AnonymousActionWithoutPayload?
+
+    /**
+     Cast the action to an `AnonymousActionWithEncodablePayload`
+     if it was created by the given `ActionCreatorWithEncodablePayload`.
+
+     - Parameter actionCreator: The `ActionCreatorWithEncodablePayload` to match on
+     */
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithEncodablePayload<Payload>)
+        -> AnonymousActionWithEncodablePayload<Payload>?
+
+    /**
+     Cast the action to an `AnonymousActionWithCustomPayload`
+     if it was created by the given `ActionCreatorWithCustomPayload`.
+
+     - Parameter actionCreator: The `ActionCreatorWithCustomPayload` to match on
+     */
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithCustomPayload<Payload>)
+        -> AnonymousActionWithCustomPayload<Payload>?
 }
 
 public extension AnonymousAction {
     func wasCreated(by actionCreator: ActionCreator) -> Bool {
         return actionCreator.id == id
+    }
+
+    func asCreated(by actionCreator: ActionCreatorWithoutPayload) -> AnonymousActionWithoutPayload? {
+        return castIfCreated(by: actionCreator)
+    }
+
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithEncodablePayload<Payload>)
+        -> AnonymousActionWithEncodablePayload<Payload>? {
+        return castIfCreated(by: actionCreator)
+    }
+
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithCustomPayload<Payload>)
+        -> AnonymousActionWithCustomPayload<Payload>? {
+        return castIfCreated(by: actionCreator)
+    }
+
+    private func castIfCreated<T>(by actionCreator: ActionCreator) -> T? {
+        guard wasCreated(by: actionCreator) else { return nil }
+        return self as? T
     }
 }
 
