@@ -111,11 +111,30 @@ public protocol AnonymousAction: Action {
      - Parameter actionCreator: The `ActionCreator` to check
      */
     func wasCreated(by actionCreator: ActionCreator) -> Bool
+
+    func asCreated(by actionCreator: ActionCreatorWithoutPayload) -> AnonymousActionWithoutPayload?
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithEncodablePayload<Payload>) -> AnonymousActionWithEncodablePayload<Payload>?
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithCustomPayload<Payload>) -> AnonymousActionWithCustomPayload<Payload>?
 }
 
 public extension AnonymousAction {
     func wasCreated(by actionCreator: ActionCreator) -> Bool {
         return actionCreator.id == id
+    }
+
+    func asCreated(by actionCreator: ActionCreatorWithoutPayload) -> AnonymousActionWithoutPayload? {
+        guard wasCreated(by: actionCreator) else { return nil }
+        return self as? AnonymousActionWithoutPayload
+    }
+
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithEncodablePayload<Payload>) -> AnonymousActionWithEncodablePayload<Payload>? {
+        guard wasCreated(by: actionCreator) else { return nil }
+        return self as? AnonymousActionWithEncodablePayload<Payload>
+    }
+
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithCustomPayload<Payload>) -> AnonymousActionWithCustomPayload<Payload>? {
+        guard wasCreated(by: actionCreator) else { return nil }
+        return self as? AnonymousActionWithCustomPayload<Payload>
     }
 }
 

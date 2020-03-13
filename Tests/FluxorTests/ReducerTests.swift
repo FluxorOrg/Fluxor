@@ -11,15 +11,18 @@ import XCTest
 class ReducerTests: XCTestCase {
     func testCreateReducer() {
         // Given
-        let incrementAction = TestAction(increment: 123)
-        let initialState = TestState()
+        let initialState = TestState(counter: 42)
+        let incrementActionCreator = createActionCreator(id: "Increment", payloadType: Int.self)
+        let incrementAction = incrementActionCreator.createAction(payload: 42)
         let expectation = XCTestExpectation(description: debugDescription)
         let reducer = createReducer { state, action -> TestState in
             var state = state
-            state.counter = 1337
-            // swiftlint:disable:next force_cast
-            XCTAssertEqual(action as! TestAction, incrementAction)
-            expectation.fulfill()
+            if let anonymousAction = action as? AnonymousAction,
+                let theIncrementAction = anonymousAction.asCreated(by: incrementActionCreator) {
+                state.counter = 1337
+                XCTAssertEqual(theIncrementAction, incrementAction)
+                expectation.fulfill()
+            }
             return state
         }
         // When
@@ -29,11 +32,7 @@ class ReducerTests: XCTestCase {
         XCTAssertEqual(newState, TestState(counter: 1337))
     }
 
-    private struct TestAction: Action, Equatable {
-        let increment: Int
-    }
-
     private struct TestState: Equatable {
-        var counter = 42
+        var counter: Int
     }
 }
