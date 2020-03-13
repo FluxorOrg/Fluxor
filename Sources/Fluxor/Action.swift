@@ -144,20 +144,22 @@ public extension AnonymousAction {
     }
 
     func asCreated(by actionCreator: ActionCreatorWithoutPayload) -> AnonymousActionWithoutPayload? {
-        guard wasCreated(by: actionCreator) else { return nil }
-        return self as? AnonymousActionWithoutPayload
+        return castIfCreated(by: actionCreator)
     }
 
     func asCreated<Payload>(by actionCreator: ActionCreatorWithEncodablePayload<Payload>)
         -> AnonymousActionWithEncodablePayload<Payload>? {
-        guard wasCreated(by: actionCreator) else { return nil }
-        return self as? AnonymousActionWithEncodablePayload<Payload>
+        return castIfCreated(by: actionCreator)
     }
 
     func asCreated<Payload>(by actionCreator: ActionCreatorWithCustomPayload<Payload>)
         -> AnonymousActionWithCustomPayload<Payload>? {
+        return castIfCreated(by: actionCreator)
+    }
+
+    private func castIfCreated<T>(by actionCreator: ActionCreator) -> T? {
         guard wasCreated(by: actionCreator) else { return nil }
-        return self as? AnonymousActionWithCustomPayload<Payload>
+        return self as? T
     }
 }
 
