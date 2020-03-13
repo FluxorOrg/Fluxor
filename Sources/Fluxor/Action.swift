@@ -113,25 +113,28 @@ public protocol AnonymousAction: Action {
     func wasCreated(by actionCreator: ActionCreator) -> Bool
 
     /**
-     Cast tje action to an `AnonymousActionWithoutPayload` if it was created by the given `ActionCreatorWithoutPayload`.
+     Cast the action to an `AnonymousActionWithoutPayload` if it was created by the given `ActionCreatorWithoutPayload`.
 
      - Parameter actionCreator: The `ActionCreatorWithoutPayload` to match on
      */
     func asCreated(by actionCreator: ActionCreatorWithoutPayload) -> AnonymousActionWithoutPayload?
 
     /**
-     Cast tje action to an `AnonymousActionWithEncodablePayload` if it was created by the given `ActionCreatorWithEncodablePayload`.
+     Cast the action to an `AnonymousActionWithEncodablePayload`
+     if it was created by the given `ActionCreatorWithEncodablePayload`.
 
      - Parameter actionCreator: The `ActionCreatorWithEncodablePayload` to match on
      */
-    func asCreated<Payload>(by actionCreator: ActionCreatorWithEncodablePayload<Payload>) -> AnonymousActionWithEncodablePayload<Payload>?
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithEncodablePayload<Payload>)
+        -> AnonymousActionWithEncodablePayload<Payload>?
 
     /**
-     Cast tje action to an `AnonymousActionWithCustomPayload` if it was created by the given `ActionCreatorWithCustomPayload`.
+     Cast the action to an `AnonymousActionWithCustomPayload` if it was created by the given `ActionCreatorWithCustomPayload`.
 
      - Parameter actionCreator: The `ActionCreatorWithCustomPayload` to match on
      */
-    func asCreated<Payload>(by actionCreator: ActionCreatorWithCustomPayload<Payload>) -> AnonymousActionWithCustomPayload<Payload>?
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithCustomPayload<Payload>)
+        -> AnonymousActionWithCustomPayload<Payload>?
 }
 
 public extension AnonymousAction {
@@ -144,12 +147,14 @@ public extension AnonymousAction {
         return self as? AnonymousActionWithoutPayload
     }
 
-    func asCreated<Payload>(by actionCreator: ActionCreatorWithEncodablePayload<Payload>) -> AnonymousActionWithEncodablePayload<Payload>? {
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithEncodablePayload<Payload>)
+        -> AnonymousActionWithEncodablePayload<Payload>? {
         guard wasCreated(by: actionCreator) else { return nil }
         return self as? AnonymousActionWithEncodablePayload<Payload>
     }
 
-    func asCreated<Payload>(by actionCreator: ActionCreatorWithCustomPayload<Payload>) -> AnonymousActionWithCustomPayload<Payload>? {
+    func asCreated<Payload>(by actionCreator: ActionCreatorWithCustomPayload<Payload>)
+        -> AnonymousActionWithCustomPayload<Payload>? {
         guard wasCreated(by: actionCreator) else { return nil }
         return self as? AnonymousActionWithCustomPayload<Payload>
     }
