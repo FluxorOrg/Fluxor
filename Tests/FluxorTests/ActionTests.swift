@@ -79,7 +79,7 @@ class ActionTests: XCTestCase {
         let castAction = action.asCreated(by: actionCreator)
         // Then
         XCTAssertEqual(castAction?.id, id)
-        
+
         // When
         let otherActionCreator = createActionCreator(id: "other thing")
         // Then
@@ -97,13 +97,13 @@ class ActionTests: XCTestCase {
         // Then
         XCTAssertEqual(castAction?.id, id)
         XCTAssertEqual(castAction?.payload, payload)
-        
+
         // When
         let otherActionCreator = createActionCreator(id: "other thing", payloadType: String.self)
         // Then
         XCTAssertNil(action.asCreated(by: otherActionCreator))
     }
-    
+
     func testAsCreatedByActionCreatorWithCustomPayload() {
         // Given
         let id = "something"
@@ -116,7 +116,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(castAction?.id, id)
         XCTAssertEqual(castAction?.payload.count, payload.count)
         XCTAssertEqual(castAction?.payload.name, payload.name)
-        
+
         // When
         let otherActionCreator = createActionCreator(id: "other thing", payloadType: (name: String, age: Int).self)
         // Then
