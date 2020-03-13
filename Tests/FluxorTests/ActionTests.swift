@@ -70,6 +70,59 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(json(from: action), #"{"id":"something","payload":{".1":"Boom!","increment":42}}"#)
     }
 
+    func testAsCreatedByActionCreatorWithoutPayload() {
+        // Given
+        let id = "something"
+        let actionCreator = createActionCreator(id: id)
+        let action: AnonymousAction = actionCreator.createAction()
+        // When
+        let castAction = action.asCreated(by: actionCreator)
+        // Then
+        XCTAssertEqual(castAction?.id, id)
+        
+        // When
+        let otherActionCreator = createActionCreator(id: "other thing")
+        // Then
+        XCTAssertNil(action.asCreated(by: otherActionCreator))
+    }
+
+    func testAsCreatedByActionCreatorWithEncodablePayload() {
+        // Given
+        let id = "something"
+        let payload = 42
+        let actionCreator = createActionCreator(id: id, payloadType: Int.self)
+        let action: AnonymousAction = actionCreator.createAction(payload: payload)
+        // When
+        let castAction = action.asCreated(by: actionCreator)
+        // Then
+        XCTAssertEqual(castAction?.id, id)
+        XCTAssertEqual(castAction?.payload, payload)
+        
+        // When
+        let otherActionCreator = createActionCreator(id: "other thing", payloadType: String.self)
+        // Then
+        XCTAssertNil(action.asCreated(by: otherActionCreator))
+    }
+    
+    func testAsCreatedByActionCreatorWithCustomPayload() {
+        // Given
+        let id = "something"
+        let payload = (count: 42, name: "Steve")
+        let actionCreator = createActionCreator(id: id, payloadType: (count: Int, name: String).self)
+        let action: AnonymousAction = actionCreator.createAction(payload: payload)
+        // When
+        let castAction = action.asCreated(by: actionCreator)
+        // Then
+        XCTAssertEqual(castAction?.id, id)
+        XCTAssertEqual(castAction?.payload.count, payload.count)
+        XCTAssertEqual(castAction?.payload.name, payload.name)
+        
+        // When
+        let otherActionCreator = createActionCreator(id: "other thing", payloadType: (name: String, age: Int).self)
+        // Then
+        XCTAssertNil(action.asCreated(by: otherActionCreator))
+    }
+
     private struct Person {
         let name: String
         let address: String
