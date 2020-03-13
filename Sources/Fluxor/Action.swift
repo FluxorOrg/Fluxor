@@ -129,7 +129,8 @@ public protocol AnonymousAction: Action {
         -> AnonymousActionWithEncodablePayload<Payload>?
 
     /**
-     Cast the action to an `AnonymousActionWithCustomPayload` if it was created by the given `ActionCreatorWithCustomPayload`.
+     Cast the action to an `AnonymousActionWithCustomPayload`
+     if it was created by the given `ActionCreatorWithCustomPayload`.
 
      - Parameter actionCreator: The `ActionCreatorWithCustomPayload` to match on
      */
