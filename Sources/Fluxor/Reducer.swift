@@ -14,7 +14,7 @@ public func createReducer<State>(_ reduce: @escaping (inout State, Action) -> Vo
     return Reducer(reduce: reduce)
 }
 
-/// An `Reducer` created from a `reduce` function.
+/// A `Reducer` created from a `reduce` function.
 public struct Reducer<State> {
     public let reduce: (inout State, Action) -> Void
 }
