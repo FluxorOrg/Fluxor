@@ -10,11 +10,11 @@
 
  - Parameter reduce: The `reduce` function to create a `Reducer` from
  */
-public func createReducer<State>(_ reduce: @escaping (State, Action) -> State) -> Reducer<State> {
+public func createReducer<State>(_ reduce: @escaping (inout State, Action) -> Void) -> Reducer<State> {
     return Reducer(reduce: reduce)
 }
 
 /// An `Reducer` created from a `reduce` function.
 public struct Reducer<State> {
-    public let reduce: (State, Action) -> State
+    public let reduce: (inout State, Action) -> Void
 }

@@ -44,10 +44,8 @@ class StoreTests: XCTestCase {
         XCTAssertNil(store.state.lastAction)
         store.register(reducer: testReducer)
         store.register(reducer: createReducer { state, action in
-            var state = state
             state.type = .modifiedAgain
             state.lastAction = String(describing: action)
-            return state
         })
         // When
         store.dispatch(action: action)
@@ -174,11 +172,9 @@ class StoreTests: XCTestCase {
         case modifiedAgain
     }
 
-    private let testReducer = createReducer { (state: TestState, action) in
-        var state = state
+    private let testReducer: Reducer<TestState> = createReducer { state, action in
         state.type = .modified
         state.lastAction = String(describing: action)
-        return state
     }
 
     private class TestEffects: Effects {
