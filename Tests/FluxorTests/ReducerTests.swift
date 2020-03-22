@@ -9,7 +9,7 @@ import Fluxor
 import XCTest
 
 class ReducerTests: XCTestCase {
-    func testCreateReducer() {
+    func testCreateReducerClosure() {
         // Given
         var state = TestState(counter: 42)
         let incrementActionCreator = createActionCreator(id: "Increment", payloadType: Int.self)
@@ -30,7 +30,27 @@ class ReducerTests: XCTestCase {
         XCTAssertEqual(state, TestState(counter: 1337))
     }
 
+    func testCreateReducerOnActionType() {
+        // Given
+        var state = TestState(counter: 42)
+        let testAction = TestAction()
+        let expectation = XCTestExpectation(description: debugDescription)
+        let reducer: Reducer<TestState> = createReducer(
+            reduceOn(TestAction.self) { state, action in
+                state.counter = 1337
+                XCTAssertEqual(action, testAction)
+                expectation.fulfill()
+        })
+        // When
+        reducer.reduce(&state, testAction)
+        // Then
+        wait(for: [expectation], timeout: 2)
+        XCTAssertEqual(state, TestState(counter: 1337))
+    }
+
     private struct TestState: Equatable {
         var counter: Int
     }
+
+    private struct TestAction: Action, Equatable {}
 }
