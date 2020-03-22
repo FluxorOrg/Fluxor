@@ -58,8 +58,10 @@ public class Store<State: Encodable>: ObservableObject {
      */
     public func dispatch(action: Action) {
         let oldState = state
-        state = reducers.reduce(state) { $1.reduce($0, action) }
-        interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: state) }
+        var newState = oldState
+        reducers.forEach { $0.reduce(&newState, action) }
+        interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: newState) }
+        state = newState
         self.action = action
     }
 
