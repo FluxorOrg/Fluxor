@@ -86,14 +86,16 @@ class StoreTests: XCTestCase {
         // Given
         let action = TestAction()
         let interceptor = TestInterceptor<TestState>()
-        store.register(interceptor: interceptor)
         store.register(reducer: testReducer)
+        store.register(interceptor: interceptor)
+        let oldState = store.state
         XCTAssertEqual(interceptor.dispatchedActionsAndStates.count, 0)
         // When
         store.dispatch(action: action)
         // Then
         XCTAssertEqual(interceptor.dispatchedActionsAndStates.count, 1)
         XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].action as! TestAction, action)
+        XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].oldState, oldState)
         XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].newState, store.state)
     }
 
