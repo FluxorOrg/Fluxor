@@ -12,22 +12,30 @@ class ReducerTests: XCTestCase {
     func testCreateReducerClosure() {
         // Given
         var state = TestState(counter: 1337)
-        let incrementActionCreator = createActionCreator(id: "Increment", payloadType: Int.self)
-        let incrementAction = incrementActionCreator.createAction(payload: 42)
+        let incrementAction = IncrementAction(increment: 42)
+        let decrementActionCreator = createActionCreator(id: "Decrement", payloadType: Int.self)
+        let decrementAction = decrementActionCreator.createAction(payload: 1)
         let expectation = XCTestExpectation(description: debugDescription)
+        expectation.expectedFulfillmentCount = 2
         let reducer: Reducer<TestState> = createReducer { state, action in
-            if let anonymousAction = action as? AnonymousAction,
-                let action = anonymousAction.asCreated(by: incrementActionCreator) {
-                state.counter += action.payload
+            if let action = action as? IncrementAction {
+                state.counter += action.increment
                 XCTAssertEqual(action, incrementAction)
+                expectation.fulfill()
+            }
+            else if let anonymousAction = action as? AnonymousAction,
+                let action = anonymousAction.asCreated(by: decrementActionCreator) {
+                state.counter -= action.payload
+                XCTAssertEqual(action, decrementAction)
                 expectation.fulfill()
             }
         }
         // When
         reducer.reduce(&state, incrementAction)
+        reducer.reduce(&state, decrementAction)
         // Then
         wait(for: [expectation], timeout: 1)
-        XCTAssertEqual(state, TestState(counter: 1379))
+        XCTAssertEqual(state, TestState(counter: 1378))
     }
 
     func testCreateReducerOnActionType() {
