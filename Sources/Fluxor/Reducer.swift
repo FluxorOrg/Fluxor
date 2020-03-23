@@ -14,12 +14,24 @@ public func createReducer<State>(_ reduce: @escaping (inout State, Action) -> Vo
     return Reducer(reduce: reduce)
 }
 
+/**
+ Creates a `Reducer` from a list of `OnReduce`s.
+
+ - Parameter reduceOns: The `OnReduce`s which the created `Reducer` should contain
+ */
 public func createReducer<State>(_ reduceOns: OnReduce<State>...) -> Reducer<State> {
     return Reducer<State> { state, action in
         reduceOns.forEach { $0.reduce(&state, action) }
     }
 }
 
+/**
+ Creates a `OnReduce` which only runs `reduce` with actions of the type specificed in `actionType`.
+ The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
+
+ - Parameter actionType: The type of `Action` to filter on
+ - Parameter reduce: The `reduce` function to create a `OnReduce` from
+ */
 public func reduceOn<State, A: Action>(_ actionType: A.Type,
                                        reduce: @escaping (inout State, A) -> Void) -> OnReduce<State> {
     return OnReduce { state, action in
@@ -27,6 +39,14 @@ public func reduceOn<State, A: Action>(_ actionType: A.Type,
         reduce(&state, action)
     }
 }
+
+/**
+Creates a `OnReduce` which only runs `reduce` with actions created by the `ActionCreator` specificed.
+The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
+
+- Parameter actionCreator: The `ActionCreator` to filter on
+- Parameter reduce: The `reduce` function to create a `OnReduce` from
+*/
 
 public func reduceOn<State, C: ActionCreator>(_ actionCreator: C,
                                               reduce: @escaping (inout State, C.ActionType) -> Void)
@@ -43,7 +63,7 @@ public struct Reducer<State> {
     public let reduce: (inout State, Action) -> Void
 }
 
-/// A `OnReduce` created from a `reduce` function. This could be used when creating a `Reducer`.
+/// A `OnReduce` created from a `reduce` function.
 public struct OnReduce<State> {
     public let reduce: (inout State, Action) -> Void
 }
