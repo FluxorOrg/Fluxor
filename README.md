@@ -50,7 +50,7 @@ import Foundation
 
 // 3
 struct AppState: Encodable {
-    var counter: Int // 2
+    var counter: Int
 }
 
 // 1
@@ -58,21 +58,15 @@ struct IncrementAction: Action {
     let increment: Int
 }
 
-let counterReducer = createReducer { (state: AppState, action) in
-    var state = state
-    switch action {
-    case let incrementAction as IncrementAction:
-        state.counter += incrementAction.increment
-    default: break
-    }
-    return state
-}
-
 // 4
 let counterSelector = createRootSelector(keyPath: \AppState.counter)
 
 let store = Store(initialState: AppState(counter: 0))
-store.register(reducer: counterReducer)
+store.register(reducer: createReducer(
+    reduceOn(IncrementAction.self) { state, action in
+        state.counter += action.increment // 2
+    }
+))
 
 let cancellable = store.select(counterSelector).sink {
     print("Current count: \($0)") // 5
