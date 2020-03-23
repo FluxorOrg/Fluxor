@@ -50,7 +50,7 @@ class MockStoreTests: XCTestCase {
         // When
         store.setState(newState: TestState(counter: 123))
         // Then
-        wait(for: [expectation], timeout: 5)
+        wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
     }
 

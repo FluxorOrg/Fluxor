@@ -32,7 +32,7 @@ class StoreTests: XCTestCase {
         // When
         store.dispatch(action: action)
         // Then
-        wait(for: [expectation], timeout: 5)
+        wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
     }
 
@@ -70,14 +70,14 @@ class StoreTests: XCTestCase {
         // When
         store.dispatch(action: firstAction)
         // Then
-        wait(for: [expectation], timeout: 5)
+        wait(for: [expectation], timeout: 1)
         XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertTrue(dispatchedActions[0] is InitialAction)
         XCTAssertEqual(dispatchedActions[1] as! TestAction, firstAction)
         XCTAssertEqual(dispatchedActions[2] as! AnonymousActionWithoutPayload, TestEffects.responseAction)
         XCTAssertEqual(dispatchedActions[3] as! AnonymousActionWithEncodablePayload, TestEffects.generateAction)
         XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
-        wait(for: [TestEffects.expectation], timeout: 5)
+        wait(for: [TestEffects.expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
     }
 
@@ -113,7 +113,7 @@ class StoreTests: XCTestCase {
         // When
         store.dispatch(action: TestAction())
         // Then
-        wait(for: [expectation], timeout: 5)
+        wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
     }
 
@@ -130,7 +130,7 @@ class StoreTests: XCTestCase {
         // When
         store.dispatch(action: TestAction())
         // Then
-        wait(for: [expectation], timeout: 5)
+        wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
     }
 

@@ -26,7 +26,7 @@ class ReducerTests: XCTestCase {
         // When
         reducer.reduce(&state, incrementAction)
         // Then
-        wait(for: [expectation], timeout: 2)
+        wait(for: [expectation], timeout: 1)
         XCTAssertEqual(state, TestState(counter: 1379))
     }
 
@@ -45,7 +45,7 @@ class ReducerTests: XCTestCase {
         // When
         reducer.reduce(&state, testAction)
         // Then
-        wait(for: [expectation], timeout: 2)
+        wait(for: [expectation], timeout: 1)
         XCTAssertEqual(state, TestState(counter: 1379))
     }
 
@@ -65,7 +65,7 @@ class ReducerTests: XCTestCase {
         // When
         reducer.reduce(&state, incrementAction)
         // Then
-        wait(for: [expectation], timeout: 2)
+        wait(for: [expectation], timeout: 1)
         XCTAssertEqual(state, TestState(counter: 1379))
     }
 
