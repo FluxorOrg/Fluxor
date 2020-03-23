@@ -22,8 +22,7 @@ class ReducerTests: XCTestCase {
                 state.counter += action.increment
                 XCTAssertEqual(action, incrementAction)
                 expectation.fulfill()
-            }
-            else if let anonymousAction = action as? AnonymousAction,
+            } else if let anonymousAction = action as? AnonymousAction,
                 let action = anonymousAction.asCreated(by: decrementActionCreator) {
                 state.counter -= action.payload
                 XCTAssertEqual(action, decrementAction)
