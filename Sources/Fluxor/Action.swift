@@ -117,7 +117,7 @@ public protocol AnonymousAction: Action {
     func wasCreated<C: ActionCreator>(by actionCreator: C) -> Bool where C.ActionType == Self
 
     /**
-     Cast the action to the `ActionCreator`'s `ActionType` if it was created by the given `ActionCreator`.
+     Cast the action to the `ActionType` of the `ActionCreator` if it was created by it.
 
      - Parameter actionCreator: The `ActionCreator` to match on
      */
