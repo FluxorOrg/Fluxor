@@ -18,7 +18,7 @@ class ReducerTests: XCTestCase {
         let reducer: Reducer<TestState> = createReducer { state, action in
             if let anonymousAction = action as? AnonymousAction,
                 let action = anonymousAction.asCreated(by: incrementActionCreator) {
-                state.counter = state.counter + action.payload
+                state.counter += action.payload
                 XCTAssertEqual(action, incrementAction)
                 expectation.fulfill()
             }
@@ -40,12 +40,12 @@ class ReducerTests: XCTestCase {
         expectation.expectedFulfillmentCount = 2
         let reducer: Reducer<TestState> = createReducer(
             reduceOn(IncrementAction.self) { state, action in
-                state.counter = state.counter + action.increment
+                state.counter += action.increment
                 XCTAssertEqual(action, incrementAction)
                 expectation.fulfill()
             },
             reduceOn(decrementActionCreator) { state, action in
-                state.counter = state.counter - action.payload
+                state.counter -= action.payload
                 XCTAssertEqual(action, decrementAction)
                 expectation.fulfill()
             }
