@@ -14,29 +14,25 @@ public func createReducer<State>(_ reduce: @escaping (inout State, Action) -> Vo
     return Reducer(reduce: reduce)
 }
 
-public func createReducer<State, A: Action>(_ reduceOn: ReduceOnAction<State, A>) -> Reducer<State> {
+public func createReducer<State>(_ reduceOns: AnyReduceOn<State>...) -> Reducer<State> {
     return Reducer<State> { state, action in
-        if let action = action as? A {
-            reduceOn.reduce(&state, action)
-        }
+        reduceOns.forEach { $0.reduce(&state, action) }
     }
 }
 
-public func createReducer<State, C: ActionCreator>(_ reduceOn: ReduceOnActionCreator<State, C>) -> Reducer<State> {
-    return Reducer<State> { state, action in
-        if let anonymousAction = action as? AnonymousAction,
-            let action = anonymousAction.asCreated(by: reduceOn.actionCreator) {
-            reduceOn.reduce(&state, action)
-        }
+public func reduceOn<State, A: Action>(_ actionType: A.Type, reduce: @escaping (inout State, A) -> Void) -> AnyReduceOn<State> {
+    return AnyReduceOn { state, action in
+        guard let action = action as? A else { return }
+        ReduceOnAction<State, A>(actionType: actionType, reduce: reduce).reduce(&state, action)
     }
 }
 
-public func reduceOn<State, A: Action>(_ actionType: A.Type, reduce: @escaping (inout State, A) -> Void) -> ReduceOnAction<State, A> {
-    return ReduceOnAction<State, A>(actionType: actionType, reduce: reduce)
-}
-
-public func reduceOn<State, C: ActionCreator>(_ actionCreator: C, reduce: @escaping (inout State, C.ActionType) -> Void) -> ReduceOnActionCreator<State, C> {
-    return ReduceOnActionCreator<State, C>(actionCreator: actionCreator, reduce: reduce)
+public func reduceOn<State, C: ActionCreator>(_ actionCreator: C, reduce: @escaping (inout State, C.ActionType) -> Void) -> AnyReduceOn<State> {
+    return AnyReduceOn { state, action in
+        guard let anonymousAction = action as? AnonymousAction,
+            let action = anonymousAction.asCreated(by: actionCreator) else { return }
+        ReduceOnActionCreator<State, C>(actionCreator: actionCreator, reduce: reduce).reduce(&state, action)
+    }
 }
 
 /// A `Reducer` created from a `reduce` function.
@@ -52,4 +48,8 @@ public struct ReduceOnAction<State, A: Action> {
 public struct ReduceOnActionCreator<State, C: ActionCreator> {
     public let actionCreator: C
     public let reduce: (inout State, C.ActionType) -> Void
+}
+
+public struct AnyReduceOn<State> {
+    public let reduce: (inout State, Action) -> Void
 }
