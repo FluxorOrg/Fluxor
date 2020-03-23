@@ -37,7 +37,7 @@ class ReducerTests: XCTestCase {
         XCTAssertEqual(state, TestState(counter: 1378))
     }
 
-    func testCreateReducerOnActionType() {
+    func testCreateReducerOnReduce() {
         // Given
         var state = TestState(counter: 1337)
         let incrementAction = IncrementAction(increment: 42)
