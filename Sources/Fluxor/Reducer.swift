@@ -20,14 +20,17 @@ public func createReducer<State>(_ reduceOns: AnyReduceOn<State>...) -> Reducer<
     }
 }
 
-public func reduceOn<State, A: Action>(_ actionType: A.Type, reduce: @escaping (inout State, A) -> Void) -> AnyReduceOn<State> {
+public func reduceOn<State, A: Action>(_ actionType: A.Type,
+                                       reduce: @escaping (inout State, A) -> Void) -> AnyReduceOn<State> {
     return AnyReduceOn { state, action in
         guard let action = action as? A else { return }
         ReduceOnAction<State, A>(actionType: actionType, reduce: reduce).reduce(&state, action)
     }
 }
 
-public func reduceOn<State, C: ActionCreator>(_ actionCreator: C, reduce: @escaping (inout State, C.ActionType) -> Void) -> AnyReduceOn<State> {
+public func reduceOn<State, C: ActionCreator>(_ actionCreator: C,
+                                              reduce: @escaping (inout State, C.ActionType) -> Void)
+    -> AnyReduceOn<State> {
     return AnyReduceOn { state, action in
         guard let anonymousAction = action as? AnonymousAction,
             let action = anonymousAction.asCreated(by: actionCreator) else { return }
