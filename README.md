@@ -3,18 +3,26 @@
 </p>
 
 <p align="center">
-    <b>Unidirectional Data Flow in Swift - inspired by Redux and NgRx.</b><br>
-    Based on Combine - ideal for use with SwiftUI.
+    <b>Unidirectional Data Flow in Swift - inspired by Redux and NgRx.</b><br />
+    Based on Combine - ideal for use with SwiftUI.<br />
+    <br />
+    <img src="https://img.shields.io/badge/Swift-5.1-brightgreen.svg" alt="Swift version" />
+    <a href="https://swift.org/package-manager">
+        <img src="https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg?style=flat" alt="Swift PM" />
+    </a>
+    <img src="https://img.shields.io/badge/platforms-Mac+iOS-brightgreen.svg?style=flat" alt="Platforms" />
+    <a href="https://twitter.com/mortengregersen">
+        <img src="https://img.shields.io/badge/twitter-@mortengregersen-blue.svg?style=flat" alt="Twitter" />
+    </a>
+    <br />
+    <img src="https://github.com/MortenGregersen/Fluxor/workflows/CI/badge.svg" alt="CI" />
+    <a href="https://codeclimate.com/github/MortenGregersen/Fluxor/maintainability">
+        <img src="https://api.codeclimate.com/v1/badges/f8f269fac2ca81c09856/maintainability" alt="Maintainability" />
+    </a>
+    <a href="https://codeclimate.com/github/MortenGregersen/Fluxor/test_coverage">
+        <img src="https://api.codeclimate.com/v1/badges/f8f269fac2ca81c09856/test_coverage" alt="Test Coverage" />
+    </a>
 </p>
-
-![Platforms](https://img.shields.io/badge/platforms-Mac+iOS-brightgreen.svg?style=flat)
-![Swift version](https://img.shields.io/badge/Swift-5.1-brightgreen.svg)
-![Swift PM](https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg?style=flat)
-![Twitter](https://img.shields.io/badge/twitter-@mortengregersen-blue.svg?style=flat)
-
-![Test](https://github.com/MortenGregersen/Fluxor/workflows/CI/badge.svg)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f8f269fac2ca81c09856/maintainability)](https://codeclimate.com/github/MortenGregersen/Fluxor/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/f8f269fac2ca81c09856/test_coverage)](https://codeclimate.com/github/MortenGregersen/Fluxor/test_coverage)
 
 ## Why do I need Fluxor?
 When developing apps, it can quickly become difficult to keep track of the flow of data. Data flows in multiple directions and can easily become inconsistent with *Multiple Sources of Truth*.
