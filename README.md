@@ -1,6 +1,11 @@
-<img src="https://github.com/MortenGregersen/Fluxor/blob/master/Assets/Fluxor-logo.png" width="400" max-width="90%" alt="Fluxor" />
+<p align="center">
+    <img src="https://github.com/MortenGregersen/Fluxor/blob/master/Assets/Fluxor-logo.png" width="400" max-width="90%" alt="Fluxor" />
+</p>
 
-**Unidirectional Data Flow in Swift - inspired by Redux and NgRx.** Based on Combine - ideal for use with SwiftUI.
+<p align="center">
+    <b>Unidirectional Data Flow in Swift - inspired by Redux and NgRx.</b><br>
+    Based on Combine - ideal for use with SwiftUI.
+</p>
 
 ![Platforms](https://img.shields.io/badge/platforms-Mac+iOS-brightgreen.svg?style=flat)
 ![Swift version](https://img.shields.io/badge/Swift-5.1-brightgreen.svg)
