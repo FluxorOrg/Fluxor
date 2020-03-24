@@ -1,6 +1,4 @@
-<p align="center">
-    <img src="https://github.com/MortenGregersen/Fluxor/blob/master/Assets/Fluxor-logo.png" width="400" max-width="90%" alt="Fluxor" />
-</p>
+<img src="https://github.com/MortenGregersen/Fluxor/blob/master/Assets/Fluxor-logo.png" width="400" max-width="90%" alt="Fluxor" />
 
 **Unidirectional Data Flow in Swift - inspired by Redux and NgRx.** Based on Combine - ideal for use with SwiftUI.
 
