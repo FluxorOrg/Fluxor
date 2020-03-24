@@ -1,4 +1,5 @@
 <p align="center">
+    <br />
     <img src="https://github.com/MortenGregersen/Fluxor/blob/master/Assets/Fluxor-logo.png" width="400" max-width="90%" alt="Fluxor" />
 </p>
 
