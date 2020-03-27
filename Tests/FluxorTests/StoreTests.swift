@@ -65,7 +65,7 @@ class StoreTests: XCTestCase {
             dispatchedActions.append(receivedAction)
             expectation.fulfill()
         }
-        store.register(effects: TestEffects.self)
+        store.register(effects: TestEffects())
         let firstAction = TestAction()
         // When
         store.dispatch(action: firstAction)
@@ -180,8 +180,7 @@ class StoreTests: XCTestCase {
     }
 
     private class TestEffects: Effects {
-        lazy var effects: [Effect] = [testEffect, anotherTestEffect, yetAnotherTestEffect]
-        let actions: ActionPublisher
+        lazy var effectCreators: [EffectCreator] = [testEffect, anotherTestEffect, yetAnotherTestEffect]
 
         static let responseActionIdentifier = "TestResponseAction"
         static let responseActionCreator = createActionCreator(id: TestEffects.responseActionIdentifier)
@@ -193,32 +192,28 @@ class StoreTests: XCTestCase {
         static let expectation = XCTestExpectation()
         static var lastAction: AnonymousActionWithEncodablePayload<Int>?
 
-        required init(_ actions: ActionPublisher) {
-            self.actions = actions
-        }
-
-        lazy var testEffect = createEffect(
+        lazy var testEffect = createEffectCreator { (actions: ActionPublisher) in
             actions
                 .ofType(TestAction.self)
                 .flatMap { _ in Just(Self.responseAction) }
                 .eraseToAnyPublisher()
-        )
+        }
 
-        lazy var anotherTestEffect = createEffect(
+        lazy var anotherTestEffect = createEffectCreator { (actions: ActionPublisher) in
             actions
                 .withIdentifier(TestEffects.responseActionIdentifier)
                 .flatMap { _ in Just(Self.generateAction) }
                 .eraseToAnyPublisher()
-        )
+        }
 
-        lazy var yetAnotherTestEffect = createEffect(
+        lazy var yetAnotherTestEffect = createEffectCreator { actions in
             actions
                 .withIdentifier(TestEffects.generateActionIdentifier)
                 .sink(receiveValue: { action in
                     TestEffects.lastAction = (action as! AnonymousActionWithEncodablePayload<Int>)
                     TestEffects.expectation.fulfill()
                 })
-        )
+        }
     }
 }
 

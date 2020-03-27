@@ -11,41 +11,52 @@ public typealias ActionPublisher = Published<Action>.Publisher
 /// A collection of effects based on the given `ActionPublisher`.
 public protocol Effects: AnyObject {
     /// The `Effect`s to register in the `Store`.
-    var effects: [Effect] { get }
+    var effectCreators: [EffectCreator] { get }
 
     /**
-     Initializes the `Effects` with an `ActionPublisher`.
+     Creates a `DispathingEffectCreator` from the given creator closure.
 
-     - Parameter actions: The `ActionPublisher` for the `Effect`s to listen to
-     */
-    init(_ actions: ActionPublisher)
-
-    /**
-     Creates a dispatching `Effect` from the given `Publisher`.
-     
      A dispatching `Effect` gives a new `Action` to dispatch on the store in the future.
 
-     - Parameter publisher: The `Publisher` to create an `Effect` for
+     - Parameter createPublisher: The closure to create an `AnyPublisher<Action, Never>` for the `Effect`
      */
-    func createEffect(_ publisher: AnyPublisher<Action, Never>) -> Effect
+    func createEffectCreator(_ createPublisher: @escaping (ActionPublisher) -> AnyPublisher<Action, Never>) -> EffectCreator
 
     /**
-     Creates a non dispatching `Effect` from the given `Cancellable`.
-     
-     A non dispatching `Effect` 
+     Creates a `NonDispathingEffectCreator` from the given creator closure.
 
-     - Parameter cancellable: The `Cancellable` to create an `Effect` for
+     - Parameter createCancellable: The closure to create an `AnyCancellable` for the `Effect`
      */
-    func createEffect(_ cancellable: AnyCancellable) -> Effect
+    func createEffectCreator(_ createCancellable: @escaping (ActionPublisher) -> AnyCancellable) -> EffectCreator
 }
 
 public extension Effects {
-    func createEffect(_ publisher: AnyPublisher<Action, Never>) -> Effect {
-        return .dispatching(publisher)
+    func createEffectCreator(_ createPublisher: @escaping (ActionPublisher) -> AnyPublisher<Action, Never>) -> EffectCreator {
+        return DispathingEffectCreator(createPublisher: createPublisher)
     }
 
-    func createEffect(_ cancellable: AnyCancellable) -> Effect {
-        return .nonDispatching(cancellable)
+    func createEffectCreator(_ createCancellable: @escaping (ActionPublisher) -> AnyCancellable) -> EffectCreator {
+        return NonDispathingEffectCreator(createCancellable: createCancellable)
+    }
+}
+
+public protocol EffectCreator {
+    func createEffect(actionPublisher: ActionPublisher) -> Effect
+}
+
+public struct DispathingEffectCreator: EffectCreator {
+    let createPublisher: (ActionPublisher) -> AnyPublisher<Action, Never>
+
+    public func createEffect(actionPublisher: ActionPublisher) -> Effect {
+        return .dispatching(createPublisher(actionPublisher))
+    }
+}
+
+public struct NonDispathingEffectCreator: EffectCreator {
+    let createCancellable: (ActionPublisher) -> AnyCancellable
+
+    public func createEffect(actionPublisher: ActionPublisher) -> Effect {
+        return .nonDispatching(createCancellable(actionPublisher))
     }
 }
 
