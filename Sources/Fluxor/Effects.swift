@@ -14,24 +14,21 @@ public typealias ActionPublisher = Published<Action>.Publisher
  An `Effect` can give a new `Action` to dispatch (a `dispatching` effect) or nothing (a `nonDispatching` effect).
  */
 public enum Effect {
-    /// An `Effect` that gives an `Action` to dispatch.
+    /// An `Effect` that publishes an `Action` to dispatch.
     case dispatching(_ publisher: AnyPublisher<Action, Never>)
-    /// An `Effect` that handles the action but doesn't give an `Action`.
+    /// An `Effect` that handles the action but doesn't publish a new `Action`.
     case nonDispatching(_ cancellable: AnyCancellable)
 }
 
-
-/// A collection of effects based on the given `ActionPublisher`.
+/// A collection of `EffectCreator`s.
 public protocol Effects: AnyObject {
+    /// The `EffectCreator`s to invoke to create `Effect`s to register on the `Store`.
     var effectCreators: [EffectCreator] { get }
 }
 
 public extension Effects {
-    /// The `EffectCreator`s to invoke to create `Effect`s to register on the `Store`.
     var effectCreators: [EffectCreator] {
-        Mirror(reflecting: self).children.compactMap {
-            $0.value as? EffectCreator
-        }
+        Mirror(reflecting: self).children.compactMap { $0.value as? EffectCreator }
     }
 }
 
@@ -55,10 +52,17 @@ public func createEffectCreator(_ createCancellable: @escaping (ActionPublisher)
     return NonDispathingEffectCreator(createCancellable: createCancellable)
 }
 
+/// A type creating `Effect`s.
 public protocol EffectCreator {
+    /**
+     Creates an `Effect` based on the given `ActionPublisher`.
+
+     - Parameter actionPublisher: The `ActionPublisher` to create the `Effect` from
+     */
     func createEffect(actionPublisher: ActionPublisher) -> Effect
 }
 
+/// A creator for creating a dispatching `Effect`.
 public struct DispathingEffectCreator: EffectCreator {
     let createPublisher: (ActionPublisher) -> AnyPublisher<Action, Never>
 
@@ -67,6 +71,7 @@ public struct DispathingEffectCreator: EffectCreator {
     }
 }
 
+/// A creator for creating a non dispatching `Effect`.
 public struct NonDispathingEffectCreator: EffectCreator {
     let createCancellable: (ActionPublisher) -> AnyCancellable
 
