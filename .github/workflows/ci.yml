@@ -15,7 +15,7 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Build
       run: swift build -v
     - name: Test
@@ -23,9 +23,9 @@ jobs:
     - name: Export coverage
       run: xcrun llvm-cov export -format="lcov" -instr-profile=.build/x86_64-apple-macosx/debug/codecov/default.profdata -ignore-filename-regex=".build|Tests" .build/x86_64-apple-macosx/debug/FluxorPackageTests.xctest/Contents/MacOS/FluxorPackageTests > coverage.lcov
     - name: Upload coverage
-      uses: paambaati/codeclimate-action@v2.4.0
+      uses: paambaati/codeclimate-action@v2.5.6
       env:
-        CC_TEST_REPORTER_ID: e658ce73b71169fa83b630cca94f8e1c4252243575add58d28533fb5dba1a7a8
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
         coverageCommand: ls
         coverageLocations: coverage.lcov:lcov
@@ -37,6 +37,6 @@ jobs:
       DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
     needs: [build]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: SPM Build
         run: swift build

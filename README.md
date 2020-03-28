@@ -16,11 +16,11 @@
         <img src="https://img.shields.io/badge/twitter-@mortengregersen-blue.svg?style=flat" alt="Twitter" />
     </a>
     <br />
-    <img src="https://github.com/MortenGregersen/Fluxor/workflows/CI/badge.svg" alt="CI" />
-    <a href="https://codeclimate.com/github/MortenGregersen/Fluxor/maintainability">
+    <img src="https://github.com/FluxorOrg/Fluxor/workflows/CI/badge.svg" alt="CI" />
+    <a href="https://codeclimate.com/github/FluxorOrg/Fluxor/maintainability">
         <img src="https://api.codeclimate.com/v1/badges/f8f269fac2ca81c09856/maintainability" alt="Maintainability" />
     </a>
-    <a href="https://codeclimate.com/github/MortenGregersen/Fluxor/test_coverage">
+    <a href="https://codeclimate.com/github/FluxorOrg/Fluxor/test_coverage">
         <img src="https://api.codeclimate.com/v1/badges/f8f269fac2ca81c09856/test_coverage" alt="Test Coverage" />
     </a>
 </p>
