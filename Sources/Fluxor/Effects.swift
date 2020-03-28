@@ -20,7 +20,7 @@ public enum Effect {
     case nonDispatching(_ cancellable: AnyCancellable)
 }
 
-/// A collection of `EffectCreator`s.
+/// A collection of `EffectCreator`s the `Store` can use to register `Effect`s.
 public protocol Effects: AnyObject {
     /// The `EffectCreator`s to invoke to create `Effect`s to register on the `Store`.
     var effectCreators: [EffectCreator] { get }
