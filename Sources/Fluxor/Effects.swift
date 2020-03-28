@@ -8,6 +8,19 @@ import Combine
 
 public typealias ActionPublisher = Published<Action>.Publisher
 
+/**
+ A side effect that happens as a response to a dispatched `Action`.
+
+ An `Effect` can give a new `Action` to dispatch (a `dispatching` effect) or nothing (a `nonDispatching` effect).
+ */
+public enum Effect {
+    /// An `Effect` that gives an `Action` to dispatch.
+    case dispatching(_ publisher: AnyPublisher<Action, Never>)
+    /// An `Effect` that handles the action but doesn't give an `Action`.
+    case nonDispatching(_ cancellable: AnyCancellable)
+}
+
+
 /// A collection of effects based on the given `ActionPublisher`.
 public protocol Effects: AnyObject {
     var effectCreators: [EffectCreator] { get }
@@ -60,16 +73,4 @@ public struct NonDispathingEffectCreator: EffectCreator {
     public func createEffect(actionPublisher: ActionPublisher) -> Effect {
         return .nonDispatching(createCancellable(actionPublisher))
     }
-}
-
-/**
- Something that happens as a response to a dispatched `Action`.
-
- An `Effect` can give a new `Action` to dispatch (a `dispatching` effect) or nothing (a `nonDispatching` effect).
- */
-public enum Effect {
-    /// An `Effect` that gives an `Action` to dispatch.
-    case dispatching(_ publisher: AnyPublisher<Action, Never>)
-    /// An `Effect` that handles the action but doesn't give an `Action`.
-    case nonDispatching(_ cancellable: AnyCancellable)
 }
