@@ -80,8 +80,8 @@ public class Store<State: Encodable>: ObservableObject {
      - Parameter effects: The effects type to register
      */
     public func register(effects: Effects) {
-        effects.effectCreators.forEach { effectCreator in
-            let effect = effectCreator.createEffect(actionPublisher: $action)
+        effects.effectCreators.forEach {
+            let effect = $0.createEffect(actionPublisher: $action)
             switch effect {
             case Effect.dispatching(let publisher):
                 publisher

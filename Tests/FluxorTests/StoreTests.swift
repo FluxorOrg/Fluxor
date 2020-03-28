@@ -180,8 +180,6 @@ class StoreTests: XCTestCase {
     }
 
     private class TestEffects: Effects {
-        lazy var effectCreators: [EffectCreator] = [testEffect, anotherTestEffect, yetAnotherTestEffect]
-
         static let responseActionIdentifier = "TestResponseAction"
         static let responseActionCreator = createActionCreator(id: TestEffects.responseActionIdentifier)
         static let responseAction = TestEffects.responseActionCreator.createAction()
@@ -192,21 +190,21 @@ class StoreTests: XCTestCase {
         static let expectation = XCTestExpectation()
         static var lastAction: AnonymousActionWithEncodablePayload<Int>?
 
-        lazy var testEffect = createEffectCreator { (actions: ActionPublisher) in
+        let testEffect = createEffectCreator { (actions: ActionPublisher) in
             actions
                 .ofType(TestAction.self)
-                .flatMap { _ in Just(Self.responseAction) }
+                .flatMap { _ in Just(TestEffects.responseAction) }
                 .eraseToAnyPublisher()
         }
 
-        lazy var anotherTestEffect = createEffectCreator { (actions: ActionPublisher) in
+        let anotherTestEffect = createEffectCreator { (actions: ActionPublisher) in
             actions
                 .withIdentifier(TestEffects.responseActionIdentifier)
-                .flatMap { _ in Just(Self.generateAction) }
+                .flatMap { _ in Just(TestEffects.generateAction) }
                 .eraseToAnyPublisher()
         }
 
-        lazy var yetAnotherTestEffect = createEffectCreator { actions in
+        let yetAnotherTestEffect = createEffectCreator { actions in
             actions
                 .withIdentifier(TestEffects.generateActionIdentifier)
                 .sink(receiveValue: { action in

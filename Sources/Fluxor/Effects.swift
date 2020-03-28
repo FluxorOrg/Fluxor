@@ -10,34 +10,36 @@ public typealias ActionPublisher = Published<Action>.Publisher
 
 /// A collection of effects based on the given `ActionPublisher`.
 public protocol Effects: AnyObject {
-    /// The `Effect`s to register in the `Store`.
     var effectCreators: [EffectCreator] { get }
-
-    /**
-     Creates a `DispathingEffectCreator` from the given creator closure.
-
-     A dispatching `Effect` gives a new `Action` to dispatch on the store in the future.
-
-     - Parameter createPublisher: The closure to create an `AnyPublisher<Action, Never>` for the `Effect`
-     */
-    func createEffectCreator(_ createPublisher: @escaping (ActionPublisher) -> AnyPublisher<Action, Never>) -> EffectCreator
-
-    /**
-     Creates a `NonDispathingEffectCreator` from the given creator closure.
-
-     - Parameter createCancellable: The closure to create an `AnyCancellable` for the `Effect`
-     */
-    func createEffectCreator(_ createCancellable: @escaping (ActionPublisher) -> AnyCancellable) -> EffectCreator
 }
 
 public extension Effects {
-    func createEffectCreator(_ createPublisher: @escaping (ActionPublisher) -> AnyPublisher<Action, Never>) -> EffectCreator {
-        return DispathingEffectCreator(createPublisher: createPublisher)
+    /// The `EffectCreator`s to invoke to create `Effect`s to register on the `Store`.
+    var effectCreators: [EffectCreator] {
+        Mirror(reflecting: self).children.compactMap {
+            $0.value as? EffectCreator
+        }
     }
+}
 
-    func createEffectCreator(_ createCancellable: @escaping (ActionPublisher) -> AnyCancellable) -> EffectCreator {
-        return NonDispathingEffectCreator(createCancellable: createCancellable)
-    }
+/**
+ Creates a `DispathingEffectCreator` from the given creator closure.
+
+ A dispatching `Effect` gives a new `Action` to dispatch on the store in the future.
+
+ - Parameter createPublisher: The closure to create an `AnyPublisher<Action, Never>` for the `Effect`
+ */
+public func createEffectCreator(_ createPublisher: @escaping (ActionPublisher) -> AnyPublisher<Action, Never>) -> EffectCreator {
+    return DispathingEffectCreator(createPublisher: createPublisher)
+}
+
+/**
+ Creates a `NonDispathingEffectCreator` from the given creator closure.
+
+ - Parameter createCancellable: The closure to create an `AnyCancellable` for the `Effect`
+ */
+public func createEffectCreator(_ createCancellable: @escaping (ActionPublisher) -> AnyCancellable) -> EffectCreator {
+    return NonDispathingEffectCreator(createCancellable: createCancellable)
 }
 
 public protocol EffectCreator {
