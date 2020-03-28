@@ -68,9 +68,7 @@ public struct ActionCreatorWithoutPayload: ActionCreator {
     public typealias ActionType = AnonymousActionWithoutPayload
     public let id: String
 
-    /**
-     Creates an `AnonymousActionWithoutPayload` with the `ActionCreator`s `id`.
-     */
+    /// Creates an `AnonymousActionWithoutPayload` with the `ActionCreator`s `id`.
     public func createAction() -> ActionType {
         return ActionType(id: id)
     }
