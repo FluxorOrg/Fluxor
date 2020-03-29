@@ -20,6 +20,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(json, #"{"increment":42}"#)
     }
 
+    /// Is it possible to create an `ActionCreator` without payload type?
     func testCreateActionCreator() {
         // Given
         let actionCreator = createActionCreator(id: "something")
@@ -30,6 +31,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(json(from: action), #"{"id":"something"}"#)
     }
 
+    /// Is it possible to create an `ActionCreator` with an encodable payload type?
     func testCreateActionCreatorWithEncodablePayload() {
         // Given
         let actionCreator = createActionCreator(id: "something", payloadType: Int.self)
@@ -42,7 +44,8 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(json(from: action), #"{"id":"something","payload":42}"#)
     }
 
-    func testCreateActionCreatorWithNonEncodablePayload() {
+    /// Is it possible to create an `ActionCreator` with a custom payload type?
+    func testCreateActionCreatorWithCustomPayload() {
         // Given
         let actionCreator = createActionCreator(id: "something", payloadType: Person.self)
         let payload = Person(name: "Steve Jobs", address: "1 Infinite Loop", age: 56)
@@ -57,6 +60,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(json(from: action), #"{"id":"something","payload":{"address":"1 Infinite Loop","age":56,"name":"Steve Jobs"}}"#)
     }
 
+    /// Is it possible to create an `ActionCreator` with a tuple payload type?
     func testCreateActionCreatorWithTuple() {
         // Given
         let actionCreator = createActionCreator(id: "something", payloadType: (increment: Int, String).self)
@@ -70,6 +74,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(json(from: action), #"{"id":"something","payload":{".1":"Boom!","increment":42}}"#)
     }
 
+    /// Is it possible to cast an `AnonymousAction` as if it was created by an `ActionCreator` without payload type?
     func testAsCreatedByActionCreatorWithoutPayload() {
         // Given
         let id = "something"
@@ -86,6 +91,7 @@ class ActionTests: XCTestCase {
         XCTAssertNil(action.asCreated(by: otherActionCreator))
     }
 
+    /// Is it possible to cast an `AnonymousAction` as if it was created by an `ActionCreator` with an encodable payload type?
     func testAsCreatedByActionCreatorWithEncodablePayload() {
         // Given
         let id = "something"
@@ -104,7 +110,27 @@ class ActionTests: XCTestCase {
         XCTAssertNil(action.asCreated(by: otherActionCreator))
     }
 
+    /// Is it possible to cast an `AnonymousAction` as if it was created by an `ActionCreator` with a custom payload type?
     func testAsCreatedByActionCreatorWithCustomPayload() {
+        // Given
+        let id = "something"
+        let payload = Person(name: "Steve Jobs", address: "1 Infinite Loop", age: 56)
+        let actionCreator = createActionCreator(id: id, payloadType: Person.self)
+        let action: AnonymousAction = actionCreator.createAction(payload: payload)
+        // When
+        let castAction = action.asCreated(by: actionCreator)
+        // Then
+        XCTAssertEqual(castAction?.id, id)
+        XCTAssertEqual(castAction?.payload, payload)
+
+        // When
+        let otherActionCreator = createActionCreator(id: "other thing", payloadType: (name: String, age: Int).self)
+        // Then
+        XCTAssertNil(action.asCreated(by: otherActionCreator))
+    }
+    
+    /// Is it possible to cast an `AnonymousAction` as if it was created by an `ActionCreator` with a tuple payload type?
+    func testAsCreatedByActionCreatorWithTuplePayload() {
         // Given
         let id = "something"
         let payload = (count: 42, name: "Steve")
@@ -123,7 +149,7 @@ class ActionTests: XCTestCase {
         XCTAssertNil(action.asCreated(by: otherActionCreator))
     }
 
-    private struct Person {
+    private struct Person: Equatable {
         let name: String
         let address: String
         let age: Int
