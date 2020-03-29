@@ -6,8 +6,8 @@ let package = Package(
     name: "Fluxor",
     platforms: [
         .macOS(.v10_15),
-        .iOS("13.0"),
-        .tvOS("13.0"),
+        .iOS(.v13),
+        .tvOS(.v13),
     ],
     products: [
         .library(
