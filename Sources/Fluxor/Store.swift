@@ -41,7 +41,7 @@ public class Store<State: Encodable>: ObservableObject {
      - Parameter reducers: The `Reducer`s to register
      - Parameter effects: The `Effect`s to register
      */
-    public init(initialState: State, reducers: [Reducer<State>] = [], effects: [Effects.Type] = []) {
+    public init(initialState: State, reducers: [Reducer<State>] = [], effects: [Effects] = []) {
         state = initialState
         reducers.forEach(register(reducer:))
         effects.forEach(register(effects:))
@@ -79,8 +79,9 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter effects: The effects type to register
      */
-    public func register(effects: Effects.Type) {
-        effects.init($action).effects.forEach { effect in
+    public func register(effects: Effects) {
+        effects.effectCreators.forEach {
+            let effect = $0.createEffect(actionPublisher: $action)
             switch effect {
             case Effect.dispatching(let publisher):
                 publisher
