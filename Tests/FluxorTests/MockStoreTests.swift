@@ -16,6 +16,7 @@ class MockStoreTests: XCTestCase {
         store = MockStore(initialState: initialState)
     }
 
+    /// Can the state be set?
     func testSetState() {
         // Given
         XCTAssertEqual(store.state, initialState)
@@ -28,6 +29,7 @@ class MockStoreTests: XCTestCase {
         XCTAssertNotEqual(store.stateHash, initialStateHash)
     }
 
+    /// Can the selector be overridden?
     func testOverrideSelector() {
         // Given
         let selector = createRootSelector(keyPath: \TestState.counter)
