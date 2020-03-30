@@ -41,18 +41,21 @@ class SelectorTests: XCTestCase {
         "\($0.address), \($0.city), \($0.country)"
     }
 
+    /// Is it possible to create a `RootSelector` and  map the state?
     func testCreateRootSelector() {
         XCTAssertEqual(nameSelector.map(state), state.name)
         XCTAssertEqual(birthdaySelector.map(state), state.birthday)
         XCTAssertEqual(addressSelector.map(state), state.address)
     }
 
+    /// Is it possible to create a `Selector1` and  map the state?
     func testCreateSelector1() {
         XCTAssertEqual(fullNameSelector.map(state), "Tim Cook")
         let name = NameState(firstName: "Steve", lastName: "Jobs")
         XCTAssertEqual(fullNameSelector.projector(name), "Steve Jobs")
     }
 
+    /// Is it possible to create a `Selector2` and  map the state?
     func testCreateSelector2() {
         let congratulationsSelector = createSelector(fullNameSelector, birthdaySelector) {
             fullName, birthday in
@@ -65,6 +68,7 @@ class SelectorTests: XCTestCase {
                        "Congratulations Steve Jobs! Today is February 24 - your birthday!")
     }
 
+    /// Is it possible to create a `Selector3` and  map the state?
     func testCreateSelector3() {
         let newestProductSelector = createSelector(newProductsSelector) {
             $0.products.last!
@@ -79,6 +83,7 @@ class SelectorTests: XCTestCase {
                        "Yesterday Steve Jobs presented the newest iPad at a Town Hall Meeting at Apple (One Infinite Loop, Cupertino, USA)")
     }
 
+    /// Is it possible to create a `Selector4` and  map the state?
     func testCreateSelector4() {
         let iphoneScandalSelector = createSelector(scandalsSelector) {
             $0.iphone
@@ -93,6 +98,7 @@ class SelectorTests: XCTestCase {
                        "Today Steve Jobs (born February 24, 1955) held a Town Hall Meeting at Apple (One Infinite Loop, Cupertino, USA) about Antennagate")
     }
 
+    /// Is it possible to create a `Selector5` and  map the state?
     func testCreateSelector5() {
         let bioSelector = createSelector(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, scandalsSelector, newProductsSelector) {
             fullName, formattedBirthday, formattedAddress, scandals, newProducts in
@@ -122,6 +128,7 @@ class SelectorTests: XCTestCase {
             """)
     }
 
+    /// Does the selector cache its result?
     func testMemoizedSelectorMapSetsResult() {
         // Given
         let initialStateHash = UUID()
@@ -148,6 +155,7 @@ class SelectorTests: XCTestCase {
         XCTAssertEqual(selector.result?.stateHash, changedStateHash)
     }
 
+    /// Can the cache be overridden?
     func testMemoizedSelectorSetsResult() {
         // Given
         let initialStateHash = UUID()

@@ -7,7 +7,10 @@
 import Fluxor
 import XCTest
 
+// swiftlint:disable force_cast
+
 class TestInterceptorTests: XCTestCase {
+    /// Is the dispatched `Action`, the `oldState` and the `newState` saved correctly?
     func testActionDispatched() {
         // Given
         let interceptor = TestInterceptor<TestState>()
@@ -22,13 +25,11 @@ class TestInterceptorTests: XCTestCase {
         interceptor.actionDispatched(action: action2, oldState: oldState2, newState: newState2)
         // Then
         let first = interceptor.dispatchedActionsAndStates[0]
-        guard let firstAction = first.action as? AnonymousAction else { XCTFail("Invalid action"); return }
-        XCTAssertEqual(firstAction.id, action1.id)
+        XCTAssertEqual((first.action as! AnonymousAction).id, action1.id)
         XCTAssertEqual(first.oldState, oldState1)
         XCTAssertEqual(first.newState, newState1)
         let second = interceptor.dispatchedActionsAndStates[1]
-        guard let secondAction = second.action as? AnonymousAction else { XCTFail("Invalid action"); return }
-        XCTAssertEqual(secondAction.id, action2.id)
+        XCTAssertEqual((second.action as! AnonymousAction).id, action2.id)
         XCTAssertEqual(second.oldState, oldState2)
         XCTAssertEqual(second.newState, newState2)
     }

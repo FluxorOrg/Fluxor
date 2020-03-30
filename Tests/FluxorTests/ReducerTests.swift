@@ -9,6 +9,7 @@ import Fluxor
 import XCTest
 
 class ReducerTests: XCTestCase {
+    /// Can the state be reduced with closures?
     func testCreateReducerClosure() {
         // Given
         var state = TestState(counter: 1337)
@@ -37,6 +38,7 @@ class ReducerTests: XCTestCase {
         XCTAssertEqual(state, TestState(counter: 1378))
     }
 
+    /// Can the state be reduced with `OnReduce`?
     func testCreateReducerOnReduce() {
         // Given
         var state = TestState(counter: 1337)

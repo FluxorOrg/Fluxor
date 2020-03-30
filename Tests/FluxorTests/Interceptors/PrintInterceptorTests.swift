@@ -8,6 +8,7 @@
 import XCTest
 
 class PrintInterceptorTests: XCTestCase {
+    /// Is the dispatched `Action`, the `oldState` and the `newState` printed correctly?
     func testActionDispatched() {
         // Given
         var printedStrings = [String]()
@@ -41,6 +42,7 @@ class PrintInterceptorTests: XCTestCase {
         """)
     }
 
+    /// Only here for test coverage of the public initializer.
     func testPublicInit() {
         // Given
         let interceptor = PrintInterceptor<TestState>()
