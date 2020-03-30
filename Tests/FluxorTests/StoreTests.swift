@@ -19,22 +19,6 @@ class StoreTests: XCTestCase {
         store = Store(initialState: TestState(type: .initial, lastAction: nil))
     }
 
-    /// Does dispatching set the new `Action`?
-    func testDispatchSetsAction() {
-        // Given
-        let action = TestAction()
-        let expectation = XCTestExpectation(description: debugDescription)
-        let cancellable = store.action.sink { receivedAction in
-            XCTAssertEqual(receivedAction as! TestAction, action)
-            expectation.fulfill()
-        }
-        // When
-        store.dispatch(action: action)
-        // Then
-        wait(for: [expectation], timeout: 1)
-        XCTAssertNotNil(cancellable)
-    }
-
     /// Does the `Reducer`s get called?
     func testDispatchUsesReducers() {
         // Given
