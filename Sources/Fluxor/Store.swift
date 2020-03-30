@@ -26,10 +26,10 @@ import struct Foundation.UUID
 public class Store<State: Encodable>: ObservableObject {
     @Published internal fileprivate(set) var state: State { willSet { stateHash = UUID() } }
     internal private(set) var stateHash = UUID()
-    internal private(set) var action = PassthroughSubject<Action, Never>()
-    internal private(set) var reducers = [Reducer<State>]()
-    internal private(set) var effectCancellables = Set<AnyCancellable>()
-    internal private(set) var interceptors = [AnyInterceptor<State>]()
+    private(set) var action = PassthroughSubject<Action, Never>()
+    private(set) var reducers = [Reducer<State>]()
+    private(set) var effectCancellables = Set<AnyCancellable>()
+    private(set) var interceptors = [AnyInterceptor<State>]()
 
     /**
      Initializes the `Store` with an initial state and an `InitialAction`.

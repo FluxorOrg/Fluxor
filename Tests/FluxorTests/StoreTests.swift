@@ -56,27 +56,21 @@ class StoreTests: XCTestCase {
     /// Does the `Effects` get triggered?
     func testEffects() {
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
-        expectation.expectedFulfillmentCount = 3
-        var dispatchedActions: [Action] = []
-        let cancellable = store.action.sink { receivedAction in
-            XCTAssertEqual(Thread.current, Thread.main)
-            dispatchedActions.append(receivedAction)
-            expectation.fulfill()
-        }
+        let interceptor = TestInterceptor<TestState>()
+        TestEffects.threadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
         store.register(effects: TestEffects())
+        store.register(interceptor: interceptor)
         let firstAction = TestAction()
         // When
         store.dispatch(action: firstAction)
         // Then
-        wait(for: [expectation], timeout: 1)
+        wait(for: [TestEffects.expectation], timeout: 1)
+        let dispatchedActions = interceptor.dispatchedActionsAndStates.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 3)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
         XCTAssertEqual(dispatchedActions[1] as! AnonymousActionWithoutPayload, TestEffects.responseAction)
         XCTAssertEqual(dispatchedActions[2] as! AnonymousActionWithEncodablePayload, TestEffects.generateAction)
         XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
-        wait(for: [TestEffects.expectation], timeout: 1)
-        XCTAssertNotNil(cancellable)
     }
 
     /// Does the `Interceptor` receive the right `Action` and modified `State`?
@@ -185,10 +179,12 @@ class StoreTests: XCTestCase {
         static let generateAction = TestEffects.generateActionCreator.createAction(payload: 42)
         static let expectation = XCTestExpectation()
         static var lastAction: AnonymousActionWithEncodablePayload<Int>?
+        static var threadCheck: (() -> Void)!
 
         let testEffect = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
             actions
                 .ofType(TestAction.self)
+                .receive(on: DispatchQueue.global(qos: .background))
                 .flatMap { _ in Just(TestEffects.responseAction) }
                 .eraseToAnyPublisher()
         }
@@ -196,6 +192,7 @@ class StoreTests: XCTestCase {
         let anotherTestEffect = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
             actions
                 .withIdentifier(TestEffects.responseActionIdentifier)
+                .handleEvents(receiveOutput: { _ in TestEffects.threadCheck() })
                 .flatMap { _ in Just(TestEffects.generateAction) }
                 .eraseToAnyPublisher()
         }
