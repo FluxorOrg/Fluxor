@@ -24,8 +24,7 @@ class StoreTests: XCTestCase {
         // Given
         let action = TestAction()
         let expectation = XCTestExpectation(description: debugDescription)
-        let cancellable = store.$action.sink { receivedAction in
-            guard !(receivedAction is InitialAction) else { return }
+        let cancellable = store.action.sink { receivedAction in
             XCTAssertEqual(receivedAction as! TestAction, action)
             expectation.fulfill()
         }
@@ -58,9 +57,9 @@ class StoreTests: XCTestCase {
     func testEffects() {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
-        expectation.expectedFulfillmentCount = 4
+        expectation.expectedFulfillmentCount = 3
         var dispatchedActions: [Action] = []
-        let cancellable = store.$action.sink { receivedAction in
+        let cancellable = store.action.sink { receivedAction in
             XCTAssertEqual(Thread.current, Thread.main)
             dispatchedActions.append(receivedAction)
             expectation.fulfill()
@@ -71,11 +70,10 @@ class StoreTests: XCTestCase {
         store.dispatch(action: firstAction)
         // Then
         wait(for: [expectation], timeout: 1)
-        XCTAssertEqual(dispatchedActions.count, 4)
-        XCTAssertTrue(dispatchedActions[0] is InitialAction)
-        XCTAssertEqual(dispatchedActions[1] as! TestAction, firstAction)
-        XCTAssertEqual(dispatchedActions[2] as! AnonymousActionWithoutPayload, TestEffects.responseAction)
-        XCTAssertEqual(dispatchedActions[3] as! AnonymousActionWithEncodablePayload, TestEffects.generateAction)
+        XCTAssertEqual(dispatchedActions.count, 3)
+        XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousActionWithoutPayload, TestEffects.responseAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousActionWithEncodablePayload, TestEffects.generateAction)
         XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
         wait(for: [TestEffects.expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
@@ -183,21 +181,19 @@ class StoreTests: XCTestCase {
         static let responseActionIdentifier = "TestResponseAction"
         static let responseActionCreator = createActionCreator(id: TestEffects.responseActionIdentifier)
         static let responseAction = TestEffects.responseActionCreator.createAction()
-        static let generateActionIdentifier = "TestGenerateAction"
-        static let generateActionCreator = createActionCreator(id: TestEffects.generateActionIdentifier,
-                                                               payloadType: Int.self)
+        static let generateActionCreator = createActionCreator(id: "TestGenerateAction", payloadType: Int.self)
         static let generateAction = TestEffects.generateActionCreator.createAction(payload: 42)
         static let expectation = XCTestExpectation()
         static var lastAction: AnonymousActionWithEncodablePayload<Int>?
 
-        let testEffect = createEffectCreator { (actions: ActionPublisher) in
+        let testEffect = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
             actions
                 .ofType(TestAction.self)
                 .flatMap { _ in Just(TestEffects.responseAction) }
                 .eraseToAnyPublisher()
         }
 
-        let anotherTestEffect = createEffectCreator { (actions: ActionPublisher) in
+        let anotherTestEffect = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
             actions
                 .withIdentifier(TestEffects.responseActionIdentifier)
                 .flatMap { _ in Just(TestEffects.generateAction) }
@@ -206,9 +202,9 @@ class StoreTests: XCTestCase {
 
         let yetAnotherTestEffect = createEffectCreator { actions in
             actions
-                .withIdentifier(TestEffects.generateActionIdentifier)
+                .wasCreated(by: TestEffects.generateActionCreator)
                 .sink(receiveValue: { action in
-                    TestEffects.lastAction = (action as! AnonymousActionWithEncodablePayload<Int>)
+                    TestEffects.lastAction = action
                     TestEffects.expectation.fulfill()
                 })
         }
