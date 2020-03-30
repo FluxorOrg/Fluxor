@@ -7,8 +7,6 @@
 import Fluxor
 import XCTest
 
-// swiftlint:disable line_length
-
 class ActionTests: XCTestCase {
     /// Is it possible to encode an `Action`?
     func testEncoding() {
