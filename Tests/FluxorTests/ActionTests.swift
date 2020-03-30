@@ -7,6 +7,8 @@
 import Fluxor
 import XCTest
 
+// swiftlint:disable line_length
+
 class ActionTests: XCTestCase {
     /// Is it possible to encode an `Action`?
     func testEncoding() {
@@ -128,7 +130,7 @@ class ActionTests: XCTestCase {
         // Then
         XCTAssertNil(action.asCreated(by: otherActionCreator))
     }
-    
+
     /// Is it possible to cast an `AnonymousAction` as if it was created by an `ActionCreator` with a tuple payload type?
     func testAsCreatedByActionCreatorWithTuplePayload() {
         // Given

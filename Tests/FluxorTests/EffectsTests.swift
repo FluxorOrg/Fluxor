@@ -8,6 +8,8 @@ import Combine
 @testable import Fluxor
 import XCTest
 
+// swiftlint:disable nesting
+
 class EffectsTests: XCTestCase {
     @Published var action: Action = InitialAction()
 
@@ -32,7 +34,7 @@ class EffectsTests: XCTestCase {
         let effectCreator = createEffectCreator(createPublisher)
         let effect = effectCreator.createEffect(actionPublisher: $action)
         // Then
-        guard case .dispatching = effect else { XCTFail(); return }
+        guard case .dispatching = effect else { XCTFail("The effect type is wrong."); return }
         XCTAssertTrue(effectCreator is DispathingEffectCreator)
     }
 
@@ -45,7 +47,7 @@ class EffectsTests: XCTestCase {
         let effectCreator = createEffectCreator(createPublisher)
         let effect = effectCreator.createEffect(actionPublisher: $action)
         // Then
-        guard case .nonDispatching = effect else { XCTFail(); return }
+        guard case .nonDispatching = effect else { XCTFail("The effect type is wrong."); return }
         XCTAssertTrue(effectCreator is NonDispathingEffectCreator)
     }
 }

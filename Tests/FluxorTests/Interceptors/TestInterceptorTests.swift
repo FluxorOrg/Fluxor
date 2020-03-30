@@ -7,6 +7,8 @@
 import Fluxor
 import XCTest
 
+// swiftlint:disable force_cast
+
 class TestInterceptorTests: XCTestCase {
     /// Is the dispatched `Action`, the `oldState` and the `newState` saved correctly?
     func testActionDispatched() {
