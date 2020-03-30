@@ -37,7 +37,8 @@ public extension Effects {
 
  - Parameter createPublisher: The closure to create an `AnyPublisher<Action, Never>` for the `Effect`
  */
-public func createEffectCreator(_ createPublisher: @escaping (AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never>)
+public func createEffectCreator(
+    _ createPublisher: @escaping (AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never>)
     -> EffectCreator {
     return DispathingEffectCreator(createPublisher: createPublisher)
 }
@@ -47,7 +48,9 @@ public func createEffectCreator(_ createPublisher: @escaping (AnyPublisher<Actio
 
  - Parameter createCancellable: The closure to create an `AnyCancellable` for the `Effect`
  */
-public func createEffectCreator(_ createCancellable: @escaping (AnyPublisher<Action, Never>) -> AnyCancellable) -> EffectCreator {
+public func createEffectCreator(
+    _ createCancellable: @escaping (AnyPublisher<Action, Never>) -> AnyCancellable)
+    -> EffectCreator {
     return NonDispathingEffectCreator(createCancellable: createCancellable)
 }
 
