@@ -24,8 +24,8 @@ import struct Foundation.UUID
  It is possible to get a `Publisher` for the value or just to select the current value.
  */
 public class Store<State: Encodable>: ObservableObject {
-    internal private(set) var stateHash = UUID()
     @Published internal fileprivate(set) var state: State { willSet { stateHash = UUID() } }
+    internal private(set) var stateHash = UUID()
     internal private(set) var action = PassthroughSubject<Action, Never>()
     internal private(set) var reducers = [Reducer<State>]()
     internal private(set) var effectCancellables = Set<AnyCancellable>()
@@ -45,11 +45,11 @@ public class Store<State: Encodable>: ObservableObject {
     }
 
     /**
-     Dispatches an action and creates a new `State` by running the current `State` and the action
-     through all registered reducers.
+     Dispatches an action and creates a new `State` by running the current `State` and the `Action`
+     through all registered `Reducer`s.
 
-     After the `State` is set, all registered interceptors are notified of the change.
-     Lastly the action is dispatched to all registered effects.
+     After the `State` is set, all registered `Interceptor`s are notified of the change.
+     Lastly the `Action` is dispatched to all registered `Effect`s.
 
      - Parameter action: The action to dispatch
      */

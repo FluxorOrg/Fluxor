@@ -35,7 +35,7 @@ class StoreTests: XCTestCase {
         XCTAssertNotNil(cancellable)
     }
 
-    /// Does dispatching use the registered `Reducer`s?
+    /// Does the `Reducer`s get called?
     func testDispatchUsesReducers() {
         // Given
         let action = TestAction()
@@ -53,7 +53,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.lastAction, String(describing: action))
     }
 
-    /// Does the `Effects` get registered?
+    /// Does the `Effects` get triggered?
     func testEffects() {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
