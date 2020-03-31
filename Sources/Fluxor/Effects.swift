@@ -33,7 +33,7 @@ public extension Effects {
 }
 
 /**
- Creates a `DispathingEffectCreator` from the given creator closure.
+ Creates a `DispatchingEffectCreator` from the given creator closure.
 
  A dispatching `Effect` gives a new `Action` to dispatch on the store in the future.
 
@@ -41,16 +41,16 @@ public extension Effects {
  */
 public func createEffectCreator(_ createPublisher: @escaping (ActionPublisher) -> AnyPublisher<Action, Never>)
     -> EffectCreator {
-    return DispathingEffectCreator(createPublisher: createPublisher)
+    return DispatchingEffectCreator(createPublisher: createPublisher)
 }
 
 /**
- Creates a `NonDispathingEffectCreator` from the given creator closure.
+ Creates a `NonDispatchingEffectCreator` from the given creator closure.
 
  - Parameter createCancellable: The closure to create an `AnyCancellable` for the `Effect`
  */
 public func createEffectCreator(_ createCancellable: @escaping (ActionPublisher) -> AnyCancellable) -> EffectCreator {
-    return NonDispathingEffectCreator(createCancellable: createCancellable)
+    return NonDispatchingEffectCreator(createCancellable: createCancellable)
 }
 
 /// A type creating `Effect`s.
@@ -64,7 +64,7 @@ public protocol EffectCreator {
 }
 
 /// A creator for creating a dispatching `Effect`.
-public struct DispathingEffectCreator: EffectCreator {
+public struct DispatchingEffectCreator: EffectCreator {
     let createPublisher: (ActionPublisher) -> AnyPublisher<Action, Never>
 
     public func createEffect(actionPublisher: ActionPublisher) -> Effect {
@@ -73,7 +73,7 @@ public struct DispathingEffectCreator: EffectCreator {
 }
 
 /// A creator for creating a non dispatching `Effect`.
-public struct NonDispathingEffectCreator: EffectCreator {
+public struct NonDispatchingEffectCreator: EffectCreator {
     let createCancellable: (ActionPublisher) -> AnyCancellable
 
     public func createEffect(actionPublisher: ActionPublisher) -> Effect {
