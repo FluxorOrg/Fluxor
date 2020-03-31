@@ -4,8 +4,8 @@
  *  MIT license, see LICENSE file for details
  */
 
-import AnyCodable
-import Foundation.NSData
+import struct AnyCodable.AnyEncodable
+import Foundation
 
 /**
  An event happening in an application.

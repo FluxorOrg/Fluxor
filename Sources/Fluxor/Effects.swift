@@ -31,7 +31,7 @@ public extension Effects {
 }
 
 /**
- Creates a `DispathingEffectCreator` from the given creator closure.
+ Creates a `DispatchingEffectCreator` from the given creator closure.
 
  A dispatching `Effect` gives a new `Action` to dispatch on the store in the future.
 
@@ -39,19 +39,19 @@ public extension Effects {
  */
 public func createEffectCreator(
     _ createPublisher: @escaping (AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never>)
-    -> EffectCreator {
-    return DispathingEffectCreator(createPublisher: createPublisher)
+    -> DispatchingEffectCreator {
+    return .init(createPublisher: createPublisher)
 }
 
 /**
- Creates a `NonDispathingEffectCreator` from the given creator closure.
+ Creates a `NonDispatchingEffectCreator` from the given creator closure.
 
  - Parameter createCancellable: The closure to create an `AnyCancellable` for the `Effect`
  */
 public func createEffectCreator(
     _ createCancellable: @escaping (AnyPublisher<Action, Never>) -> AnyCancellable)
-    -> EffectCreator {
-    return NonDispathingEffectCreator(createCancellable: createCancellable)
+    -> NonDispatchingEffectCreator {
+    return .init(createCancellable: createCancellable)
 }
 
 /// A type creating `Effect`s.
@@ -65,7 +65,7 @@ public protocol EffectCreator {
 }
 
 /// A creator for creating a dispatching `Effect`.
-public struct DispathingEffectCreator: EffectCreator {
+public struct DispatchingEffectCreator: EffectCreator {
     let createPublisher: (AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never>
 
     public func createEffect(actionPublisher: AnyPublisher<Action, Never>) -> Effect {
@@ -74,7 +74,7 @@ public struct DispathingEffectCreator: EffectCreator {
 }
 
 /// A creator for creating a non dispatching `Effect`.
-public struct NonDispathingEffectCreator: EffectCreator {
+public struct NonDispatchingEffectCreator: EffectCreator {
     let createCancellable: (AnyPublisher<Action, Never>) -> AnyCancellable
 
     public func createEffect(actionPublisher: AnyPublisher<Action, Never>) -> Effect {

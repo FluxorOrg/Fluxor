@@ -12,7 +12,12 @@ let package = Package(
     products: [
         .library(
             name: "Fluxor",
+            type: .dynamic,
             targets: ["Fluxor"]),
+        .library(
+            name: "FluxorTestSupport",
+            type: .dynamic,
+            targets: ["FluxorTestSupport"]),
     ],
     dependencies: [
         .package(
@@ -23,6 +28,9 @@ let package = Package(
         .target(
             name: "Fluxor",
             dependencies: ["AnyCodable"]),
+        .target(
+            name: "FluxorTestSupport",
+            dependencies: ["Fluxor"]),
         .testTarget(
             name: "FluxorTests",
             dependencies: ["Fluxor"]),
