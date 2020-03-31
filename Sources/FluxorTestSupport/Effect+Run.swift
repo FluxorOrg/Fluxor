@@ -10,11 +10,21 @@ import Fluxor
 import XCTest
 
 public extension DispatchingEffectCreator {
+    /**
+     Run the `Effect` created by the `EffectCreator` with the specified `Action` and return the published `Action`s.
+
+     The `expectedCount` defines how many `Action`s the `Publisher` should publish before the `Action`s are returned.
+
+     - Parameter action: The `Action` to send to the `Effect`
+     - Parameter expectedCount: The count of `Action`s to wait for
+     - Parameter file: The calling file (used in log if failing)
+     - Parameter line: The calling line (used in log if failing)
+     */
     func run(with action: Action, expectedCount: Int = 1, file: StaticString = #file, line: UInt = #line) -> [Action] {
         let actions = PassthroughSubject<Action, Never>()
         let effect = createEffect(actionPublisher: actions.eraseToAnyPublisher())
         guard case .dispatching(let publisher) = effect else { return [] }
-        let recorder = ActionRecorder(numberOfRecords: expectedCount)
+        let recorder = ActionRecorder(numberOfActions: expectedCount)
         publisher.subscribe(recorder)
         actions.send(action)
         recorder.waitForAllActions()
@@ -23,6 +33,11 @@ public extension DispatchingEffectCreator {
 }
 
 public extension NonDispatchingEffectCreator {
+    /**
+     Run the `Effect` created by the `EffectCreator` with the specified `Action`.
+
+     - Parameter action: The `Action` to send to the `Effect`
+     */
     func run(with action: Action) {
         let actions = PassthroughSubject<Action, Never>()
         let effect = createEffect(actionPublisher: actions.eraseToAnyPublisher())
@@ -44,10 +59,17 @@ private class ActionRecorder: Subscriber {
     private let waiter = XCTWaiter()
     private(set) var actions = [Action]() { didSet { expectation.fulfill() } }
 
-    init(numberOfRecords: Int) {
-        expectation.expectedFulfillmentCount = numberOfRecords
+    init(numberOfActions: Int) {
+        expectation.expectedFulfillmentCount = numberOfActions
     }
 
+    /**
+     Wait for all the expected `Action`s to be published.
+
+     - Parameter timeout: The time waiting for the `Action`s
+     - Parameter file: The calling file (used in log if failing)
+     - Parameter line: The calling line (used in log if failing)
+     */
     func waitForAllActions(timeout: TimeInterval = 1, file: StaticString = #file, line: UInt = #line) {
         guard actions.count < expectation.expectedFulfillmentCount else { return }
         let waitResult = waiter.wait(for: [expectation], timeout: timeout)
