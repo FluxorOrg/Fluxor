@@ -7,7 +7,7 @@
     <b>Unidirectional Data Flow in Swift - inspired by Redux and NgRx.</b><br />
     Based on Combine - ideal for use with SwiftUI.<br />
     <br />
-    <img src="https://img.shields.io/badge/Swift-5.1-brightgreen.svg" alt="Swift version" />
+    <img src="https://img.shields.io/badge/Swift-5.2-brightgreen.svg" alt="Swift version" />
     <a href="https://swift.org/package-manager">
         <img src="https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg?style=flat" alt="Swift PM" />
     </a>
