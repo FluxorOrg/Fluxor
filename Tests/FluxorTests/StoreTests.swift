@@ -19,24 +19,7 @@ class StoreTests: XCTestCase {
         store = Store(initialState: TestState(type: .initial, lastAction: nil))
     }
 
-    /// Does dispatching set the new `Action`?
-    func testDispatchSetsAction() {
-        // Given
-        let action = TestAction()
-        let expectation = XCTestExpectation(description: debugDescription)
-        let cancellable = store.$action.sink { receivedAction in
-            guard !(receivedAction is InitialAction) else { return }
-            XCTAssertEqual(receivedAction as! TestAction, action)
-            expectation.fulfill()
-        }
-        // When
-        store.dispatch(action: action)
-        // Then
-        wait(for: [expectation], timeout: 1)
-        XCTAssertNotNil(cancellable)
-    }
-
-    /// Does dispatching use the registered `Reducer`s?
+    /// Does the `Reducer`s get called?
     func testDispatchUsesReducers() {
         // Given
         let action = TestAction()
@@ -54,31 +37,24 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.lastAction, String(describing: action))
     }
 
-    /// Does the `Effects` get registered?
+    /// Does the `Effects` get triggered?
     func testEffects() {
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
-        expectation.expectedFulfillmentCount = 4
-        var dispatchedActions: [Action] = []
-        let cancellable = store.$action.sink { receivedAction in
-            XCTAssertEqual(Thread.current, Thread.main)
-            dispatchedActions.append(receivedAction)
-            expectation.fulfill()
-        }
+        let interceptor = TestInterceptor<TestState>()
+        TestEffects.threadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
         store.register(effects: TestEffects())
+        store.register(interceptor: interceptor)
         let firstAction = TestAction()
         // When
         store.dispatch(action: firstAction)
         // Then
-        wait(for: [expectation], timeout: 1)
-        XCTAssertEqual(dispatchedActions.count, 4)
-        XCTAssertTrue(dispatchedActions[0] is InitialAction)
-        XCTAssertEqual(dispatchedActions[1] as! TestAction, firstAction)
-        XCTAssertEqual(dispatchedActions[2] as! AnonymousActionWithoutPayload, TestEffects.responseAction)
-        XCTAssertEqual(dispatchedActions[3] as! AnonymousActionWithEncodablePayload, TestEffects.generateAction)
-        XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
         wait(for: [TestEffects.expectation], timeout: 1)
-        XCTAssertNotNil(cancellable)
+        let dispatchedActions = interceptor.dispatchedActionsAndStates.map(\.action)
+        XCTAssertEqual(dispatchedActions.count, 3)
+        XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousActionWithoutPayload, TestEffects.responseAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousActionWithEncodablePayload, TestEffects.generateAction)
+        XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
     }
 
     /// Does the `Interceptor` receive the right `Action` and modified `State`?
@@ -183,32 +159,33 @@ class StoreTests: XCTestCase {
         static let responseActionIdentifier = "TestResponseAction"
         static let responseActionCreator = createActionCreator(id: TestEffects.responseActionIdentifier)
         static let responseAction = TestEffects.responseActionCreator.createAction()
-        static let generateActionIdentifier = "TestGenerateAction"
-        static let generateActionCreator = createActionCreator(id: TestEffects.generateActionIdentifier,
-                                                               payloadType: Int.self)
+        static let generateActionCreator = createActionCreator(id: "TestGenerateAction", payloadType: Int.self)
         static let generateAction = TestEffects.generateActionCreator.createAction(payload: 42)
         static let expectation = XCTestExpectation()
         static var lastAction: AnonymousActionWithEncodablePayload<Int>?
+        static var threadCheck: (() -> Void)!
 
-        let testEffect = createEffectCreator { (actions: ActionPublisher) in
+        let testEffect = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
             actions
                 .ofType(TestAction.self)
+                .receive(on: DispatchQueue.global(qos: .background))
                 .flatMap { _ in Just(TestEffects.responseAction) }
                 .eraseToAnyPublisher()
         }
 
-        let anotherTestEffect = createEffectCreator { (actions: ActionPublisher) in
+        let anotherTestEffect = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
             actions
                 .withIdentifier(TestEffects.responseActionIdentifier)
+                .handleEvents(receiveOutput: { _ in TestEffects.threadCheck() })
                 .flatMap { _ in Just(TestEffects.generateAction) }
                 .eraseToAnyPublisher()
         }
 
         let yetAnotherTestEffect = createEffectCreator { actions in
             actions
-                .withIdentifier(TestEffects.generateActionIdentifier)
+                .wasCreated(by: TestEffects.generateActionCreator)
                 .sink(receiveValue: { action in
-                    TestEffects.lastAction = (action as! AnonymousActionWithEncodablePayload<Int>)
+                    TestEffects.lastAction = action
                     TestEffects.expectation.fulfill()
                 })
         }

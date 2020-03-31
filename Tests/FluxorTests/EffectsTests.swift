@@ -11,7 +11,7 @@ import XCTest
 // swiftlint:disable nesting
 
 class EffectsTests: XCTestCase {
-    @Published var action: Action = InitialAction()
+    var action = PassthroughSubject<Action, Never>()
 
     func testEffectCreators() {
         // Given
@@ -27,12 +27,12 @@ class EffectsTests: XCTestCase {
 
     func testCreateEffectCreatorFromPublisher() {
         // Given
-        let createPublisher = { (actionPublisher: ActionPublisher) -> AnyPublisher<Action, Never> in
+        let createPublisher = { (actionPublisher: AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never> in
             actionPublisher.filter { _ in true }.eraseToAnyPublisher()
         }
         // When
         let effectCreator = createEffectCreator(createPublisher)
-        let effect = effectCreator.createEffect(actionPublisher: $action)
+        let effect = effectCreator.createEffect(actionPublisher: action.eraseToAnyPublisher())
         // Then
         guard case .dispatching = effect else { XCTFail("The effect type is wrong."); return }
         XCTAssertTrue(effectCreator is DispatchingEffectCreator)
@@ -40,12 +40,12 @@ class EffectsTests: XCTestCase {
 
     func testCreateEffectCreatorFromCancellable() {
         // Given
-        let createPublisher = { (actionPublisher: ActionPublisher) -> AnyCancellable in
+        let createPublisher = { (actionPublisher: AnyPublisher<Action, Never>) -> AnyCancellable in
             actionPublisher.sink { print($0) }
         }
         // When
         let effectCreator = createEffectCreator(createPublisher)
-        let effect = effectCreator.createEffect(actionPublisher: $action)
+        let effect = effectCreator.createEffect(actionPublisher: action.eraseToAnyPublisher())
         // Then
         guard case .nonDispatching = effect else { XCTFail("The effect type is wrong."); return }
         XCTAssertTrue(effectCreator is NonDispatchingEffectCreator)

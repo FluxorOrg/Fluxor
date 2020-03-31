@@ -6,8 +6,6 @@
 
 import Combine
 
-public typealias ActionPublisher = Published<Action>.Publisher
-
 /**
  A side effect that happens as a response to a dispatched `Action`.
 
@@ -39,7 +37,8 @@ public extension Effects {
 
  - Parameter createPublisher: The closure to create an `AnyPublisher<Action, Never>` for the `Effect`
  */
-public func createEffectCreator(_ createPublisher: @escaping (ActionPublisher) -> AnyPublisher<Action, Never>)
+public func createEffectCreator(
+    _ createPublisher: @escaping (AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never>)
     -> EffectCreator {
     return DispatchingEffectCreator(createPublisher: createPublisher)
 }
@@ -49,34 +48,36 @@ public func createEffectCreator(_ createPublisher: @escaping (ActionPublisher) -
 
  - Parameter createCancellable: The closure to create an `AnyCancellable` for the `Effect`
  */
-public func createEffectCreator(_ createCancellable: @escaping (ActionPublisher) -> AnyCancellable) -> EffectCreator {
+public func createEffectCreator(
+    _ createCancellable: @escaping (AnyPublisher<Action, Never>) -> AnyCancellable)
+    -> EffectCreator {
     return NonDispatchingEffectCreator(createCancellable: createCancellable)
 }
 
 /// A type creating `Effect`s.
 public protocol EffectCreator {
     /**
-     Creates an `Effect` based on the given `ActionPublisher`.
+     Creates an `Effect` based on the given `AnyPublisher<Action, Never>`.
 
-     - Parameter actionPublisher: The `ActionPublisher` to create the `Effect` from
+     - Parameter actionPublisher: The `AnyPublisher<Action, Never>` to create the `Effect` from
      */
-    func createEffect(actionPublisher: ActionPublisher) -> Effect
+    func createEffect(actionPublisher: AnyPublisher<Action, Never>) -> Effect
 }
 
 /// A creator for creating a dispatching `Effect`.
 public struct DispatchingEffectCreator: EffectCreator {
-    let createPublisher: (ActionPublisher) -> AnyPublisher<Action, Never>
+    let createPublisher: (AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never>
 
-    public func createEffect(actionPublisher: ActionPublisher) -> Effect {
+    public func createEffect(actionPublisher: AnyPublisher<Action, Never>) -> Effect {
         return .dispatching(createPublisher(actionPublisher))
     }
 }
 
 /// A creator for creating a non dispatching `Effect`.
 public struct NonDispatchingEffectCreator: EffectCreator {
-    let createCancellable: (ActionPublisher) -> AnyCancellable
+    let createCancellable: (AnyPublisher<Action, Never>) -> AnyCancellable
 
-    public func createEffect(actionPublisher: ActionPublisher) -> Effect {
+    public func createEffect(actionPublisher: AnyPublisher<Action, Never>) -> Effect {
         return .nonDispatching(createCancellable(actionPublisher))
     }
 }
