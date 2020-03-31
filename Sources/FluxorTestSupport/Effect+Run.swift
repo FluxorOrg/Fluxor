@@ -10,11 +10,11 @@ import Fluxor
 import XCTest
 
 public extension DispatchingEffectCreator {
-    func run(with action: Action, expectedActions: Int = 1, file: StaticString = #file, line: UInt = #line) -> [Action] {
+    func run(with action: Action, expectedCount: Int = 1, file: StaticString = #file, line: UInt = #line) -> [Action] {
         let actions = PassthroughSubject<Action, Never>()
         let effect = createEffect(actionPublisher: actions.eraseToAnyPublisher())
         guard case .dispatching(let publisher) = effect else { return [] }
-        let recorder = ActionRecorder(numberOfRecords: expectedActions)
+        let recorder = ActionRecorder(numberOfRecords: expectedCount)
         publisher.subscribe(recorder)
         actions.send(action)
         recorder.waitForAllActions()
