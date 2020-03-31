@@ -80,12 +80,12 @@ public class Store<State: Encodable>: ObservableObject {
         effects.effectCreators.forEach {
             let effect = $0.createEffect(actionPublisher: action.eraseToAnyPublisher())
             switch effect {
-            case Effect.dispatching(let publisher):
+            case .dispatching(let publisher):
                 publisher
                     .receive(on: DispatchQueue.main)
                     .sink(receiveValue: self.dispatch(action:))
                     .store(in: &effectCancellables)
-            case Effect.nonDispatching(let cancellable):
+            case .nonDispatching(let cancellable):
                 cancellable
                     .store(in: &effectCancellables)
             }

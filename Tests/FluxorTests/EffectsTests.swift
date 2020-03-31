@@ -35,7 +35,6 @@ class EffectsTests: XCTestCase {
         let effect = effectCreator.createEffect(actionPublisher: action.eraseToAnyPublisher())
         // Then
         guard case .dispatching = effect else { XCTFail("The effect type is wrong."); return }
-        XCTAssertTrue(effectCreator is DispatchingEffectCreator)
     }
 
     func testCreateEffectCreatorFromCancellable() {
@@ -48,6 +47,5 @@ class EffectsTests: XCTestCase {
         let effect = effectCreator.createEffect(actionPublisher: action.eraseToAnyPublisher())
         // Then
         guard case .nonDispatching = effect else { XCTFail("The effect type is wrong."); return }
-        XCTAssertTrue(effectCreator is NonDispatchingEffectCreator)
     }
 }

@@ -39,8 +39,8 @@ public extension Effects {
  */
 public func createEffectCreator(
     _ createPublisher: @escaping (AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never>)
-    -> EffectCreator {
-    return DispatchingEffectCreator(createPublisher: createPublisher)
+    -> DispatchingEffectCreator {
+    return .init(createPublisher: createPublisher)
 }
 
 /**
@@ -50,8 +50,8 @@ public func createEffectCreator(
  */
 public func createEffectCreator(
     _ createCancellable: @escaping (AnyPublisher<Action, Never>) -> AnyCancellable)
-    -> EffectCreator {
-    return NonDispatchingEffectCreator(createCancellable: createCancellable)
+    -> NonDispatchingEffectCreator {
+    return .init(createCancellable: createCancellable)
 }
 
 /// A type creating `Effect`s.
