@@ -12,11 +12,9 @@ let package = Package(
     products: [
         .library(
             name: "Fluxor",
-            type: .dynamic,
             targets: ["Fluxor"]),
         .library(
             name: "FluxorTestSupport",
-            type: .dynamic,
             targets: ["FluxorTestSupport"]),
     ],
     targets: [
