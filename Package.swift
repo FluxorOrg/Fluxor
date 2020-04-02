@@ -19,20 +19,20 @@ let package = Package(
             type: .dynamic,
             targets: ["FluxorTestSupport"]),
     ],
-    dependencies: [
-        .package(
-            url: "https://github.com/Flight-School/AnyCodable",
-            from: "0.2.3"),
-    ],
     targets: [
         .target(
-            name: "Fluxor",
-            dependencies: ["AnyCodable"]),
+            name: "AnyEncodable"),
+        .testTarget(
+            name: "AnyEncodableTests",
+            dependencies: ["AnyEncodable"]),
         .target(
-            name: "FluxorTestSupport",
-            dependencies: ["Fluxor"]),
+            name: "Fluxor",
+            dependencies: ["AnyEncodable"]),
         .testTarget(
             name: "FluxorTests",
+            dependencies: ["Fluxor"]),
+        .target(
+            name: "FluxorTestSupport",
             dependencies: ["Fluxor"]),
     ]
 )
