@@ -71,6 +71,29 @@ extension AnyCodable: Encodable {
     }
 }
 
+extension AnyCodable: Decodable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if container.decodeNil() {
+            self.init(())
+        } else if let bool = try? container.decode(Bool.self) {
+            self.init(bool)
+        } else if let int = try? container.decode(Int.self) {
+            self.init(int)
+        } else if let double = try? container.decode(Double.self) {
+            self.init(double)
+        } else if let string = try? container.decode(String.self) {
+            self.init(string)
+        } else if let array = try? container.decode([AnyCodable].self) {
+            self.init(array.map { $0.value })
+        } else if let dictionary = try? container.decode([String: AnyCodable].self) {
+            self.init(dictionary.mapValues { $0.value })
+        } else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Value cannot be decoded")
+        }
+    }
+}
+
 extension AnyCodable: Equatable {
     public static func ==(lhs: AnyCodable, rhs: AnyCodable) -> Bool {
         switch (lhs.value, rhs.value) {

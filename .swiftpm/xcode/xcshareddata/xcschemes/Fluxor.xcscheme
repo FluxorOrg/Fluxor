@@ -57,9 +57,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AnyEncodableTests"
-               BuildableName = "AnyEncodableTests"
-               BlueprintName = "AnyEncodableTests"
+               BlueprintIdentifier = "AnyCodableTests"
+               BuildableName = "AnyCodableTests"
+               BlueprintName = "AnyCodableTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
