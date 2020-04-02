@@ -13,7 +13,7 @@ public extension DispatchingEffectCreator {
     /**
      Run the `Effect` created by the `EffectCreator` with the specified `Action` and return the published `Action`s.
 
-     The `expectedCount` defines how many `Action`s the `Publisher` should publish before the `Action`s are returned.
+     The `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned.
 
      - Parameter action: The `Action` to send to the `Effect`
      - Parameter expectedCount: The count of `Action`s to wait for

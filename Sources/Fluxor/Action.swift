@@ -4,7 +4,7 @@
  *  MIT license, see LICENSE file for details
  */
 
-import struct AnyCodable.AnyEncodable
+import AnyCodable
 import Foundation
 
 /**
@@ -148,10 +148,10 @@ public struct AnonymousActionWithEncodablePayload<Payload: Encodable>: Anonymous
 public struct AnonymousActionWithCustomPayload<Payload>: AnonymousAction {
     public let id: String
     public let payload: Payload
-    private var encodablePayload: [String: AnyEncodable] {
+    private var encodablePayload: [String: AnyCodable] {
         let mirror = Mirror(reflecting: payload)
-        let dict = mirror.children.reduce(into: [String: AnyEncodable]()) {
-            $0[$1.label!] = AnyEncodable($1.value)
+        let dict = mirror.children.reduce(into: [String: AnyCodable]()) {
+            $0[$1.label!] = AnyCodable($1.value)
         }
         return dict
     }

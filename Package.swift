@@ -12,27 +12,25 @@ let package = Package(
     products: [
         .library(
             name: "Fluxor",
-            type: .dynamic,
             targets: ["Fluxor"]),
         .library(
             name: "FluxorTestSupport",
-            type: .dynamic,
             targets: ["FluxorTestSupport"]),
-    ],
-    dependencies: [
-        .package(
-            url: "https://github.com/Flight-School/AnyCodable",
-            from: "0.2.3"),
     ],
     targets: [
         .target(
-            name: "Fluxor",
+            name: "AnyCodable"),
+        .testTarget(
+            name: "AnyCodableTests",
             dependencies: ["AnyCodable"]),
         .target(
-            name: "FluxorTestSupport",
-            dependencies: ["Fluxor"]),
+            name: "Fluxor",
+            dependencies: ["AnyCodable"]),
         .testTarget(
             name: "FluxorTests",
+            dependencies: ["Fluxor"]),
+        .target(
+            name: "FluxorTestSupport",
             dependencies: ["Fluxor"]),
     ]
 )
