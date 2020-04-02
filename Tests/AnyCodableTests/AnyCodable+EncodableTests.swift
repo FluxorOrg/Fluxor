@@ -7,7 +7,9 @@
 import AnyCodable
 import XCTest
 
-class AnyCodableEncodingTests: XCTestCase {
+// swiftlint:disable force_cast function_body_length
+
+class AnyCodableEncodableTests: XCTestCase {
     /// Can all simple types be encoded?
     func testSimpleTypes() throws {
         // Given
@@ -25,8 +27,8 @@ class AnyCodableEncodingTests: XCTestCase {
             "nested": [
                 "a": "alpha",
                 "b": "bravo",
-                "c": "charlie",
-            ],
+                "c": "charlie"
+            ]
         ]
         // When
         let encoder = JSONEncoder()

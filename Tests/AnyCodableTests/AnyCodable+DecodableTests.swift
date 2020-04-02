@@ -7,7 +7,9 @@
 import AnyCodable
 import XCTest
 
-class AnyCodableDecodingTests: XCTestCase {
+// swiftlint:disable force_cast
+
+class AnyCodableDecodableTests: XCTestCase {
     /// Can all simple types be decoded?
     func testDecoding() throws {
         // Given

@@ -22,6 +22,7 @@ public struct AnyCodable {
 }
 
 extension AnyCodable: Encodable {
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch value {
@@ -95,7 +96,8 @@ extension AnyCodable: Decodable {
 }
 
 extension AnyCodable: Equatable {
-    public static func ==(lhs: AnyCodable, rhs: AnyCodable) -> Bool {
+    // swiftlint:disable:next cyclomatic_complexity
+    public static func == (lhs: AnyCodable, rhs: AnyCodable) -> Bool {
         switch (lhs.value, rhs.value) {
         case is (Void, Void):
             return true
