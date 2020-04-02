@@ -19,13 +19,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "AnyEncodable"),
+            name: "AnyCodable"),
         .testTarget(
-            name: "AnyEncodableTests",
-            dependencies: ["AnyEncodable"]),
+            name: "AnyCodableTests",
+            dependencies: ["AnyCodable"]),
         .target(
             name: "Fluxor",
-            dependencies: ["AnyEncodable"]),
+            dependencies: ["AnyCodable"]),
         .testTarget(
             name: "FluxorTests",
             dependencies: ["Fluxor"]),

@@ -1,5 +1,5 @@
 /**
- * AnyEncodable
+ * AnyCodable
  *  Copyright (c) Morten Bjerg Gregersen 2020
  *  MIT license, see LICENSE file for details
  */
@@ -13,7 +13,7 @@ import Foundation
  The above can't be used as a dependency, as it triggers linker errors
  when Fluxor and FluxorTestSupport is used in a test target.
  */
-public struct AnyEncodable {
+public struct AnyCodable {
     public let value: Any
 
     public init<T>(_ value: T?) {
@@ -21,7 +21,7 @@ public struct AnyEncodable {
     }
 }
 
-extension AnyEncodable: Encodable {
+extension AnyCodable: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch value {
@@ -60,9 +60,9 @@ extension AnyEncodable: Encodable {
         case let url as URL:
             try container.encode(url)
         case let array as [Any?]:
-            try container.encode(array.map { AnyEncodable($0) })
+            try container.encode(array.map { AnyCodable($0) })
         case let dictionary as [String: Any?]:
-            try container.encode(dictionary.mapValues { AnyEncodable($0) })
+            try container.encode(dictionary.mapValues { AnyCodable($0) })
         default:
             let debugDescription = "Value cannot be encoded"
             let context = EncodingError.Context(codingPath: container.codingPath, debugDescription: debugDescription)
@@ -71,8 +71,8 @@ extension AnyEncodable: Encodable {
     }
 }
 
-extension AnyEncodable: Equatable {
-    public static func ==(lhs: AnyEncodable, rhs: AnyEncodable) -> Bool {
+extension AnyCodable: Equatable {
+    public static func ==(lhs: AnyCodable, rhs: AnyCodable) -> Bool {
         switch (lhs.value, rhs.value) {
         case is (Void, Void):
             return true
@@ -104,9 +104,9 @@ extension AnyEncodable: Equatable {
             return lhs == rhs
         case let (lhs as String, rhs as String):
             return lhs == rhs
-        case let (lhs as [String: AnyEncodable], rhs as [String: AnyEncodable]):
+        case let (lhs as [String: AnyCodable], rhs as [String: AnyCodable]):
             return lhs == rhs
-        case let (lhs as [AnyEncodable], rhs as [AnyEncodable]):
+        case let (lhs as [AnyCodable], rhs as [AnyCodable]):
             return lhs == rhs
         default:
             return false
@@ -114,7 +114,7 @@ extension AnyEncodable: Equatable {
     }
 }
 
-extension AnyEncodable: CustomStringConvertible {
+extension AnyCodable: CustomStringConvertible {
     public var description: String {
         switch value {
         case is Void:
@@ -127,26 +127,26 @@ extension AnyEncodable: CustomStringConvertible {
     }
 }
 
-extension AnyEncodable: CustomDebugStringConvertible {
+extension AnyCodable: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch value {
         case let value as CustomDebugStringConvertible:
-            return "AnyEncodable(\(value.debugDescription))"
+            return "AnyCodable(\(value.debugDescription))"
         default:
-            return "AnyEncodable(\(description))"
+            return "AnyCodable(\(description))"
         }
     }
 }
 
-extension AnyEncodable: ExpressibleByNilLiteral {}
-extension AnyEncodable: ExpressibleByBooleanLiteral {}
-extension AnyEncodable: ExpressibleByIntegerLiteral {}
-extension AnyEncodable: ExpressibleByFloatLiteral {}
-extension AnyEncodable: ExpressibleByExtendedGraphemeClusterLiteral {}
-extension AnyEncodable: ExpressibleByStringLiteral {}
-extension AnyEncodable: ExpressibleByArrayLiteral {}
-extension AnyEncodable: ExpressibleByDictionaryLiteral {}
-extension AnyEncodable {
+extension AnyCodable: ExpressibleByNilLiteral {}
+extension AnyCodable: ExpressibleByBooleanLiteral {}
+extension AnyCodable: ExpressibleByIntegerLiteral {}
+extension AnyCodable: ExpressibleByFloatLiteral {}
+extension AnyCodable: ExpressibleByExtendedGraphemeClusterLiteral {}
+extension AnyCodable: ExpressibleByStringLiteral {}
+extension AnyCodable: ExpressibleByArrayLiteral {}
+extension AnyCodable: ExpressibleByDictionaryLiteral {}
+extension AnyCodable {
     public init(nilLiteral _: ()) {
         self.init(nil as Any?)
     }

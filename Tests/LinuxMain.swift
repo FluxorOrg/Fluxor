@@ -1,11 +1,11 @@
 import XCTest
-import AnyEncodableTests
+import AnyCodableTests
 import FluxorTests
 
 var tests = [XCTestCaseEntry]()
-tests += AnyEncodableEncodingTests.allTests(),
-tests += AnyEncodableEquatableTests.allTests(),
-tests += AnyEncodableStringTests.allTests(),
+tests += AnyCodableEncodingTests.allTests(),
+tests += AnyCodableEquatableTests.allTests(),
+tests += AnyCodableStringTests.allTests(),
 tests += PrintInterceptorTests.allTests(),
 tests += TestInterceptorTests.allTests(),
 tests += ActionPublisherOfTypeTests.allTests(),
