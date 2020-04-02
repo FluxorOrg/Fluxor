@@ -131,18 +131,6 @@ Fluxor has a companion app, [**FluxorExplorer**](https://github.com/MortenGreger
 
 To learn more about how to use FluxorExplorer, [go to the repository for the app](https://github.com/MortenGregersen/FluxorExplorer).
 
-### Setting up
-The only thing need, for FluxorExplorer to receive all actions and state changes from an app, is to register the [FluxorExplorerStoreInterceptor](https://github.com/MortenGregersen/FluxorExplorerStoreInterceptor) in the app's `Store`. When FluxorExplorer and the app are running on the same network (eg. running the app on the iOS Simulator), they will automatically connect and send/receive data.
-
-```swift
-let store = Store(initialState: AppState())
-#if DEBUG
-store.register(interceptor: FluxorExplorerStoreInterceptor(displayName: UIDevice.current.name))
-#endif
-```
-
-It is recommended to only register the interceptor in `DEBUG` builds.
-
 ## Apps using Fluxor
 
 ### Real world apps
