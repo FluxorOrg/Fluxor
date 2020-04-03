@@ -1,6 +1,6 @@
 <p align="center">
     <br />
-    <img src="https://github.com/MortenGregersen/Fluxor/blob/master/Assets/Fluxor-logo.png" width="400" max-width="90%" alt="Fluxor" />
+    <img src="https://raw.githubusercontent.com/FluxorOrg/Fluxor/master/Assets/Fluxor-logo.png" width="400" max-width="90%" alt="Fluxor" />
 </p>
 
 <p align="center">
@@ -40,11 +40,11 @@ Fluxor is made up from the following types:
 * [**Effects**](Sources/Fluxor/Effects.swift) gets triggered by **Actions**, and can perform async task which in turn can dispatch new **Actions**.
 * [**Interceptors**](Sources/Fluxor/Interceptor.swift) intercepts every dispatched **Action** and state change for easier debugging.
 
-![](https://github.com/MortenGregersen/Fluxor/blob/master/Assets/Diagram.png)
+![](https://raw.githubusercontent.com/FluxorOrg/Fluxor/master/Assets/Diagram.png)
 
 ## Installation
 
-Fluxor can be installed as a dependency to your project using [Swift Package Manager](https://swift.org/package-manager), by simply adding `https://github.com/MortenGregersen/Fluxor.git`.
+Fluxor can be installed as a dependency to your project using [Swift Package Manager](https://swift.org/package-manager), by simply adding `https://github.com/FluxorOrg/Fluxor.git`.
 
 ### Requirements
 
@@ -125,18 +125,19 @@ Fluxor comes with two implementations of `Interceptor`:
 * [**TestInterceptor**](Sources/Fluxor/Interceptors/TestInterceptor.swift) to help assert that specific `Action`s was dispatched in unit tests.
 
 ## Debugging with FluxorExplorer
-Fluxor has a companion app, [**FluxorExplorer**](https://github.com/MortenGregersen/FluxorExplorer), which helps when debugging apps using Fluxor. FluxorExplorer lets you look through the dispatched `Action`s and state changes, to debug the data flow of the app.
+Fluxor has a companion app, [**FluxorExplorer**](https://github.com/FluxorOrg/FluxorExplorer), which helps when debugging apps using Fluxor. FluxorExplorer lets you look through the dispatched `Action`s and state changes, to debug the data flow of the app.
 
-![](https://github.com/MortenGregersen/Fluxor/blob/master/Assets/FluxorExplorer.png)
+To learn more about how to use FluxorExplorer, [go to the repository for the app](https://github.com/FluxorOrg/FluxorExplorer).
 
-To learn more about how to use FluxorExplorer, [go to the repository for the app](https://github.com/MortenGregersen/FluxorExplorer).
+![](https://raw.githubusercontent.com/FluxorOrg/Fluxor/master/Assets/FluxorExplorer.png)
+
 
 ## Apps using Fluxor
 
 ### Real world apps
 
-* [FluxorExplorer](https://github.com/MortenGregersen/FluxorExplorer)
+* [FluxorExplorer](https://github.com/FluxorOrg/FluxorExplorer)
 
 ### Sample apps
 
-* [FluxorSampleToDo](https://github.com/MortenGregersen/FluxorSampleToDo)
+* [FluxorSampleToDo](https://github.com/FluxorOrg/FluxorSampleToDo)
