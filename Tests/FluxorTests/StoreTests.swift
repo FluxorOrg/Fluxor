@@ -165,25 +165,22 @@ class StoreTests: XCTestCase {
         static var lastAction: AnonymousActionWithEncodablePayload<Int>?
         static var threadCheck: (() -> Void)!
 
-        let testEffect = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
-            actions
-                .ofType(TestAction.self)
+        let testEffect = Effect.dispatching {
+            $0.ofType(TestAction.self)
                 .receive(on: DispatchQueue.global(qos: .background))
-                .flatMap { _ in Just(TestEffects.responseAction) }
+                .map { _ in TestEffects.responseAction }
                 .eraseToAnyPublisher()
         }
 
-        let anotherTestEffect = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
-            actions
-                .withIdentifier(TestEffects.responseActionIdentifier)
+        let anotherTestEffect = Effect.dispatching {
+            $0.withIdentifier(TestEffects.responseActionIdentifier)
                 .handleEvents(receiveOutput: { _ in TestEffects.threadCheck() })
-                .flatMap { _ in Just(TestEffects.generateAction) }
+                .map { _ in TestEffects.generateAction }
                 .eraseToAnyPublisher()
         }
 
-        let yetAnotherTestEffect = createEffectCreator { actions in
-            actions
-                .wasCreated(by: TestEffects.generateActionCreator)
+        let yetAnotherTestEffect = Effect.nonDispatching {
+            $0.wasCreated(by: TestEffects.generateActionCreator)
                 .sink(receiveValue: { action in
                     TestEffects.lastAction = action
                     TestEffects.expectation.fulfill()

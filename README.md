@@ -103,7 +103,7 @@ import Fluxor
 import Foundation
 
 class TodosEffects: Effects {
-    let fetchTodos = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
+    let fetchTodos = Effect { (actions: AnyPublisher<Action, Never>) in
         actions
             .ofType(FetchTodosAction.self)
             .flatMap { _ in

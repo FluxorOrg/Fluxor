@@ -77,16 +77,15 @@ public class Store<State: Encodable>: ObservableObject {
      - Parameter effects: The effects type to register
      */
     public func register(effects: Effects) {
-        effects.effectCreators.forEach {
-            let effect = $0.createEffect(actionPublisher: action.eraseToAnyPublisher())
+        effects.effects.forEach { effect in
             switch effect {
-            case .dispatching(let publisher):
-                publisher
+            case .dispatching(let effectCreator):
+                effectCreator(action.eraseToAnyPublisher())
                     .receive(on: DispatchQueue.main)
                     .sink(receiveValue: self.dispatch(action:))
                     .store(in: &effectCancellables)
-            case .nonDispatching(let cancellable):
-                cancellable
+            case .nonDispatching(let effectCreator):
+                effectCreator(action.eraseToAnyPublisher())
                     .store(in: &effectCancellables)
             }
         }
