@@ -157,9 +157,9 @@ class StoreTests: XCTestCase {
 
     private class TestEffects: Effects {
         static let responseActionIdentifier = "TestResponseAction"
-        static let responseActionCreator = createActionCreator(id: TestEffects.responseActionIdentifier)
+        static let responseActionCreator = ActionCreator.create(id: TestEffects.responseActionIdentifier)
         static let responseAction = TestEffects.responseActionCreator.createAction()
-        static let generateActionCreator = createActionCreator(id: "TestGenerateAction", payloadType: Int.self)
+        static let generateActionCreator = ActionCreator.create(id: "TestGenerateAction", payloadType: Int.self)
         static let generateAction = TestEffects.generateActionCreator.createAction(payload: 42)
         static let expectation = XCTestExpectation()
         static var lastAction: AnonymousActionWithEncodablePayload<Int>?

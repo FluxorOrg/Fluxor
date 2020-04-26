@@ -10,8 +10,8 @@ import XCTest
 
 class ActionPublisherWasCreatedByTests: XCTestCase {
     var actions: PassthroughSubject<Action, Never>!
-    let creator1 = createActionCreator(id: "Action1")
-    let creator2 = createActionCreator(id: "Action2")
+    let creator1 = ActionCreator.create(id: "Action1")
+    let creator2 = ActionCreator.create(id: "Action2")
 
     override func setUp() {
         super.setUp()

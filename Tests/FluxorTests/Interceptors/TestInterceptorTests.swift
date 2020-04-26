@@ -14,10 +14,10 @@ class TestInterceptorTests: XCTestCase {
     func testActionDispatched() {
         // Given
         let interceptor = TestInterceptor<TestState>()
-        let action1 = createActionCreator(id: "Action1").createAction()
+        let action1 = ActionCreator.create(id: "Action1").createAction()
         let oldState1 = TestState(counter: 1)
         let newState1 = TestState(counter: 11)
-        let action2 = createActionCreator(id: "Action2").createAction()
+        let action2 = ActionCreator.create(id: "Action2").createAction()
         let oldState2 = TestState(counter: 2)
         let newState2 = TestState(counter: 22)
         // When

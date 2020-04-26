@@ -48,7 +48,7 @@ The `reduce` function is a pure function which takes the current `State` and an 
 - Parameter reduce: The `reduce` function to create a `OnReduce` from
 */
 
-public func reduceOn<State, C: ActionCreator>(_ actionCreator: C,
+public func reduceOn<State, C: ActionCreatorProtocol>(_ actionCreator: C,
                                               reduce: @escaping (inout State, C.ActionType) -> Void)
     -> OnReduce<State> {
     return OnReduce { state, action in

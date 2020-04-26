@@ -16,7 +16,7 @@ class PrintInterceptorTests: XCTestCase {
         let action1 = TestAction()
         let oldState1 = TestState(counter: 1)
         let newState1 = TestState(counter: 11)
-        let action2 = createActionCreator(id: "Action2", payloadType: Int.self).createAction(payload: 42)
+        let action2 = ActionCreator.create(id: "Action2", payloadType: Int.self).createAction(payload: 42)
         let oldState2 = TestState(counter: 2)
         let newState2 = TestState(counter: 22)
         // When

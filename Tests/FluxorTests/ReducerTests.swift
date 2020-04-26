@@ -14,7 +14,7 @@ class ReducerTests: XCTestCase {
         // Given
         var state = TestState(counter: 1337)
         let incrementAction = IncrementAction(increment: 42)
-        let decrementActionCreator = createActionCreator(id: "Decrement", payloadType: Int.self)
+        let decrementActionCreator = ActionCreator.create(id: "Decrement", payloadType: Int.self)
         let decrementAction = decrementActionCreator.createAction(payload: 1)
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.expectedFulfillmentCount = 2
@@ -43,7 +43,7 @@ class ReducerTests: XCTestCase {
         // Given
         var state = TestState(counter: 1337)
         let incrementAction = IncrementAction(increment: 42)
-        let decrementActionCreator = createActionCreator(id: "Decrement", payloadType: Int.self)
+        let decrementActionCreator = ActionCreator.create(id: "Decrement", payloadType: Int.self)
         let decrementAction = decrementActionCreator.createAction(payload: 1)
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.expectedFulfillmentCount = 2

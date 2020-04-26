@@ -23,7 +23,7 @@ class ActionTests: XCTestCase {
     /// Is it possible to create an `ActionCreator` without payload type?
     func testCreateActionCreator() {
         // Given
-        let actionCreator = createActionCreator(id: "something")
+        let actionCreator = ActionCreator.create(id: "something")
         // When
         let action = actionCreator.createAction()
         // Then
@@ -34,7 +34,7 @@ class ActionTests: XCTestCase {
     /// Is it possible to create an `ActionCreator` with an encodable payload type?
     func testCreateActionCreatorWithEncodablePayload() {
         // Given
-        let actionCreator = createActionCreator(id: "something", payloadType: Int.self)
+        let actionCreator = ActionCreator.create(id: "something", payloadType: Int.self)
         let payload = 42
         // When
         let action = actionCreator.createAction(payload: payload)
@@ -47,7 +47,7 @@ class ActionTests: XCTestCase {
     /// Is it possible to create an `ActionCreator` with a custom payload type?
     func testCreateActionCreatorWithCustomPayload() {
         // Given
-        let actionCreator = createActionCreator(id: "something", payloadType: Person.self)
+        let actionCreator = ActionCreator.create(id: "something", payloadType: Person.self)
         let payload = Person(name: "Steve Jobs", address: "1 Infinite Loop", age: 56)
         // When
         let action = actionCreator.createAction(payload: payload)
@@ -63,7 +63,7 @@ class ActionTests: XCTestCase {
     /// Is it possible to create an `ActionCreator` with a tuple payload type?
     func testCreateActionCreatorWithTuple() {
         // Given
-        let actionCreator = createActionCreator(id: "something", payloadType: (increment: Int, String).self)
+        let actionCreator = ActionCreator.create(id: "something", payloadType: (increment: Int, String).self)
         let payload = (increment: 42, "Boom!")
         // When
         let action = actionCreator.createAction(payload: payload)
@@ -78,7 +78,7 @@ class ActionTests: XCTestCase {
     func testAsCreatedByActionCreatorWithoutPayload() {
         // Given
         let id = "something"
-        let actionCreator = createActionCreator(id: id)
+        let actionCreator = ActionCreator.create(id: id)
         let action: AnonymousAction = actionCreator.createAction()
         // When
         let castAction = action.asCreated(by: actionCreator)
@@ -86,7 +86,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(castAction?.id, id)
 
         // When
-        let otherActionCreator = createActionCreator(id: "other thing")
+        let otherActionCreator = ActionCreator.create(id: "other thing")
         // Then
         XCTAssertNil(action.asCreated(by: otherActionCreator))
     }
@@ -96,7 +96,7 @@ class ActionTests: XCTestCase {
         // Given
         let id = "something"
         let payload = 42
-        let actionCreator = createActionCreator(id: id, payloadType: Int.self)
+        let actionCreator = ActionCreator.create(id: id, payloadType: Int.self)
         let action: AnonymousAction = actionCreator.createAction(payload: payload)
         // When
         let castAction = action.asCreated(by: actionCreator)
@@ -105,7 +105,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(castAction?.payload, payload)
 
         // When
-        let otherActionCreator = createActionCreator(id: "other thing", payloadType: String.self)
+        let otherActionCreator = ActionCreator.create(id: "other thing", payloadType: String.self)
         // Then
         XCTAssertNil(action.asCreated(by: otherActionCreator))
     }
@@ -115,7 +115,7 @@ class ActionTests: XCTestCase {
         // Given
         let id = "something"
         let payload = Person(name: "Steve Jobs", address: "1 Infinite Loop", age: 56)
-        let actionCreator = createActionCreator(id: id, payloadType: Person.self)
+        let actionCreator = ActionCreator.create(id: id, payloadType: Person.self)
         let action: AnonymousAction = actionCreator.createAction(payload: payload)
         // When
         let castAction = action.asCreated(by: actionCreator)
@@ -124,7 +124,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(castAction?.payload, payload)
 
         // When
-        let otherActionCreator = createActionCreator(id: "other thing", payloadType: (name: String, age: Int).self)
+        let otherActionCreator = ActionCreator.create(id: "other thing", payloadType: (name: String, age: Int).self)
         // Then
         XCTAssertNil(action.asCreated(by: otherActionCreator))
     }
@@ -134,7 +134,7 @@ class ActionTests: XCTestCase {
         // Given
         let id = "something"
         let payload = (count: 42, name: "Steve")
-        let actionCreator = createActionCreator(id: id, payloadType: (count: Int, name: String).self)
+        let actionCreator = ActionCreator.create(id: id, payloadType: (count: Int, name: String).self)
         let action: AnonymousAction = actionCreator.createAction(payload: payload)
         // When
         let castAction = action.asCreated(by: actionCreator)
@@ -144,7 +144,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(castAction?.payload.name, payload.name)
 
         // When
-        let otherActionCreator = createActionCreator(id: "other thing", payloadType: (name: String, age: Int).self)
+        let otherActionCreator = ActionCreator.create(id: "other thing", payloadType: (name: String, age: Int).self)
         // Then
         XCTAssertNil(action.asCreated(by: otherActionCreator))
     }

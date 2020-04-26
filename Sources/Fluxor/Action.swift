@@ -28,43 +28,47 @@ public extension Action {
     }
 }
 
-/**
- Creates an `ActionCreatorWithoutPayload` with the specified `id`.
- */
-public func createActionCreator(id: String) -> ActionCreatorWithoutPayload {
-    return ActionCreatorWithoutPayload(id: id)
-}
-
-/**
- Creates an `ActionCreatorWithEncodablePayload` with the specified `id` and `payloadType`.
-
- The `payloadType` must be `Encodable`.
-
- - Parameter payloadType: The type the payload of the `Action` must have
- */
-public func createActionCreator<Payload: Encodable>(id: String, payloadType: Payload.Type)
-    -> ActionCreatorWithEncodablePayload<Payload> {
-    return ActionCreatorWithEncodablePayload(id: id)
-}
-
-/**
- Creates an `ActionCreatorWithCustomPayload` with the specified `id` and `payloadType`.
-
- - Parameter payloadType: The type the payload of the `Action` must have
- */
-public func createActionCreator<Payload>(id: String, payloadType: Payload.Type)
-    -> ActionCreatorWithCustomPayload<Payload> {
-    return ActionCreatorWithCustomPayload(id: id)
-}
-
-/// A type creating `AnonymousAction`s.
-public protocol ActionCreator {
+/// A type for creating `AnonymousAction`s.
+public protocol ActionCreatorProtocol {
     var id: String { get }
     associatedtype ActionType: AnonymousAction
 }
 
+/// A type used for holding factory functions for creating `ActionCreator`s.
+public struct ActionCreator {
+    /**
+     Creates an `ActionCreatorWithoutPayload` with the specified `id`.
+     */
+    public static func create(id: String) -> ActionCreatorWithoutPayload {
+        return ActionCreatorWithoutPayload(id: id)
+    }
+
+    /**
+     Creates an `ActionCreatorWithEncodablePayload` with the specified `id` and `payloadType`.
+
+     The `payloadType` must be `Encodable`.
+
+     - Parameter payloadType: The type the payload of the `Action` must have
+     */
+    public static func create<Payload: Encodable>(id: String, payloadType: Payload.Type)
+        -> ActionCreatorWithEncodablePayload<Payload> {
+        return ActionCreatorWithEncodablePayload(id: id)
+    }
+
+    /**
+     Creates an `ActionCreatorWithCustomPayload` with the specified `id` and `payloadType`.
+
+     - Parameter payloadType: The type the payload of the `Action` must have
+     */
+    public static func create<Payload>(id: String, payloadType: Payload.Type)
+        -> ActionCreatorWithCustomPayload<Payload> {
+        return ActionCreatorWithCustomPayload(id: id)
+    }
+
+}
+
 /// A creator for creating `AnonymousAction`s
-public struct ActionCreatorWithoutPayload: ActionCreator {
+public struct ActionCreatorWithoutPayload: ActionCreatorProtocol {
     public typealias ActionType = AnonymousActionWithoutPayload
     public let id: String
 
@@ -75,7 +79,7 @@ public struct ActionCreatorWithoutPayload: ActionCreator {
 }
 
 /// A creator for creating `AnonymousActionWithEncodablePayload`s
-public struct ActionCreatorWithEncodablePayload<Payload: Encodable>: ActionCreator {
+public struct ActionCreatorWithEncodablePayload<Payload: Encodable>: ActionCreatorProtocol {
     public typealias ActionType = AnonymousActionWithEncodablePayload<Payload>
     public let id: String
 
@@ -90,7 +94,7 @@ public struct ActionCreatorWithEncodablePayload<Payload: Encodable>: ActionCreat
 }
 
 /// A creator for creating `AnonymousActionWithCustomPayload`s
-public struct ActionCreatorWithCustomPayload<Payload>: ActionCreator {
+public struct ActionCreatorWithCustomPayload<Payload>: ActionCreatorProtocol {
     public typealias ActionType = AnonymousActionWithCustomPayload<Payload>
     public let id: String
 
@@ -112,22 +116,22 @@ public protocol AnonymousAction: Action {
 
      - Parameter actionCreator: The `ActionCreator` to check
      */
-    func wasCreated<C: ActionCreator>(by actionCreator: C) -> Bool where C.ActionType == Self
+    func wasCreated<C: ActionCreatorProtocol>(by actionCreator: C) -> Bool where C.ActionType == Self
 
     /**
      Cast the action to the `ActionType` of the `ActionCreator` if it was created by it.
 
      - Parameter actionCreator: The `ActionCreator` to match on
      */
-    func asCreated<C: ActionCreator>(by actionCreator: C) -> C.ActionType?
+    func asCreated<C: ActionCreatorProtocol>(by actionCreator: C) -> C.ActionType?
 }
 
 public extension AnonymousAction {
-    func wasCreated<C: ActionCreator>(by actionCreator: C) -> Bool {
+    func wasCreated<C: ActionCreatorProtocol>(by actionCreator: C) -> Bool {
         return actionCreator.id == id
     }
 
-    func asCreated<C: ActionCreator>(by actionCreator: C) -> C.ActionType? {
+    func asCreated<C: ActionCreatorProtocol>(by actionCreator: C) -> C.ActionType? {
         guard wasCreated(by: actionCreator) else { return nil }
         return self as? C.ActionType
     }

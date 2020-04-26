@@ -18,7 +18,7 @@ extension Publisher where Output == Action {
 
      - Parameter actionCreator: An `ActionCreator` to check
      */
-    public func wasCreated<C: ActionCreator>(by actionCreator: C) -> AnyPublisher<C.ActionType, Self.Failure> {
+    public func wasCreated<C: ActionCreatorProtocol>(by actionCreator: C) -> AnyPublisher<C.ActionType, Self.Failure> {
         ofType(C.ActionType.self)
             .filter { $0.wasCreated(by: actionCreator) }
             .eraseToAnyPublisher()
