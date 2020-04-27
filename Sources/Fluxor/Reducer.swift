@@ -41,20 +41,20 @@ public func reduceOn<State, A: Action>(_ actionType: A.Type,
 }
 
 /**
-Creates a `OnReduce` which only runs `reduce` with actions created by the `ActionCreator` specificed.
-The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
+ Creates a `OnReduce` which only runs `reduce` with actions created from the `ActionTemplate` specificed.
+ The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
 
-- Parameter actionCreator: The `ActionCreator` to filter on
-- Parameter reduce: The `reduce` function to create a `OnReduce` from
-*/
+ - Parameter actionTemplate: The `ActionTemplate` to filter on
+ - Parameter reduce: The `reduce` function to create a `OnReduce` from
+ */
 
-public func reduceOn<State, C: ActionCreatorProtocol>(_ actionCreator: C,
-                                              reduce: @escaping (inout State, C.ActionType) -> Void)
+public func reduceOn<State, Payload>(_ actionTemplate: ActionTemplate<Payload>,
+                                     reduce: @escaping (inout State, AnonymousAction<Payload>) -> Void)
     -> OnReduce<State> {
     return OnReduce { state, action in
-        guard let anonymousAction = action as? AnonymousAction,
-            let action = anonymousAction.asCreated(by: actionCreator) else { return }
-        reduce(&state, action)
+        guard let anonymousAction = action as? AnonymousAction<Payload>,
+            anonymousAction.wasCreated(from: actionTemplate) else { return }
+        reduce(&state, anonymousAction)
     }
 }
 

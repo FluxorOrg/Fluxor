@@ -14,8 +14,8 @@ class ReducerTests: XCTestCase {
         // Given
         var state = TestState(counter: 1337)
         let incrementAction = IncrementAction(increment: 42)
-        let decrementActionCreator = ActionCreator.create(id: "Decrement", payloadType: Int.self)
-        let decrementAction = decrementActionCreator.createAction(payload: 1)
+        let decrementActionTemplate = ActionTemplate(id: "Decrement", payloadType: Int.self)
+        let decrementAction = decrementActionTemplate.createAction(payload: 1)
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.expectedFulfillmentCount = 2
         let reducer: Reducer<TestState> = createReducer { state, action in
@@ -23,8 +23,7 @@ class ReducerTests: XCTestCase {
                 state.counter += action.increment
                 XCTAssertEqual(action, incrementAction)
                 expectation.fulfill()
-            } else if let anonymousAction = action as? AnonymousAction,
-                let action = anonymousAction.asCreated(by: decrementActionCreator) {
+            } else if let action = action as? AnonymousAction<Int> {
                 state.counter -= action.payload
                 XCTAssertEqual(action, decrementAction)
                 expectation.fulfill()
@@ -43,8 +42,8 @@ class ReducerTests: XCTestCase {
         // Given
         var state = TestState(counter: 1337)
         let incrementAction = IncrementAction(increment: 42)
-        let decrementActionCreator = ActionCreator.create(id: "Decrement", payloadType: Int.self)
-        let decrementAction = decrementActionCreator.createAction(payload: 1)
+        let decrementActionTemplate = ActionTemplate(id: "Decrement", payloadType: Int.self)
+        let decrementAction = decrementActionTemplate.createAction(payload: 1)
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.expectedFulfillmentCount = 2
         let reducer: Reducer<TestState> = createReducer(
@@ -53,7 +52,7 @@ class ReducerTests: XCTestCase {
                 XCTAssertEqual(action, incrementAction)
                 expectation.fulfill()
             },
-            reduceOn(decrementActionCreator) { state, action in
+            reduceOn(decrementActionTemplate) { state, action in
                 state.counter -= action.payload
                 XCTAssertEqual(action, decrementAction)
                 expectation.fulfill()
