@@ -28,6 +28,11 @@ public extension Action {
     }
 }
 
+/**
+ A template for creating `Action`s.
+
+ The template can have a `Payload`type which is used when creating an actual `Action` from the template.
+ */
 public struct ActionTemplate<Payload> {
     let id: String
     let payloadType: Payload.Type
@@ -37,6 +42,11 @@ public struct ActionTemplate<Payload> {
         self.payloadType = payloadType
     }
 
+    /**
+     Creates an `AnonymousAction` with the `ActionCreator`s `id` and the given `payload`.
+
+      - Parameter payload: The payload to create the `AnonymousAction` with
+     */
     public func createAction(payload: Payload) -> AnonymousAction<Payload> {
         return .init(id: id, payload: payload)
     }
@@ -44,9 +54,12 @@ public struct ActionTemplate<Payload> {
 
 public extension ActionTemplate where Payload == Void {
     init(id: String) {
-        self.init(id: id, payloadType: Void.self)
+        self.init(id: id, payloadType: Payload.self)
     }
 
+    /**
+     Creates an `AnonymousAction` with the `ActionCreator`s `id`.
+     */
     func createAction() -> AnonymousAction<Payload> {
         return .init(id: id, payload: ())
     }
@@ -56,17 +69,10 @@ internal protocol IdentifiableAction: Action {
     var id: String { get }
 }
 
-/// An `Action` with an identifier.
+/// An `Action` with an identifier. Created from `ActionTemplate`s.
 public struct AnonymousAction<Payload>: IdentifiableAction {
     public let id: String
     public private(set) var payload: Payload
-    private var encodablePayload: [String: AnyCodable] {
-        let mirror = Mirror(reflecting: payload)
-        let dict = mirror.children.reduce(into: [String: AnyCodable]()) {
-            $0[$1.label!] = AnyCodable($1.value)
-        }
-        return dict
-    }
 
     /**
      Check if the `AnonymousAction` was created from a given `ActionTemplate`.
@@ -79,6 +85,14 @@ public struct AnonymousAction<Payload>: IdentifiableAction {
 }
 
 extension AnonymousAction: Encodable {
+    private var encodablePayload: [String: AnyCodable] {
+        let mirror = Mirror(reflecting: payload)
+        let dict = mirror.children.reduce(into: [String: AnyCodable]()) {
+            $0[$1.label!] = AnyCodable($1.value)
+        }
+        return dict
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
