@@ -26,7 +26,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.type, .initial)
         XCTAssertNil(store.state.lastAction)
         store.register(reducer: testReducer)
-        store.register(reducer: createReducer { state, action in
+        store.register(reducer: Reducer<TestState> { state, action in
             state.type = .modifiedAgain
             state.lastAction = String(describing: action)
         })
@@ -150,7 +150,7 @@ class StoreTests: XCTestCase {
         case modifiedAgain
     }
 
-    private let testReducer: Reducer<TestState> = createReducer { state, action in
+    private let testReducer = Reducer<TestState> { state, action in
         state.type = .modified
         state.lastAction = String(describing: action)
     }
