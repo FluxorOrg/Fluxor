@@ -97,12 +97,7 @@ extension AnonymousAction: Encodable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         if type(of: payload) != Void.self {
-            let wrappedPayload: AnyCodable
-            if let payload = payload as? Encodable {
-                wrappedPayload = AnyCodable(payload)
-            } else {
-                wrappedPayload = AnyCodable(encodablePayload)
-            }
+            let wrappedPayload = AnyCodable(payload as? Encodable ?? encodablePayload)
             try container.encode(wrappedPayload, forKey: .payload)
         }
     }
