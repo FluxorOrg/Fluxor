@@ -85,20 +85,21 @@ public struct AnonymousAction<Payload>: IdentifiableAction {
 }
 
 extension AnonymousAction: Encodable {
-    private var encodablePayload: [String: AnyCodable] {
+    private var encodablePayload: [String: AnyCodable]? {
+        guard type(of: payload) != Void.self else { return nil }
         let mirror = Mirror(reflecting: payload)
-        let dict = mirror.children.reduce(into: [String: AnyCodable]()) {
+        return mirror.children.reduce(into: [String: AnyCodable]()) {
             $0[$1.label!] = AnyCodable($1.value)
         }
-        return dict
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        if type(of: payload) != Void.self {
-            let wrappedPayload = AnyCodable(payload as? Encodable ?? encodablePayload)
-            try container.encode(wrappedPayload, forKey: .payload)
+        if let payload = payload as? Encodable {
+            try container.encode(AnyCodable(payload), forKey: .payload)
+        } else {
+            try container.encodeIfPresent(encodablePayload, forKey: .payload)
         }
     }
 

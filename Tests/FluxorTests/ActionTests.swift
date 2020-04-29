@@ -84,8 +84,8 @@ class ActionTests: XCTestCase {
         let increment: Int
     }
 
-    private func json(from action: Action) -> String {
-        let data = action.encode(with: encoder)!
+    private func json<Payload>(from action: AnonymousAction<Payload>) -> String {
+        let data = try! encoder.encode(action)
         return String(data: data, encoding: .utf8)!
     }
 
