@@ -25,7 +25,7 @@ class EffectsTests: XCTestCase {
         XCTAssertEqual(testEffects.effects.count, 1)
     }
 
-    func testCreateEffectCreatorFromPublisher() {
+    func testEffectCreatedFromPublisher() {
         // Given
         let effectCreator = { (actionPublisher: AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never> in
             actionPublisher.filter { _ in true }.eraseToAnyPublisher()
@@ -36,7 +36,7 @@ class EffectsTests: XCTestCase {
         guard case .dispatching = effect else { XCTFail("The effect type is wrong."); return }
     }
 
-    func testCreateEffectCreatorFromCancellable() {
+    func testEffectCreatedFromCancellable() {
         // Given
         let effectCreator = { (actionPublisher: AnyPublisher<Action, Never>) -> AnyCancellable in
             actionPublisher.sink { print($0) }
