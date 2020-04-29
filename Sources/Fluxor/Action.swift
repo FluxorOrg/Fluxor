@@ -96,11 +96,14 @@ extension AnonymousAction: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        guard type(of: payload) != Void.self else { return }
-        if let payload = payload as? Encodable {
-            try container.encode(AnyCodable(payload), forKey: .payload)
-        } else {
-            try container.encode(encodablePayload, forKey: .payload)
+        if type(of: payload) != Void.self {
+            let wrappedPayload: AnyCodable
+            if let payload = payload as? Encodable {
+                wrappedPayload = AnyCodable(payload)
+            } else {
+                wrappedPayload = AnyCodable(encodablePayload)
+            }
+            try container.encode(wrappedPayload, forKey: .payload)
         }
     }
 
