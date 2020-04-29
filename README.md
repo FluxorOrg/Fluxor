@@ -73,11 +73,11 @@ struct IncrementAction: Action {
 }
 
 // 4
-let counterSelector = createRootSelector(keyPath: \AppState.counter)
+let counterSelector = Selector(keyPath: \AppState.counter)
 
 let store = Store(initialState: AppState(counter: 0))
-store.register(reducer: createReducer(
-    reduceOn(IncrementAction.self) { state, action in
+store.register(reducer: Reducer(
+    ReduceOn(IncrementAction.self) { state, action in
         state.counter += action.increment // 2
     }
 ))
