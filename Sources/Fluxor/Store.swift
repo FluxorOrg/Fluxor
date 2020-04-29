@@ -107,7 +107,7 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
-    public func select<Value>(_ selector: MemoizedSelector<State, Value>) -> AnyPublisher<Value, Never> {
+    public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
         return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
     }
 
@@ -125,7 +125,7 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
-    public func selectCurrent<Value>(_ selector: MemoizedSelector<State, Value>) -> Value {
+    public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return selector.map(state, stateHash: stateHash)
     }
 
@@ -161,7 +161,7 @@ public class MockStore<State: Encodable>: Store<State> {
      - Parameter selector: The `Selector` to override
      - Parameter value: The value the `Selector` should give
      */
-    public func overrideSelector<Value>(_ selector: MemoizedSelector<State, Value>, value: Value) {
+    public func overrideSelector<Value>(_ selector: Selector<State, Value>, value: Value) {
         selector.setResult(value: value)
     }
 }

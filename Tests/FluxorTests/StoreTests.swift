@@ -78,7 +78,7 @@ class StoreTests: XCTestCase {
     /// Does a change in `State` publish new value for `Selector`?
     func testSelectMapPublisher() {
         // Given
-        let selector = createRootSelector(keyPath: \TestState.type)
+        let selector = Selector(keyPath: \TestState.type)
         let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = store.select(selector).sink {
@@ -113,7 +113,7 @@ class StoreTests: XCTestCase {
     /// Can we select the current value for `Selector`?
     func testSelectMap() {
         // Given
-        let selector = createRootSelector(keyPath: \TestState.type)
+        let selector = Selector(keyPath: \TestState.type)
         let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
         let valueBeforeAction = store.selectCurrent(selector)
         XCTAssertEqual(valueBeforeAction, .initial)
