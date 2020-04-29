@@ -103,9 +103,8 @@ import Fluxor
 import Foundation
 
 class TodosEffects: Effects {
-    let fetchTodos = Effect { (actions: AnyPublisher<Action, Never>) in
-        actions
-            .ofType(FetchTodosAction.self)
+    let fetchTodos = Effect.dispatching {
+        $0.ofType(FetchTodosAction.self)
             .flatMap { _ in
                 Current.todoService.fetchTodos()
                     .map { DidFetchTodosAction(todos: $0) }
