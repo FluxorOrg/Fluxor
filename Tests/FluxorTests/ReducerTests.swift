@@ -37,8 +37,8 @@ class ReducerTests: XCTestCase {
         XCTAssertEqual(state, TestState(counter: 1378))
     }
 
-    /// Can the state be reduced with `OnReduce`?
-    func testCreateReducerOnReduce() {
+    /// Can the state be reduced with `ReduceOn`?
+    func testCreateReducerReduceOn() {
         // Given
         var state = TestState(counter: 1337)
         let incrementAction = IncrementAction(increment: 42)

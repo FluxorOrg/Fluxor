@@ -19,9 +19,9 @@ public struct Reducer<State> {
     }
 
     /**
-     Creates a `Reducer` from a list of `OnReduce`s.
+     Creates a `Reducer` from a list of `ReduceOn`s.
 
-     - Parameter reduceOns: The `OnReduce`s which the created `Reducer` should contain
+     - Parameter reduceOns: The `ReduceOn`s which the created `Reducer` should contain
      */
     public init(_ reduceOns: ReduceOn<State>...) {
         self.reduce = { state, action in
@@ -35,11 +35,11 @@ public struct ReduceOn<State> {
     public let reduce: (inout State, Action) -> Void
 
     /**
-     Creates a `OnReduce` which only runs `reduce` with actions of the type specificed in `actionType`.
+     Creates a `ReduceOn` which only runs `reduce` with actions of the type specificed in `actionType`.
      The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
 
      - Parameter actionType: The type of `Action` to filter on
-     - Parameter reduce: The `reduce` function to create a `OnReduce` from
+     - Parameter reduce: The `reduce` function to create a `ReduceOn` from
      */
     public init<A: Action>(_ actionType: A.Type, reduce: @escaping (inout State, A) -> Void) {
         self.reduce = { state, action in
@@ -49,11 +49,11 @@ public struct ReduceOn<State> {
     }
 
     /**
-     Creates a `OnReduce` which only runs `reduce` with actions created from the `ActionTemplate` specificed.
+     Creates a `ReduceOn` which only runs `reduce` with actions created from the `ActionTemplate` specificed.
      The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
 
      - Parameter actionTemplate: The `ActionTemplate` to filter on
-     - Parameter reduce: The `reduce` function to create a `OnReduce` from
+     - Parameter reduce: The `reduce` function to create a `ReduceOn` from
      */
 
     public init<Payload>(_ actionTemplate: ActionTemplate<Payload>,
