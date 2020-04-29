@@ -10,8 +10,8 @@ import XCTest
 
 class ActionPublisherWasCreatedByTests: XCTestCase {
     var actions: PassthroughSubject<Action, Never>!
-    let creator1 = createActionCreator(id: "Action1")
-    let creator2 = createActionCreator(id: "Action2")
+    let creator1 = ActionTemplate(id: "Action1")
+    let creator2 = ActionTemplate(id: "Action2")
 
     override func setUp() {
         super.setUp()
@@ -24,7 +24,7 @@ class ActionPublisherWasCreatedByTests: XCTestCase {
         let expectation = XCTestExpectation(description: debugDescription)
 
         let cancellable = actions
-            .wasCreated(by: creator1)
+            .wasCreated(from: creator1)
             .sink { _ in expectation.fulfill() }
         // When
         actions.send(creator1.createAction())
@@ -39,7 +39,7 @@ class ActionPublisherWasCreatedByTests: XCTestCase {
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.isInverted = true
         let cancellable = actions
-            .wasCreated(by: creator2)
+            .wasCreated(from: creator2)
             .sink { _ in expectation.fulfill() }
         // When
         actions.send(creator1.createAction())

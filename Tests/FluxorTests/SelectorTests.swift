@@ -9,98 +9,114 @@ import XCTest
 
 // swiftlint:disable closure_parameter_position line_length
 
-class SelectorTests: XCTestCase {
-    private var state = TestState(name: NameState(firstName: "Tim",
-                                                  lastName: "Cook"),
-                                  birthday: BirthdayState(year: 1960,
-                                                          month: "November",
-                                                          day: 1),
-                                  address: AddressState(address: "One Apple Park Way",
-                                                        city: "Cupertino",
-                                                        country: "USA"),
-                                  scandals: ScandalsState(iphone: "Bendgate",
-                                                          other: "Apple Maps launch"),
-                                  newProducts: NewProductState(products: [
-                                      "Watch", "HomePod", "AirPods"
-                                  ]))
-    private let nameSelector = createRootSelector(keyPath: \TestState.name)
-    private let birthdaySelector = createRootSelector(keyPath: \TestState.birthday)
-    private let addressSelector = createRootSelector(keyPath: \TestState.address)
-    private let scandalsSelector = createRootSelector(keyPath: \TestState.scandals)
-    private let newProductsSelector = createRootSelector(keyPath: \TestState.newProducts)
+struct Person {
+    let name: String
+}
 
-    private lazy var fullNameSelector = createSelector(nameSelector) {
+class SelectorTests: XCTestCase {
+    private var state: TestState!
+    private let nameSelector = Selector(keyPath: \TestState.name)
+    private let birthdaySelector = Selector(keyPath: \TestState.birthday)
+    private let addressSelector = Selector(keyPath: \TestState.address)
+    private let scandalsSelector = Selector(keyPath: \TestState.scandals)
+    private let newProductsSelector = Selector(projector: { (state: TestState) in state.newProducts })
+
+    private lazy var fullNameSelector = Selector(nameSelector) {
         "\($0.firstName) \($0.lastName)"
     }
 
-    private lazy var formattedBirthdaySelector = createSelector(birthdaySelector) {
+    private lazy var formattedBirthdaySelector = Selector(birthdaySelector) {
         "\($0.month) \($0.day), \($0.year)"
     }
 
-    private lazy var formattedAddressSelector = createSelector(addressSelector) {
+    private lazy var formattedAddressSelector = Selector(addressSelector) {
         "\($0.address), \($0.city), \($0.country)"
     }
 
-    /// Is it possible to create a `RootSelector` and  map the state?
-    func testCreateRootSelector() {
+    override func setUp() {
+        super.setUp()
+        state = TestState(name: NameState(firstName: "Tim",
+                                          lastName: "Cook"),
+                          birthday: BirthdayState(year: 1960,
+                                                  month: "November",
+                                                  day: 1),
+                          address: AddressState(address: "One Apple Park Way",
+                                                city: "Cupertino",
+                                                country: "USA"),
+                          scandals: ScandalsState(iphone: "Bendgate",
+                                                  other: "Apple Maps launch"),
+                          newProducts: NewProductState(products: [
+                              "Watch", "HomePod", "AirPods"
+                          ]))
+    }
+
+    private func modifyState() {
+        state.name = NameState(firstName: "Steve", lastName: "Jobs")
+        state.birthday = BirthdayState(year: 1955, month: "February", day: 24)
+        state.address = AddressState(address: "One Infinite Loop", city: "Cupertino", country: "USA")
+        state.scandals = ScandalsState(iphone: "Antennagate", other: "Lost iPhone 4 prototype")
+        state.newProducts = NewProductState(products: ["Mac", "iPod", "iPhone", "iPad"])
+    }
+
+    /// Is it possible to create a `Selector` with no `Selector`s and map the state?
+    func testCreateSelector() {
         XCTAssertEqual(nameSelector.map(state), state.name)
         XCTAssertEqual(birthdaySelector.map(state), state.birthday)
         XCTAssertEqual(addressSelector.map(state), state.address)
     }
 
-    /// Is it possible to create a `Selector1` and  map the state?
+    /// Is it possible to create a `Selector` with 1 `Selector`s and map the state?
     func testCreateSelector1() {
         XCTAssertEqual(fullNameSelector.map(state), "Tim Cook")
-        let name = NameState(firstName: "Steve", lastName: "Jobs")
-        XCTAssertEqual(fullNameSelector.projector(name), "Steve Jobs")
+        modifyState()
+        XCTAssertEqual(fullNameSelector.map(state), "Steve Jobs")
     }
 
-    /// Is it possible to create a `Selector2` and  map the state?
+    /// Is it possible to create a `Selector` with 2 `Selector`s and map the state?
     func testCreateSelector2() {
-        let congratulationsSelector = createSelector(fullNameSelector, birthdaySelector) {
+        let congratulationsSelector = Selector(fullNameSelector, birthdaySelector) {
             fullName, birthday in
             "Congratulations \(fullName)! Today is \(birthday.month) \(birthday.day) - your birthday!"
         }
         XCTAssertEqual(congratulationsSelector.map(state),
                        "Congratulations Tim Cook! Today is November 1 - your birthday!")
-        let birthday = BirthdayState(year: 1955, month: "February", day: 24)
-        XCTAssertEqual(congratulationsSelector.projector("Steve Jobs", birthday),
+        modifyState()
+        XCTAssertEqual(congratulationsSelector.map(state),
                        "Congratulations Steve Jobs! Today is February 24 - your birthday!")
     }
 
-    /// Is it possible to create a `Selector3` and  map the state?
+    /// Is it possible to create a `Selector` with 3 `Selector`s and map the state?
     func testCreateSelector3() {
-        let newestProductSelector = createSelector(newProductsSelector) {
+        let newestProductSelector = Selector(newProductsSelector) {
             $0.products.last!
         }
-        let productLaunchSelector = createSelector(fullNameSelector, newestProductSelector, formattedAddressSelector) {
+        let productLaunchSelector = Selector(fullNameSelector, newestProductSelector, formattedAddressSelector) {
             fullName, newestProduct, formattedAddress in
             "Yesterday \(fullName) presented the newest \(newestProduct) at a Town Hall Meeting at Apple (\(formattedAddress))"
         }
-
         XCTAssertEqual(productLaunchSelector.map(state), "Yesterday Tim Cook presented the newest AirPods at a Town Hall Meeting at Apple (One Apple Park Way, Cupertino, USA)")
-        XCTAssertEqual(productLaunchSelector.projector("Steve Jobs", "iPad", "One Infinite Loop, Cupertino, USA"),
-                       "Yesterday Steve Jobs presented the newest iPad at a Town Hall Meeting at Apple (One Infinite Loop, Cupertino, USA)")
+        modifyState()
+        XCTAssertEqual(productLaunchSelector.map(state), "Yesterday Steve Jobs presented the newest iPad at a Town Hall Meeting at Apple (One Infinite Loop, Cupertino, USA)")
     }
 
-    /// Is it possible to create a `Selector4` and  map the state?
+    /// Is it possible to create a `Selector` with 4 `Selector`s and map the state?
     func testCreateSelector4() {
-        let iphoneScandalSelector = createSelector(scandalsSelector) {
+        let iphoneScandalSelector = Selector(scandalsSelector) {
             $0.iphone
         }
-        let scandalMeetingSelector = createSelector(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, iphoneScandalSelector) {
+        let scandalMeetingSelector = Selector(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, iphoneScandalSelector) {
             fullName, formattedBirthday, formattedAddress, iphoneScandal in
             "Today \(fullName) (born \(formattedBirthday)) held a Town Hall Meeting at Apple (\(formattedAddress)) about \(iphoneScandal)"
         }
 
         XCTAssertEqual(scandalMeetingSelector.map(state), "Today Tim Cook (born November 1, 1960) held a Town Hall Meeting at Apple (One Apple Park Way, Cupertino, USA) about Bendgate")
-        XCTAssertEqual(scandalMeetingSelector.projector("Steve Jobs", "February 24, 1955", "One Infinite Loop, Cupertino, USA", "Antennagate"),
-                       "Today Steve Jobs (born February 24, 1955) held a Town Hall Meeting at Apple (One Infinite Loop, Cupertino, USA) about Antennagate")
+        modifyState()
+        XCTAssertEqual(scandalMeetingSelector.map(state), "Today Steve Jobs (born February 24, 1955) held a Town Hall Meeting at Apple (One Infinite Loop, Cupertino, USA) about Antennagate")
     }
 
-    /// Is it possible to create a `Selector5` and  map the state?
+    /// Is it possible to create a `Selector` with 5 `Selector`s and map the state?
     func testCreateSelector5() {
-        let bioSelector = createSelector(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, scandalsSelector, newProductsSelector) {
+        let bioSelector = Selector(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, scandalsSelector, newProductsSelector) {
             fullName, formattedBirthday, formattedAddress, scandals, newProducts in
             """
             Full name: \(fullName)
@@ -117,15 +133,14 @@ class SelectorTests: XCTestCase {
         Scandals: Bendgate and Apple Maps launch
         New products: Watch, HomePod, AirPods
         """)
-        XCTAssertEqual(bioSelector.projector("Steve Jobs", "February 24, 1955", "One Infinite Loop, Cupertino, USA",
-                                             ScandalsState(iphone: "Antennagate", other: "Lost iPhone 4 prototype"),
-                                             NewProductState(products: ["Mac", "iPod", "iPhone", "iPad"])), """
-            Full name: Steve Jobs
-            Birthday: February 24, 1955
-            Work address: One Infinite Loop, Cupertino, USA
-            Scandals: Antennagate and Lost iPhone 4 prototype
-            New products: Mac, iPod, iPhone, iPad
-            """)
+        modifyState()
+        XCTAssertEqual(bioSelector.map(state), """
+        Full name: Steve Jobs
+        Birthday: February 24, 1955
+        Work address: One Infinite Loop, Cupertino, USA
+        Scandals: Antennagate and Lost iPhone 4 prototype
+        New products: Mac, iPod, iPhone, iPad
+        """)
     }
 
     /// Does the selector cache its result?
@@ -171,10 +186,10 @@ class SelectorTests: XCTestCase {
 
     private struct TestState: Equatable {
         var name: NameState
-        let birthday: BirthdayState
-        let address: AddressState
-        let scandals: ScandalsState
-        let newProducts: NewProductState
+        var birthday: BirthdayState
+        var address: AddressState
+        var scandals: ScandalsState
+        var newProducts: NewProductState
     }
 
     private struct NameState: Equatable {

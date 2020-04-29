@@ -8,19 +8,20 @@ import Combine
 
 extension Publisher where Output == Action {
     /**
-     Only lets `Action`s created by the given `ActionCreator`s get through the stream.
+     Only lets `Action`s created from the given `ActionTemplate`s get through the stream.
 
          actions
-             .wasCreated(by: fetchTodosActionCreator)
+             .wasCreated(from: fetchTodosActionTemplate)
              .sink(receiveValue: { action in
                  print("This is a FetchTodosAction: \(action)")
              })
 
-     - Parameter actionCreator: An `ActionCreator` to check
+     - Parameter actionTemplate: An `ActionTemplate` to check
      */
-    public func wasCreated<C: ActionCreator>(by actionCreator: C) -> AnyPublisher<C.ActionType, Self.Failure> {
-        ofType(C.ActionType.self)
-            .filter { $0.wasCreated(by: actionCreator) }
+    public func wasCreated<Payload>(from actionTemplate: ActionTemplate<Payload>)
+        -> AnyPublisher<AnonymousAction<Payload>, Self.Failure> {
+        ofType(AnonymousAction<Payload>.self)
+            .filter { $0.wasCreated(from: actionTemplate) }
             .eraseToAnyPublisher()
     }
 }

@@ -73,11 +73,11 @@ struct IncrementAction: Action {
 }
 
 // 4
-let counterSelector = createRootSelector(keyPath: \AppState.counter)
+let counterSelector = Selector(keyPath: \AppState.counter)
 
 let store = Store(initialState: AppState(counter: 0))
-store.register(reducer: createReducer(
-    reduceOn(IncrementAction.self) { state, action in
+store.register(reducer: Reducer(
+    ReduceOn(IncrementAction.self) { state, action in
         state.counter += action.increment // 2
     }
 ))
@@ -103,9 +103,8 @@ import Fluxor
 import Foundation
 
 class TodosEffects: Effects {
-    let fetchTodos = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
-        actions
-            .ofType(FetchTodosAction.self)
+    let fetchTodos = Effect.dispatching {
+        $0.ofType(FetchTodosAction.self)
             .flatMap { _ in
                 Current.todoService.fetchTodos()
                     .map { DidFetchTodosAction(todos: $0) }

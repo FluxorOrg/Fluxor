@@ -77,16 +77,15 @@ public class Store<State: Encodable>: ObservableObject {
      - Parameter effects: The effects type to register
      */
     public func register(effects: Effects) {
-        effects.effectCreators.forEach {
-            let effect = $0.createEffect(actionPublisher: action.eraseToAnyPublisher())
+        effects.effects.forEach { effect in
             switch effect {
-            case .dispatching(let publisher):
-                publisher
+            case .dispatching(let effectCreator):
+                effectCreator(action.eraseToAnyPublisher())
                     .receive(on: DispatchQueue.main)
                     .sink(receiveValue: self.dispatch(action:))
                     .store(in: &effectCancellables)
-            case .nonDispatching(let cancellable):
-                cancellable
+            case .nonDispatching(let effectCreator):
+                effectCreator(action.eraseToAnyPublisher())
                     .store(in: &effectCancellables)
             }
         }
@@ -108,7 +107,7 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
-    public func select<Value>(_ selector: MemoizedSelector<State, Value>) -> AnyPublisher<Value, Never> {
+    public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
         return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
     }
 
@@ -126,7 +125,7 @@ public class Store<State: Encodable>: ObservableObject {
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
-    public func selectCurrent<Value>(_ selector: MemoizedSelector<State, Value>) -> Value {
+    public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return selector.map(state, stateHash: stateHash)
     }
 
@@ -162,7 +161,7 @@ public class MockStore<State: Encodable>: Store<State> {
      - Parameter selector: The `Selector` to override
      - Parameter value: The value the `Selector` should give
      */
-    public func overrideSelector<Value>(_ selector: MemoizedSelector<State, Value>, value: Value) {
+    public func overrideSelector<Value>(_ selector: Selector<State, Value>, value: Value) {
         selector.setResult(value: value)
     }
 }

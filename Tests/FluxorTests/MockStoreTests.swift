@@ -32,7 +32,7 @@ class MockStoreTests: XCTestCase {
     /// Can the selector be overridden?
     func testOverrideSelector() {
         // Given
-        let selector = createRootSelector(keyPath: \TestState.counter)
+        let selector = Selector(keyPath: \TestState.counter)
         let value = 1337
         // When
         store.overrideSelector(selector, value: value)

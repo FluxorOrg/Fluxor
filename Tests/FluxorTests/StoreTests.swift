@@ -26,7 +26,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.type, .initial)
         XCTAssertNil(store.state.lastAction)
         store.register(reducer: testReducer)
-        store.register(reducer: createReducer { state, action in
+        store.register(reducer: Reducer<TestState> { state, action in
             state.type = .modifiedAgain
             state.lastAction = String(describing: action)
         })
@@ -52,8 +52,8 @@ class StoreTests: XCTestCase {
         let dispatchedActions = interceptor.dispatchedActionsAndStates.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 3)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
-        XCTAssertEqual(dispatchedActions[1] as! AnonymousActionWithoutPayload, TestEffects.responseAction)
-        XCTAssertEqual(dispatchedActions[2] as! AnonymousActionWithEncodablePayload, TestEffects.generateAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, TestEffects.responseAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, TestEffects.generateAction)
         XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
     }
 
@@ -78,7 +78,7 @@ class StoreTests: XCTestCase {
     /// Does a change in `State` publish new value for `Selector`?
     func testSelectMapPublisher() {
         // Given
-        let selector = createRootSelector(keyPath: \TestState.type)
+        let selector = Selector(keyPath: \TestState.type)
         let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = store.select(selector).sink {
@@ -113,7 +113,7 @@ class StoreTests: XCTestCase {
     /// Can we select the current value for `Selector`?
     func testSelectMap() {
         // Given
-        let selector = createRootSelector(keyPath: \TestState.type)
+        let selector = Selector(keyPath: \TestState.type)
         let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
         let valueBeforeAction = store.selectCurrent(selector)
         XCTAssertEqual(valueBeforeAction, .initial)
@@ -150,40 +150,37 @@ class StoreTests: XCTestCase {
         case modifiedAgain
     }
 
-    private let testReducer: Reducer<TestState> = createReducer { state, action in
+    private let testReducer = Reducer<TestState> { state, action in
         state.type = .modified
         state.lastAction = String(describing: action)
     }
 
     private class TestEffects: Effects {
         static let responseActionIdentifier = "TestResponseAction"
-        static let responseActionCreator = createActionCreator(id: TestEffects.responseActionIdentifier)
-        static let responseAction = TestEffects.responseActionCreator.createAction()
-        static let generateActionCreator = createActionCreator(id: "TestGenerateAction", payloadType: Int.self)
-        static let generateAction = TestEffects.generateActionCreator.createAction(payload: 42)
+        static let responseActionTemplate = ActionTemplate(id: TestEffects.responseActionIdentifier)
+        static let responseAction = TestEffects.responseActionTemplate.createAction()
+        static let generateActionTemplate = ActionTemplate(id: "TestGenerateAction", payloadType: Int.self)
+        static let generateAction = TestEffects.generateActionTemplate.createAction(payload: 42)
         static let expectation = XCTestExpectation()
-        static var lastAction: AnonymousActionWithEncodablePayload<Int>?
+        static var lastAction: AnonymousAction<Int>?
         static var threadCheck: (() -> Void)!
 
-        let testEffect = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
-            actions
-                .ofType(TestAction.self)
+        let testEffect = Effect.dispatching {
+            $0.ofType(TestAction.self)
                 .receive(on: DispatchQueue.global(qos: .background))
-                .flatMap { _ in Just(TestEffects.responseAction) }
+                .map { _ in TestEffects.responseAction }
                 .eraseToAnyPublisher()
         }
 
-        let anotherTestEffect = createEffectCreator { (actions: AnyPublisher<Action, Never>) in
-            actions
-                .withIdentifier(TestEffects.responseActionIdentifier)
+        let anotherTestEffect = Effect.dispatching {
+            $0.withIdentifier(TestEffects.responseActionIdentifier)
                 .handleEvents(receiveOutput: { _ in TestEffects.threadCheck() })
-                .flatMap { _ in Just(TestEffects.generateAction) }
+                .map { _ in TestEffects.generateAction }
                 .eraseToAnyPublisher()
         }
 
-        let yetAnotherTestEffect = createEffectCreator { actions in
-            actions
-                .wasCreated(by: TestEffects.generateActionCreator)
+        let yetAnotherTestEffect = Effect.nonDispatching {
+            $0.wasCreated(from: TestEffects.generateActionTemplate)
                 .sink(receiveValue: { action in
                     TestEffects.lastAction = action
                     TestEffects.expectation.fulfill()
@@ -192,15 +189,8 @@ class StoreTests: XCTestCase {
     }
 }
 
-extension AnonymousActionWithoutPayload: Equatable {
-    public static func == (lhs: AnonymousActionWithoutPayload, rhs: AnonymousActionWithoutPayload) -> Bool {
+extension AnonymousAction: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
-    }
-}
-
-extension AnonymousActionWithEncodablePayload: Equatable where Payload == Int {
-    public static func == (lhs: AnonymousActionWithEncodablePayload<Payload>,
-                           rhs: AnonymousActionWithEncodablePayload<Payload>) -> Bool {
-        lhs.id == rhs.id && lhs.payload == rhs.payload
     }
 }
