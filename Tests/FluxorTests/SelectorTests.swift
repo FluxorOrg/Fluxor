@@ -19,7 +19,7 @@ class SelectorTests: XCTestCase {
     private let birthdaySelector = Selector(keyPath: \TestState.birthday)
     private let addressSelector = Selector(keyPath: \TestState.address)
     private let scandalsSelector = Selector(keyPath: \TestState.scandals)
-    private let newProductsSelector = Selector(keyPath: \TestState.newProducts)
+    private let newProductsSelector = Selector(projector: { (state: TestState) in state.newProducts })
 
     private lazy var fullNameSelector = Selector(nameSelector) {
         "\($0.firstName) \($0.lastName)"
