@@ -13,8 +13,8 @@ class ActionPublisherWithIdentifierTests: XCTestCase {
     var actions: PassthroughSubject<Action, Never>!
     let action1Identifier = "TestAction"
     let action2Identifier = "OtherTestAction"
-    lazy var action1Creator = ActionTemplate(id: action1Identifier)
-    lazy var action1 = action1Creator.createAction()
+    lazy var actionTemplate1 = ActionTemplate(id: action1Identifier)
+    lazy var action1 = actionTemplate1.createAction()
 
     override func setUp() {
         super.setUp()

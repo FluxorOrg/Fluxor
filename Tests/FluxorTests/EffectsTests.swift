@@ -13,7 +13,7 @@ import XCTest
 class EffectsTests: XCTestCase {
     var action = PassthroughSubject<Action, Never>()
 
-    func testEffectCreators() {
+    func testEffectsLookup() {
         // Given
         class TestEffects: Effects {
             let notAnEffect = 42
