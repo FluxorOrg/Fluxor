@@ -38,7 +38,7 @@ public struct ReduceOn<State> {
      Creates a `ReduceOn` which only runs `reduce` with actions of the type specificed in `actionType`.
 
      - Parameter actionType: The type of `Action` to filter on
-     - Parameter reduce: The `reduce` function is a pure function which takes a `State` and an `Action` and returns a new `State`.
+     - Parameter reduce: A pure function which takes a `State` and an `Action` and returns a new `State`.
      - Parameter state: The `State` to mutate
      - Parameter action: The `Action` dispatched
      */
@@ -53,7 +53,7 @@ public struct ReduceOn<State> {
      Creates a `ReduceOn` which only runs `reduce` with actions created from the specificed `ActionTemplate`s.
 
      - Parameter actionTemplates: The `ActionTemplate`s to filter on
-     - Parameter reduce: The `reduce` function is a pure function which takes a `State` and an `Action` and returns a new `State`.
+     - Parameter reduce: A pure function which takes a `State` and an `Action` and returns a new `State`.
      - Parameter state: The `State` to mutate
      - Parameter action: The `Action` dispatched
      */
