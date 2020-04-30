@@ -26,9 +26,11 @@ class ActionTests: XCTestCase {
         let actionTemplate = ActionTemplate(id: "something")
         // When
         let action = actionTemplate.createAction()
+        let actionFromFunction = actionTemplate()
         // Then
         XCTAssertTrue(action.wasCreated(from: actionTemplate))
         XCTAssertEqual(json(from: action), #"{"id":"something"}"#)
+        XCTAssertEqual(action, actionFromFunction)
     }
 
     /// Is it possible to create an `ActionTemplate` with an encodable payload type?
@@ -38,10 +40,12 @@ class ActionTests: XCTestCase {
         let payload = 42
         // When
         let action = actionTemplate.createAction(payload: payload)
+        let actionFromFunction = actionTemplate(payload: payload)
         // Then
         XCTAssertTrue(action.wasCreated(from: actionTemplate))
         XCTAssertEqual(action.payload, payload)
         XCTAssertEqual(json(from: action), #"{"id":"something","payload":42}"#)
+        XCTAssertEqual(action, actionFromFunction)
     }
 
     /// Is it possible to create an `ActionTemplate` with a custom payload type?
@@ -51,6 +55,7 @@ class ActionTests: XCTestCase {
         let payload = Person(name: "Steve Jobs", address: "1 Infinite Loop", age: 56)
         // When
         let action = actionTemplate.createAction(payload: payload)
+        let actionFromFunction = actionTemplate(payload: payload)
         // Then
         XCTAssertTrue(action.wasCreated(from: actionTemplate))
         XCTAssertEqual(action.payload.name, payload.name)
@@ -58,6 +63,7 @@ class ActionTests: XCTestCase {
         XCTAssertEqual(action.payload.age, payload.age)
         // swiftlint:disable:next line_length
         XCTAssertEqual(json(from: action), #"{"id":"something","payload":{"address":"1 Infinite Loop","age":56,"name":"Steve Jobs"}}"#)
+        XCTAssertEqual(action, actionFromFunction)
     }
 
     /// Is it possible to create an `ActionTemplate` with a tuple payload type?
@@ -67,11 +73,13 @@ class ActionTests: XCTestCase {
         let payload = (increment: 42, "Boom!")
         // When
         let action = actionTemplate.createAction(payload: payload)
+        let actionFromFunction = actionTemplate(payload: payload)
         // Then
         XCTAssertTrue(action.wasCreated(from: actionTemplate))
         XCTAssertEqual(action.payload.increment, payload.increment)
         XCTAssertEqual(action.payload.1, payload.1)
         XCTAssertEqual(json(from: action), #"{"id":"something","payload":{".1":"Boom!","increment":42}}"#)
+        XCTAssertEqual(action, actionFromFunction)
     }
 
     private struct Person: Equatable {

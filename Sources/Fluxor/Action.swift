@@ -43,12 +43,21 @@ public struct ActionTemplate<Payload> {
     }
 
     /**
-     Creates an `AnonymousAction` with the `ActionCreator`s `id` and the given `payload`.
+     Creates an `AnonymousAction` with the `ActionTemplate`s `id` and the given `payload`.
 
       - Parameter payload: The payload to create the `AnonymousAction` with
      */
     public func createAction(payload: Payload) -> AnonymousAction<Payload> {
         return .init(id: id, payload: payload)
+    }
+
+    /**
+     Creates an `AnonymousAction` with the `ActionTemplate`s `id` and the given `payload`.
+
+      - Parameter payload: The payload to create the `AnonymousAction` with
+     */
+    public func callAsFunction(payload: Payload) -> AnonymousAction<Payload> {
+        return createAction(payload: payload)
     }
 }
 
@@ -58,10 +67,17 @@ public extension ActionTemplate where Payload == Void {
     }
 
     /**
-     Creates an `AnonymousAction` with the `ActionCreator`s `id`.
+     Creates an `AnonymousAction` with the `ActionTemplate`s `id`.
      */
     func createAction() -> AnonymousAction<Payload> {
         return .init(id: id, payload: ())
+    }
+
+    /**
+     Creates an `AnonymousAction` with the `ActionTemplate`s `id`.
+     */
+    func callAsFunction() -> AnonymousAction<Payload> {
+        return createAction()
     }
 }
 
