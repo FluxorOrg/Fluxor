@@ -13,8 +13,10 @@ public struct Reducer<State> {
      The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
 
      - Parameter reduce: The `reduce` function to create a `Reducer` from
+     - Parameter state: The `State` to mutate
+     - Parameter action: The `Action` dispatched
      */
-    public init(reduce: @escaping (inout State, Action) -> Void) {
+    public init(reduce: @escaping (_ state: inout State, _ action: Action) -> Void) {
         self.reduce = reduce
     }
 
@@ -36,12 +38,13 @@ public struct ReduceOn<State> {
 
     /**
      Creates a `ReduceOn` which only runs `reduce` with actions of the type specificed in `actionType`.
-     The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
 
      - Parameter actionType: The type of `Action` to filter on
-     - Parameter reduce: The `reduce` function to create a `ReduceOn` from
+     - Parameter reduce: A pure function which takes a `State` and an `Action` and returns a new `State`.
+     - Parameter state: The `State` to mutate
+     - Parameter action: The `Action` dispatched
      */
-    public init<A: Action>(_ actionType: A.Type, reduce: @escaping (inout State, A) -> Void) {
+    public init<A: Action>(_ actionType: A.Type, reduce: @escaping (_ state: inout State, _ action: A) -> Void) {
         self.reduce = { state, action in
             guard let action = action as? A else { return }
             reduce(&state, action)
@@ -49,18 +52,18 @@ public struct ReduceOn<State> {
     }
 
     /**
-     Creates a `ReduceOn` which only runs `reduce` with actions created from the `ActionTemplate` specificed.
-     The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
+     Creates a `ReduceOn` which only runs `reduce` with actions created from the specificed `ActionTemplate`s.
 
-     - Parameter actionTemplate: The `ActionTemplate` to filter on
-     - Parameter reduce: The `reduce` function to create a `ReduceOn` from
+     - Parameter actionTemplates: The `ActionTemplate`s to filter on
+     - Parameter reduce: A pure function which takes a `State` and an `Action` and returns a new `State`.
+     - Parameter state: The `State` to mutate
+     - Parameter action: The `Action` dispatched
      */
-
-    public init<Payload>(_ actionTemplate: ActionTemplate<Payload>,
-                         reduce: @escaping (inout State, AnonymousAction<Payload>) -> Void) {
+    public init<Payload>(_ actionTemplates: ActionTemplate<Payload>...,
+                         reduce: @escaping (_ state: inout State, _ action: AnonymousAction<Payload>) -> Void) {
         self.reduce = { state, action in
-            guard let anonymousAction = action as? AnonymousAction<Payload>,
-                anonymousAction.wasCreated(from: actionTemplate) else { return }
+            guard let anonymousAction = action as? AnonymousAction<Payload> else { return }
+            guard actionTemplates.contains(where: { anonymousAction.wasCreated(from: $0) }) else { return }
             reduce(&state, anonymousAction)
         }
     }
