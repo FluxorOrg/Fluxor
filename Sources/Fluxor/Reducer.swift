@@ -13,8 +13,10 @@ public struct Reducer<State> {
      The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
 
      - Parameter reduce: The `reduce` function to create a `Reducer` from
+     - Parameter state: The `State` to mutate
+     - Parameter action: The `Action` dispatched
      */
-    public init(reduce: @escaping (inout State, Action) -> Void) {
+    public init(reduce: @escaping (_ state: inout State, _ action: Action) -> Void) {
         self.reduce = reduce
     }
 
