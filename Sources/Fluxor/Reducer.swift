@@ -42,7 +42,7 @@ public struct ReduceOn<State> {
      - Parameter state: The `State` to mutate
      - Parameter action: The `Action` dispatched
      */
-    public init<A: Action>(_ actionType: A.Type, reduce: @escaping (state: inout State, action: A) -> Void) {
+    public init<A: Action>(_ actionType: A.Type, reduce: @escaping (_ state: inout State, _ action: A) -> Void) {
         self.reduce = { state, action in
             guard let action = action as? A else { return }
             reduce(&state, action)
@@ -58,7 +58,7 @@ public struct ReduceOn<State> {
      - Parameter action: The `Action` dispatched
      */
     public init<Payload>(_ actionTemplates: ActionTemplate<Payload>...,
-                         reduce: @escaping (state: inout State, action: AnonymousAction<Payload>) -> Void) {
+                         reduce: @escaping (_ state: inout State, _ action: AnonymousAction<Payload>) -> Void) {
         self.reduce = { state, action in
             guard let anonymousAction = action as? AnonymousAction<Payload> else { return }
             guard actionTemplates.contains(where: { anonymousAction.wasCreated(from: $0) }) else { return }
