@@ -23,3 +23,7 @@ jobs:
           path: "Documentation"
         env:
           GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+      - name: GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v1.4.1
+        with:
+          build_dir: "./.build/documentation"
