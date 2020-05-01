@@ -6,8 +6,8 @@ on:
     - docs
 
 jobs:
-  docs:
-    name: Docs
+  wiki:
+    name: Documentation on Wiki
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,6 +15,7 @@ jobs:
         uses: SwiftDocOrg/swift-doc@master
         with:
           inputs: "Sources"
+          format: "commonmark"
           module-name: Fluxor
           output: "Documentation"
       - name: Upload to Wiki
@@ -23,6 +24,18 @@ jobs:
           path: "Documentation"
         env:
           GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+  pages:
+    name: Documentation on Pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Generate Documentation
+        uses: SwiftDocOrg/swift-doc@master
+        with:
+          inputs: "Sources"
+          format: html
+          module-name: Fluxor
+          output: "Documentation"
       - name: Upload to GitHub Pages
         uses: crazy-max/ghaction-github-pages@v1.4.1
         with:
