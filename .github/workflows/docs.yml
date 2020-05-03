@@ -12,7 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install swift-doc
-        run: brew install swiftdocorg/formulae/swift-doc
+        run: |
+          git clone https://github.com/SwiftDocOrg/swift-doc
+          cd swift-doc
+          make install
+          cd ..
       - name: Generate Documentation for Wiki
         run: swift-doc generate Sources/Fluxor* --module-name Fluxor --output Documentation-Wiki
       - name: Upload to Wiki
