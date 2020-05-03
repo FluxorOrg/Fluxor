@@ -19,13 +19,13 @@ public enum Effect {
 }
 
 /// A collection of `Effect`s.
-public protocol Effects: AnyObject {
+public protocol Effects {
     /// The `Effect`s to register on the `Store`.
-    var effects: [Effect] { get }
+    var enabledEffects: [Effect] { get }
 }
 
 public extension Effects {
-    var effects: [Effect] {
+    var enabledEffects: [Effect] {
         Mirror(reflecting: self).children.compactMap { $0.value as? Effect }
     }
 }

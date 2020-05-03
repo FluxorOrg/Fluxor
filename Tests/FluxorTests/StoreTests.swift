@@ -155,7 +155,7 @@ class StoreTests: XCTestCase {
         state.lastAction = String(describing: action)
     }
 
-    private class TestEffects: Effects {
+    private struct TestEffects: Effects {
         static let responseActionIdentifier = "TestResponseAction"
         static let responseActionTemplate = ActionTemplate(id: TestEffects.responseActionIdentifier)
         static let responseAction = TestEffects.responseActionTemplate.createAction()
