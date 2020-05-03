@@ -10,6 +10,7 @@ import Foundation
  A type-erased `Encodable` value.
 
  Heavily inspired by: https://github.com/Flight-School/AnyCodable
+
  The above can't be used as a dependency, as it triggers linker errors
  when Fluxor and FluxorTestSupport is used in a test target.
  */
