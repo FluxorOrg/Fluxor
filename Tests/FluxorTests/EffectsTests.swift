@@ -15,7 +15,7 @@ class EffectsTests: XCTestCase {
 
     func testEffectsLookup() {
         // Given
-        class TestEffects: Effects {
+        struct TestEffects: Effects {
             let notAnEffect = 42
             let anEffect = Effect.nonDispatching { $0.sink { print($0) } }
         }
