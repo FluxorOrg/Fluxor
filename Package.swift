@@ -28,7 +28,7 @@ let package = Package(
             dependencies: ["AnyCodable"]),
         .testTarget(
             name: "FluxorTests",
-            dependencies: ["Fluxor"]),
+            dependencies: ["Fluxor", "FluxorTestSupport"]),
         .target(
             name: "FluxorTestSupport",
             dependencies: ["Fluxor"]),

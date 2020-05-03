@@ -121,7 +121,7 @@ If read-only access to all `Actions` dispatched and state changes is needed, an 
 Fluxor comes with two implementations of `Interceptor`:
 
 * [**PrintInterceptor**](Sources/Fluxor/Interceptors/PrintInterceptor.swift) for printing `Action`s and state changes to the log.
-* [**TestInterceptor**](Sources/Fluxor/Interceptors/TestInterceptor.swift) to help assert that specific `Action`s was dispatched in unit tests.
+* [**TestInterceptor**](Sources/FluxorTestSupport/TestInterceptor.swift) to help assert that specific `Action`s was dispatched in unit tests.
 
 ## Debugging with FluxorExplorer
 Fluxor has a companion app, [**FluxorExplorer**](https://github.com/FluxorOrg/FluxorExplorer), which helps when debugging apps using Fluxor. FluxorExplorer lets you look through the dispatched `Action`s and state changes, to debug the data flow of the app.

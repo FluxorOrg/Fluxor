@@ -1,8 +1,10 @@
 /**
- * Fluxor
+ * FluxorTestSupport
  *  Copyright (c) Morten Bjerg Gregersen 2020
  *  MIT license, see LICENSE file for details
  */
+
+import Fluxor
 
 /// A `Interceptor` to use in unit tests, to assert specific `Action`s are dispatched.
 public class TestInterceptor<State>: Interceptor {

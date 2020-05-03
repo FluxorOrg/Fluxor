@@ -6,6 +6,7 @@
 
 import Combine
 @testable import Fluxor
+import FluxorTestSupport
 import XCTest
 
 // swiftlint:disable force_cast
