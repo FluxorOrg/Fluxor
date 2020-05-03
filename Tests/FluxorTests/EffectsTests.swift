@@ -22,13 +22,13 @@ class EffectsTests: XCTestCase {
         // When
         let testEffects = TestEffects()
         // Then
-        XCTAssertEqual(testEffects.effects.count, 1)
+        XCTAssertEqual(testEffects.enabledEffects.count, 1)
     }
 
     func testEffectCreatedFromPublisher() {
         // Given
         let effectCreator = { (actionPublisher: AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never> in
-            actionPublisher.filter { _ in true }.eraseToAnyPublisher()
+            actionPublisher.eraseToAnyPublisher()
         }
         // When
         let effect = Effect.dispatching(effectCreator)
