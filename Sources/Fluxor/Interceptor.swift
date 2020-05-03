@@ -7,7 +7,13 @@
 /// A type which intercepts all `Action`s and the  `State` changes happening in a `Store`.
 public protocol Interceptor {
     associatedtype State
-    /// The function called when an `Action` is dispatched on a `Store`.
+    /**
+     The function called when an `Action` is dispatched on a `Store`.
+
+     - Parameter action: The `Action` dispatched
+     - Parameter oldState: The `State` before the `Action` was dispatched
+     - Parameter newState: The `State` after the `Action` was dispatched
+     */
     func actionDispatched(action: Action, oldState: State, newState: State)
 }
 

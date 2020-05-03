@@ -6,16 +6,21 @@
 
 import Foundation.NSUUID
 
-/// A pure function which takes a `State` and returns a `Value` based on it.
+/// Something which selects a `Value` from the specified `State`.
 public protocol SelectorProtocol {
     /// The input for the `Selector`.
     associatedtype State
     /// The output of the `Selector`,
     associatedtype Value
-    /// The function called when selecting from a `Store`.
+    /// A pure function which takes a `State` and returns a `Value` from it.
     func map(_ state: State) -> Value
 }
 
+/**
+ A type which takes a `State` and returns a `Value` from it.
+
+ `Selector`s can be based on other `Selector`s making it possible to select a combined `Value`.
+ */
 public class Selector<State, Value>: SelectorProtocol {
     /// The closue used for the mapping.
     internal let map: (State) -> Value

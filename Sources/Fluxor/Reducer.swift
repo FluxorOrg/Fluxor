@@ -6,11 +6,13 @@
 
 /// A type which takes a `State` and `Action` returns a new `State`.
 public struct Reducer<State> {
+    /// A pure function which takes the a `State` and an `Action` and returns a new `State`.
     public let reduce: (inout State, Action) -> Void
 
     /**
      Creates a `Reducer` from a `reduce` function.
-     The `reduce` function is a pure function which takes the current `State` and an `Action` and returns a new `State`.
+     
+     The `reduce` function is a pure function which takes the a `State` and an `Action` and returns a new `State`.
 
      - Parameter reduce: The `reduce` function to create a `Reducer` from
      - Parameter state: The `State` to mutate
@@ -34,6 +36,7 @@ public struct Reducer<State> {
 
 /// A part of a `Reducer` which only gets triggered on certain `Action`s or `ActionTemplate`s.
 public struct ReduceOn<State> {
+    /// A pure function which takes the a `State` and an `Action` and returns a new `State`.
     public let reduce: (inout State, Action) -> Void
 
     /**
