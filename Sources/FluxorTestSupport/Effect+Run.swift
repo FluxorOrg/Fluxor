@@ -17,16 +17,14 @@ public extension Effect {
 
      - Parameter action: The `Action` to send to the `Effect`
      - Parameter expectedCount: The count of `Action`s to wait for
-     - Parameter file: The calling file (used in log if failing)
-     - Parameter line: The calling line (used in log if failing)
      */
-    func run(with action: Action, expectedCount: Int = 1, file: StaticString = #file, line: UInt = #line) -> [Action] {
+    func run(with action: Action, expectedCount: Int = 1) throws -> [Action] {
         let actions = PassthroughSubject<Action, Never>()
         guard case .dispatching(let effectCreator) = self else { return [] }
         let recorder = ActionRecorder(numberOfActions: expectedCount)
         effectCreator(actions.eraseToAnyPublisher()).subscribe(recorder)
         actions.send(action)
-        recorder.waitForAllActions()
+        try recorder.waitForAllActions()
         return recorder.actions
     }
 
@@ -53,6 +51,10 @@ private class ActionRecorder: Subscriber {
     typealias Input = Action
     typealias Failure = Never
 
+    enum RecordingError: Error {
+        case expectedCountNotReached(message: String)
+    }
+
     private let expectation = XCTestExpectation()
     private let waiter = XCTWaiter()
     private(set) var actions = [Action]() { didSet { expectation.fulfill() } }
@@ -65,10 +67,8 @@ private class ActionRecorder: Subscriber {
      Wait for all the expected `Action`s to be published.
 
      - Parameter timeout: The time waiting for the `Action`s
-     - Parameter file: The calling file (used in log if failing)
-     - Parameter line: The calling line (used in log if failing)
      */
-    func waitForAllActions(timeout: TimeInterval = 1, file: StaticString = #file, line: UInt = #line) {
+    func waitForAllActions(timeout: TimeInterval = 1) throws {
         guard actions.count < expectation.expectedFulfillmentCount else { return }
         let waitResult = waiter.wait(for: [expectation], timeout: timeout)
         if waitResult != .completed {
@@ -78,8 +78,8 @@ private class ActionRecorder: Subscriber {
             let formattedNumberOfActions = valueFormatter(expectation.expectedFulfillmentCount)
             let formattedActions = valueFormatter(actions.count)
 
-            XCTFail("Waiting for \(formattedNumberOfActions) timed out. Received only \(formattedActions).",
-                    file: file, line: line)
+            let errorMessage = "Waiting for \(formattedNumberOfActions) timed out. Received only \(formattedActions)."
+            throw RecordingError.expectedCountNotReached(message: errorMessage)
         }
     }
 

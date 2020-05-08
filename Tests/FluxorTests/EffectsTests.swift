@@ -25,15 +25,19 @@ class EffectsTests: XCTestCase {
         XCTAssertEqual(testEffects.enabledEffects.count, 1)
     }
 
-    func testEffectCreatedFromPublisher() {
+    func testEffectRunDispatching() throws {
         // Given
-        let effectCreator = { (actionPublisher: AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never> in
+        let effect = Effect.dispatching { (actionPublisher: AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never> in
             actionPublisher.eraseToAnyPublisher()
         }
         // When
-        let effect = Effect.dispatching(effectCreator)
+        let action = Test1Action()
+        let actions: [Action] = try effect.run(with: action)
+        effect.run(with: action) // Returns early because of wrong type
         // Then
-        guard case .dispatching = effect else { XCTFail("The effect type is wrong."); return }
+        wait(for: [expectation], timeout: 1)
+        XCTAssertEqual(actions[0] as! Test2Action, action2)
+        XCTAssertThrowsError(try effect.run(with: action, expectedCount: 2))
     }
 
     func testEffectCreatedFromCancellable() {
