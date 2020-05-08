@@ -25,7 +25,7 @@ class EffectsTests: XCTestCase {
         XCTAssertEqual(testEffects.enabledEffects.count, 1)
     }
 
-    func testEffectRunDispatching() throws {
+    func testEffectRunDispatchingOne() throws {
         // Given
         let action2 = Test2Action()
         let expectation = XCTestExpectation(description: debugDescription)
@@ -48,7 +48,31 @@ class EffectsTests: XCTestCase {
         XCTAssertThrowsError(try effect.run(with: action, expectedCount: 2))
     }
 
-    func testEffectRunNonDispatching() {
+    func testEffectRunDispatchingMultiple() throws {
+        // Given
+        let action2 = Test2Action()
+        let action3 = Test3Action()
+        let expectation = XCTestExpectation(description: debugDescription)
+        expectation.expectedFulfillmentCount = 1
+        let effect = Effect.dispatchingMultiple {
+            $0.ofType(Test1Action.self)
+                .map { _ in
+                    expectation.fulfill()
+                    return [action2, action3]
+                }
+                .eraseToAnyPublisher()
+        }
+        // When
+        let action = Test1Action()
+        let actions: [Action] = try effect.run(with: action, expectedCount: 2)
+        effect.run(with: action) // Returns early because of wrong type
+        // Then
+        wait(for: [expectation], timeout: 1)
+        XCTAssertEqual(actions[0] as! Test2Action, action2)
+        XCTAssertEqual(actions[1] as! Test3Action, action3)
+    }
+
+    func testEffectRunNonDispatching() throws {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.expectedFulfillmentCount = 1
@@ -58,13 +82,18 @@ class EffectsTests: XCTestCase {
         // When
         let action = Test1Action()
         effect.run(with: action)
-        _ = effect.run(with: action) // Returns early because of wrong type
+        XCTAssertThrowsError(try effect.run(with: action, expectedCount: 1)) // Returns early because of wrong type
         // Then
         wait(for: [expectation], timeout: 1)
     }
 }
 
 private struct Test1Action: Action {}
+
 private struct Test2Action: Action, Equatable {
+    let id = UUID()
+}
+
+private struct Test3Action: Action, Equatable {
     let id = UUID()
 }

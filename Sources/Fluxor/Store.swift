@@ -78,16 +78,20 @@ open class Store<State: Encodable>: ObservableObject {
      */
     public func register(effects: Effects) {
         effects.enabledEffects.forEach { effect in
+            let cancellable: AnyCancellable
             switch effect {
             case .dispatchingOne(let effectCreator):
-                effectCreator(action.eraseToAnyPublisher())
+                cancellable = effectCreator(action.eraseToAnyPublisher())
                     .receive(on: DispatchQueue.main)
                     .sink(receiveValue: self.dispatch(action:))
-                    .store(in: &effectCancellables)
+            case .dispatchingMultiple(let effectCreator):
+                cancellable = effectCreator(action.eraseToAnyPublisher())
+                    .receive(on: DispatchQueue.main)
+                    .sink { $0.forEach(self.dispatch(action:)) }
             case .nonDispatching(let effectCreator):
-                effectCreator(action.eraseToAnyPublisher())
-                    .store(in: &effectCancellables)
+                cancellable = effectCreator(action.eraseToAnyPublisher())
             }
+            cancellable.store(in: &effectCancellables)
         }
     }
 

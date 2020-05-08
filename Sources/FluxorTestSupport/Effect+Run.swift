@@ -10,6 +10,10 @@ import Fluxor
 import XCTest
 
 public extension Effect {
+    enum RunError: Error {
+        case wrongType
+    }
+
     /**
      Run the `Effect` with the specified `Action` and return the published `Action`s.
 
@@ -20,9 +24,17 @@ public extension Effect {
      */
     func run(with action: Action, expectedCount: Int = 1) throws -> [Action] {
         let actions = PassthroughSubject<Action, Never>()
-        guard case .dispatchingOne(let effectCreator) = self else { return [] }
         let recorder = ActionRecorder(numberOfActions: expectedCount)
-        effectCreator(actions.eraseToAnyPublisher()).subscribe(recorder)
+        let publisher: AnyPublisher<[Action], Never>
+        switch self {
+        case .dispatchingOne(let effectCreator):
+            publisher = effectCreator(actions.eraseToAnyPublisher()).map { [$0] }.eraseToAnyPublisher()
+        case .dispatchingMultiple(let effectCreator):
+            publisher = effectCreator(actions.eraseToAnyPublisher())
+        case .nonDispatching:
+            throw RunError.wrongType
+        }
+        publisher.subscribe(recorder)
         actions.send(action)
         try recorder.waitForAllActions()
         return recorder.actions
@@ -48,7 +60,7 @@ public extension Effect {
  Inspired by: https://vojtastavik.com/2019/12/11/combine-publisher-blocking-recorder/
  */
 private class ActionRecorder {
-    typealias Input = Action
+    typealias Input = [Action]
     typealias Failure = Never
 
     enum RecordingError: Error {
@@ -91,7 +103,7 @@ extension ActionRecorder: Subscriber {
 
     func receive(_ input: Input) -> Subscribers.Demand {
         DispatchQueue.main.async {
-            self.actions.append(input)
+            input.forEach { self.actions.append($0) }
         }
         return .unlimited
     }
