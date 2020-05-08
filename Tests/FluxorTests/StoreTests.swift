@@ -137,7 +137,7 @@ class StoreTests: XCTestCase {
         let valueAfterAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueAfterAction, .modified)
     }
-    
+
     /// Can we get all state changes in a `MockStore`?
     func testMockStoreStateChanges() {
         // Given
