@@ -13,6 +13,7 @@ import XCTest
 class EffectsTests: XCTestCase {
     var action = PassthroughSubject<Action, Never>()
 
+    /// Can we lookup `Effect`s?
     func testEffectsLookup() {
         // Given
         struct TestEffects: Effects {
@@ -25,6 +26,7 @@ class EffectsTests: XCTestCase {
         XCTAssertEqual(testEffects.enabledEffects.count, 1)
     }
 
+    /// Can we run a single dispatching `Effect`?
     func testEffectRunDispatchingOne() throws {
         // Given
         let action2 = Test2Action()
@@ -48,6 +50,7 @@ class EffectsTests: XCTestCase {
         XCTAssertThrowsError(try effect.run(with: action, expectedCount: 2))
     }
 
+    /// Can we run a multi dispatching `Effect`?
     func testEffectRunDispatchingMultiple() throws {
         // Given
         let action2 = Test2Action()
@@ -72,6 +75,7 @@ class EffectsTests: XCTestCase {
         XCTAssertEqual(actions[1] as! Test3Action, action3)
     }
 
+    /// Can we run a non dispatching `Effect`?
     func testEffectRunNonDispatching() throws {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
@@ -85,6 +89,21 @@ class EffectsTests: XCTestCase {
         XCTAssertThrowsError(try effect.run(with: action, expectedCount: 1)) // Returns early because of wrong type
         // Then
         wait(for: [expectation], timeout: 1)
+    }
+
+    /// Only here for test coverage of ActionRecorder's empty completion function.
+    func testActionRecorderCompletion() throws {
+        var cancellable: AnyCancellable!
+        let effect = Effect.dispatchingOne {
+            let publisher = PassthroughSubject<Action, Never>()
+            cancellable = $0.sink {
+                publisher.send($0)
+                publisher.send(completion: .finished)
+            }
+            return publisher.eraseToAnyPublisher()
+        }
+        _ = try effect.run(with: Test1Action(), expectedCount: 1)
+        XCTAssertNotNil(cancellable)
     }
 }
 
