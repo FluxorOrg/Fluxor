@@ -5,6 +5,7 @@
  */
 
 @testable import Fluxor
+import FluxorTestSupport
 import XCTest
 
 class MockStoreTests: XCTestCase {
