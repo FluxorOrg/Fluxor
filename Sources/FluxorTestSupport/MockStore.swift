@@ -11,13 +11,19 @@ import Fluxor
  or override the value coming out of `Selector`s.
  */
 public class MockStore<State: Encodable>: Store<State> {
+    public var stateChanges: [(action: Action, oldState: State, newState: State)] {
+        self.testInterceptor.stateChanges
+    }
+
     private let setState = ActionTemplate(id: "Set State", payloadType: State.self)
+    private let testInterceptor = TestInterceptor<State>()
 
     public override init(initialState: State, reducers: [Reducer<State>] = [], effects: [Effects] = []) {
         let reducers = reducers + [Reducer<State>(ReduceOn(setState) { state, action in
             state = action.payload
         })]
         super.init(initialState: initialState, reducers: reducers)
+        super.register(interceptor: self.testInterceptor)
     }
 
     /**
