@@ -137,6 +137,23 @@ class StoreTests: XCTestCase {
         let valueAfterAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueAfterAction, .modified)
     }
+    
+    /// Can we get all state changes in a `MockStore`?
+    func testMockStoreStateChanges() {
+        // Given
+        let mockStore = MockStore(initialState: TestState(type: .initial, lastAction: nil))
+        let action = TestAction()
+        let modifiedState = TestState(type: .modified, lastAction: "Set State")
+        // When
+        mockStore.dispatch(action: action)
+        mockStore.setState(newState: modifiedState)
+        // Then
+        XCTAssertEqual(mockStore.stateChanges.count, 2)
+        XCTAssertEqual(mockStore.stateChanges[0].action as! TestAction, action)
+        let setStateAction = mockStore.stateChanges[1].action as! AnonymousAction<TestState>
+        XCTAssertEqual(setStateAction.id, "Set State")
+        XCTAssertEqual(mockStore.stateChanges[1].newState, modifiedState)
+    }
 
     private struct TestAction: Action, Equatable {}
 

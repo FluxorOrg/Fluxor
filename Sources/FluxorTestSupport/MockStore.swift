@@ -6,6 +6,8 @@
 
 import Fluxor
 
+// swiftlint:disable large_tuple
+
 /**
  A `Mockstore` is intended to be used in unit tests where you want to set a new `State` directly
  or override the value coming out of `Selector`s.
