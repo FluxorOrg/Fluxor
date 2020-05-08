@@ -51,7 +51,7 @@ Fluxor can be installed as a dependency to your project using [Swift Package Man
 
 ### Requirements
 
-- iOS 13.0+ / Mac OS X 10.15+ / tvOS 13.0+
+- iOS 13.0+ / macOS 10.15+ / tvOS 13.0+
 - Xcode 11.0+
 - Swift 5.2+
 
