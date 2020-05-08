@@ -183,14 +183,14 @@ class StoreTests: XCTestCase {
         static var lastAction: AnonymousAction<Int>?
         static var threadCheck: (() -> Void)!
 
-        let testEffect = Effect.dispatching {
+        let testEffect = Effect.dispatchingOne {
             $0.ofType(TestAction.self)
                 .receive(on: DispatchQueue.global(qos: .background))
                 .map { _ in TestEffects.responseAction }
                 .eraseToAnyPublisher()
         }
 
-        let anotherTestEffect = Effect.dispatching {
+        let anotherTestEffect = Effect.dispatchingOne {
             $0.withIdentifier(TestEffects.responseActionIdentifier)
                 .handleEvents(receiveOutput: { _ in TestEffects.threadCheck() })
                 .map { _ in TestEffects.generateAction }

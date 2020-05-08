@@ -30,7 +30,7 @@ class EffectsTests: XCTestCase {
         let action2 = Test2Action()
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.expectedFulfillmentCount = 1
-        let effect = Effect.dispatching {
+        let effect = Effect.dispatchingOne {
             $0.ofType(Test1Action.self)
                 .map { _ in
                     expectation.fulfill()

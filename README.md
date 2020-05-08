@@ -106,7 +106,7 @@ import Fluxor
 import Foundation
 
 class TodosEffects: Effects {
-    let fetchTodos = Effect.dispatching {
+    let fetchTodos = Effect.dispatchingOne {
         $0.ofType(FetchTodosAction.self)
             .flatMap { _ in
                 Current.todoService.fetchTodos()

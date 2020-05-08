@@ -79,7 +79,7 @@ open class Store<State: Encodable>: ObservableObject {
     public func register(effects: Effects) {
         effects.enabledEffects.forEach { effect in
             switch effect {
-            case .dispatching(let effectCreator):
+            case .dispatchingOne(let effectCreator):
                 effectCreator(action.eraseToAnyPublisher())
                     .receive(on: DispatchQueue.main)
                     .sink(receiveValue: self.dispatch(action:))

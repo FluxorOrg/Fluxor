@@ -20,7 +20,7 @@ public extension Effect {
      */
     func run(with action: Action, expectedCount: Int = 1) throws -> [Action] {
         let actions = PassthroughSubject<Action, Never>()
-        guard case .dispatching(let effectCreator) = self else { return [] }
+        guard case .dispatchingOne(let effectCreator) = self else { return [] }
         let recorder = ActionRecorder(numberOfActions: expectedCount)
         effectCreator(actions.eraseToAnyPublisher()).subscribe(recorder)
         actions.send(action)
