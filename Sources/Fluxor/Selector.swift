@@ -6,16 +6,21 @@
 
 import Foundation.NSUUID
 
-/// A pure function which takes a `State` and returns a `Value` based on it.
+/// Something which selects a `Value` from the specified `State`.
 public protocol SelectorProtocol {
     /// The input for the `Selector`.
     associatedtype State
     /// The output of the `Selector`,
     associatedtype Value
-    /// The function called when selecting from a `Store`.
+    /// A pure function which takes a `State` and returns a `Value` from it.
     func map(_ state: State) -> Value
 }
 
+/**
+ A type which takes a `State` and returns a `Value` from it.
+
+ `Selector`s can be based on other `Selector`s making it possible to select a combined `Value`.
+ */
 public class Selector<State, Value>: SelectorProtocol {
     /// The closue used for the mapping.
     internal let map: (State) -> Value
@@ -151,13 +156,10 @@ extension Selector {
     /**
      Sets the value and the corresponding `stateHash`.
 
-     If the selector is overriden in a `MockStore` the `stateHash` will be nil
-     and `map` will always return the `value`.
-
      - Parameter value: The value to save
      - Parameter stateHash: The hash of the state the value was selected from
      */
-    internal func setResult(value: Value, forStateHash stateHash: UUID? = nil) {
+    internal func setResult(value: Value, forStateHash stateHash: UUID) {
         result = (stateHash: stateHash, value: value)
     }
 
@@ -180,5 +182,19 @@ extension Selector {
         let value = map(state)
         setResult(value: value, forStateHash: stateHash)
         return value
+    }
+}
+
+/// Test support.
+extension Selector {
+    /**
+     __Test support:__ Mock the result of the `Selector`. Should only be used by `MockStore` in `FluxorTestSupport`.
+
+     If the selector is mocked the `stateHash` will be nil and `map` will always return the `value`.
+
+     - Parameter value: The value to use as result
+     */
+    public func mockResult(value: Value) {
+        result = (stateHash: nil, value: value)
     }
 }

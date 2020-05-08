@@ -6,9 +6,9 @@
 
 import Foundation
 
-/// A `Interceptor` to use when debugging which `Action`s are dispatched.
+/// A `Interceptor` to use when debugging. Every `Action`s and `State` change are printed ot the console.
 public class PrintInterceptor<State: Encodable>: Interceptor {
-    let print: (String) -> Void
+    private let print: (String) -> Void
 
     public convenience init() {
         self.init(print: { Swift.print($0) })

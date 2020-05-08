@@ -23,7 +23,7 @@ import struct Foundation.UUID
  To select a value in the `State` the callers can either use a `Selector` or a key path.
  It is possible to get a `Publisher` for the value or just to select the current value.
  */
-public class Store<State: Encodable>: ObservableObject {
+open class Store<State: Encodable>: ObservableObject {
     @Published internal fileprivate(set) var state: State { willSet { stateHash = UUID() } }
     internal private(set) var stateHash = UUID()
     private(set) var action = PassthroughSubject<Action, Never>()
@@ -136,32 +136,5 @@ public class Store<State: Encodable>: ObservableObject {
      */
     public func selectCurrent<Value>(_ keyPath: KeyPath<State, Value>) -> Value {
         return state[keyPath: keyPath]
-    }
-}
-
-/**
- A `Mockstore` is intended to be used in unit tests where you want to set a new `State` directly
- or override the value coming out of `Selector`s.
- */
-public class MockStore<State: Encodable>: Store<State> {
-    /**
-     Sets a new `State` on the `Store`.
-
-     - Parameter newState: The new `State` to set on the `Store`
-     */
-    public func setState(newState: State) {
-        state = newState
-    }
-
-    /**
-     Overrides the `Selector` with a 'default' value.
-
-     When a `Selector` is overriden it will always give the same value.
-
-     - Parameter selector: The `Selector` to override
-     - Parameter value: The value the `Selector` should give
-     */
-    public func overrideSelector<Value>(_ selector: Selector<State, Value>, value: Value) {
-        selector.setResult(value: value)
     }
 }

@@ -5,6 +5,7 @@
  */
 
 import Fluxor
+import FluxorTestSupport
 import XCTest
 
 // swiftlint:disable force_cast
@@ -24,11 +25,11 @@ class TestInterceptorTests: XCTestCase {
         interceptor.actionDispatched(action: action1, oldState: oldState1, newState: newState1)
         interceptor.actionDispatched(action: action2, oldState: oldState2, newState: newState2)
         // Then
-        let first = interceptor.dispatchedActionsAndStates[0]
+        let first = interceptor.stateChanges[0]
         XCTAssertEqual((first.action as! AnonymousAction<Void>).id, action1.id)
         XCTAssertEqual(first.oldState, oldState1)
         XCTAssertEqual(first.newState, newState1)
-        let second = interceptor.dispatchedActionsAndStates[1]
+        let second = interceptor.stateChanges[1]
         XCTAssertEqual((second.action as! AnonymousAction<Void>).id, action2.id)
         XCTAssertEqual(second.oldState, oldState2)
         XCTAssertEqual(second.newState, newState2)
