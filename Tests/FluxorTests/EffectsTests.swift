@@ -13,6 +13,7 @@ import XCTest
 class EffectsTests: XCTestCase {
     var action = PassthroughSubject<Action, Never>()
 
+    /// Can we lookup `Effect`s?
     func testEffectsLookup() {
         // Given
         struct TestEffects: Effects {
@@ -25,12 +26,13 @@ class EffectsTests: XCTestCase {
         XCTAssertEqual(testEffects.enabledEffects.count, 1)
     }
 
-    func testEffectRunDispatching() {
+    /// Can we run a single dispatching `Effect`?
+    func testEffectRunDispatchingOne() throws {
         // Given
         let action2 = Test2Action()
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.expectedFulfillmentCount = 1
-        let effect = Effect.dispatching {
+        let effect = Effect.dispatchingOne {
             $0.ofType(Test1Action.self)
                 .map { _ in
                     expectation.fulfill()
@@ -40,14 +42,41 @@ class EffectsTests: XCTestCase {
         }
         // When
         let action = Test1Action()
-        let actions: [Action] = effect.run(with: action)
+        let actions: [Action] = try effect.run(with: action)
         effect.run(with: action) // Returns early because of wrong type
         // Then
         wait(for: [expectation], timeout: 1)
         XCTAssertEqual(actions[0] as! Test2Action, action2)
+        XCTAssertThrowsError(try effect.run(with: action, expectedCount: 2))
     }
 
-    func testEffectRunNonDispatching() {
+    /// Can we run a multi dispatching `Effect`?
+    func testEffectRunDispatchingMultiple() throws {
+        // Given
+        let action2 = Test2Action()
+        let action3 = Test3Action()
+        let expectation = XCTestExpectation(description: debugDescription)
+        expectation.expectedFulfillmentCount = 1
+        let effect = Effect.dispatchingMultiple {
+            $0.ofType(Test1Action.self)
+                .map { _ in
+                    expectation.fulfill()
+                    return [action2, action3]
+                }
+                .eraseToAnyPublisher()
+        }
+        // When
+        let action = Test1Action()
+        let actions: [Action] = try effect.run(with: action, expectedCount: 2)
+        effect.run(with: action) // Returns early because of wrong type
+        // Then
+        wait(for: [expectation], timeout: 1)
+        XCTAssertEqual(actions[0] as! Test2Action, action2)
+        XCTAssertEqual(actions[1] as! Test3Action, action3)
+    }
+
+    /// Can we run a non dispatching `Effect`?
+    func testEffectRunNonDispatching() throws {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.expectedFulfillmentCount = 1
@@ -57,13 +86,33 @@ class EffectsTests: XCTestCase {
         // When
         let action = Test1Action()
         effect.run(with: action)
-        _ = effect.run(with: action) // Returns early because of wrong type
+        XCTAssertThrowsError(try effect.run(with: action, expectedCount: 1)) // Returns early because of wrong type
         // Then
         wait(for: [expectation], timeout: 1)
+    }
+
+    /// Only here for test coverage of ActionRecorder's empty completion function.
+    func testActionRecorderCompletion() throws {
+        var cancellable: AnyCancellable!
+        let effect = Effect.dispatchingOne {
+            let publisher = PassthroughSubject<Action, Never>()
+            cancellable = $0.sink {
+                publisher.send($0)
+                publisher.send(completion: .finished)
+            }
+            return publisher.eraseToAnyPublisher()
+        }
+        _ = try effect.run(with: Test1Action(), expectedCount: 1)
+        XCTAssertNotNil(cancellable)
     }
 }
 
 private struct Test1Action: Action {}
+
 private struct Test2Action: Action, Equatable {
+    let id = UUID()
+}
+
+private struct Test3Action: Action, Equatable {
     let id = UUID()
 }

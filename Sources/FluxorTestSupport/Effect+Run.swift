@@ -10,6 +10,10 @@ import Fluxor
 import XCTest
 
 public extension Effect {
+    enum RunError: Error {
+        case wrongType
+    }
+
     /**
      Run the `Effect` with the specified `Action` and return the published `Action`s.
 
@@ -17,16 +21,22 @@ public extension Effect {
 
      - Parameter action: The `Action` to send to the `Effect`
      - Parameter expectedCount: The count of `Action`s to wait for
-     - Parameter file: The calling file (used in log if failing)
-     - Parameter line: The calling line (used in log if failing)
      */
-    func run(with action: Action, expectedCount: Int = 1, file: StaticString = #file, line: UInt = #line) -> [Action] {
+    func run(with action: Action, expectedCount: Int = 1) throws -> [Action] {
         let actions = PassthroughSubject<Action, Never>()
-        guard case .dispatching(let effectCreator) = self else { return [] }
         let recorder = ActionRecorder(numberOfActions: expectedCount)
-        effectCreator(actions.eraseToAnyPublisher()).subscribe(recorder)
+        let publisher: AnyPublisher<[Action], Never>
+        switch self {
+        case .dispatchingOne(let effectCreator):
+            publisher = effectCreator(actions.eraseToAnyPublisher()).map { [$0] }.eraseToAnyPublisher()
+        case .dispatchingMultiple(let effectCreator):
+            publisher = effectCreator(actions.eraseToAnyPublisher())
+        case .nonDispatching:
+            throw RunError.wrongType
+        }
+        publisher.subscribe(recorder)
         actions.send(action)
-        recorder.waitForAllActions()
+        try recorder.waitForAllActions()
         return recorder.actions
     }
 
@@ -50,8 +60,12 @@ public extension Effect {
  Inspired by: https://vojtastavik.com/2019/12/11/combine-publisher-blocking-recorder/
  */
 private class ActionRecorder {
-    typealias Input = Action
+    typealias Input = [Action]
     typealias Failure = Never
+
+    enum RecordingError: Error {
+        case expectedCountNotReached(message: String)
+    }
 
     private let expectation = XCTestExpectation()
     private let waiter = XCTWaiter()
@@ -65,10 +79,8 @@ private class ActionRecorder {
      Wait for all the expected `Action`s to be published.
 
      - Parameter timeout: The time waiting for the `Action`s
-     - Parameter file: The calling file (used in log if failing)
-     - Parameter line: The calling line (used in log if failing)
      */
-    func waitForAllActions(timeout: TimeInterval = 1, file: StaticString = #file, line: UInt = #line) {
+    func waitForAllActions(timeout: TimeInterval = 1) throws {
         guard actions.count < expectation.expectedFulfillmentCount else { return }
         let waitResult = waiter.wait(for: [expectation], timeout: timeout)
         if waitResult != .completed {
@@ -78,8 +90,8 @@ private class ActionRecorder {
             let formattedNumberOfActions = valueFormatter(expectation.expectedFulfillmentCount)
             let formattedActions = valueFormatter(actions.count)
 
-            XCTFail("Waiting for \(formattedNumberOfActions) timed out. Received only \(formattedActions).",
-                    file: file, line: line)
+            let errorMessage = "Waiting for \(formattedNumberOfActions) timed out. Received only \(formattedActions)."
+            throw RecordingError.expectedCountNotReached(message: errorMessage)
         }
     }
 }
@@ -91,7 +103,7 @@ extension ActionRecorder: Subscriber {
 
     func receive(_ input: Input) -> Subscribers.Demand {
         DispatchQueue.main.async {
-            self.actions.append(input)
+            input.forEach { self.actions.append($0) }
         }
         return .unlimited
     }
