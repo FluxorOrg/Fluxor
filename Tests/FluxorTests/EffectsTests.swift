@@ -8,7 +8,7 @@ import Combine
 @testable import Fluxor
 import XCTest
 
-// swiftlint:disable nesting
+// swiftlint:disable nesting force_cast
 
 class EffectsTests: XCTestCase {
     var action = PassthroughSubject<Action, Never>()
@@ -17,7 +17,7 @@ class EffectsTests: XCTestCase {
         // Given
         class TestEffects: Effects {
             let notAnEffect = 42
-            let anEffect = Effect.nonDispatching { $0.sink { print($0) } }
+            let anEffect = Effect.nonDispatching { $0.sink { _ in } }
         }
         // When
         let testEffects = TestEffects()
@@ -25,25 +25,45 @@ class EffectsTests: XCTestCase {
         XCTAssertEqual(testEffects.effects.count, 1)
     }
 
-    func testEffectCreatedFromPublisher() {
+    func testEffectRunDispatching() {
         // Given
-        let effectCreator = { (actionPublisher: AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never> in
-            actionPublisher.filter { _ in true }.eraseToAnyPublisher()
+        let action2 = Test2Action()
+        let expectation = XCTestExpectation(description: debugDescription)
+        expectation.expectedFulfillmentCount = 1
+        let effect = Effect.dispatching {
+            $0.ofType(Test1Action.self)
+                .map { _ in
+                    expectation.fulfill()
+                    return action2
+                }
+                .eraseToAnyPublisher()
         }
         // When
-        let effect = Effect.dispatching(effectCreator)
+        let action = Test1Action()
+        let actions: [Action] = effect.run(with: action)
+        effect.run(with: action) // Returns early because of wrong type
         // Then
-        guard case .dispatching = effect else { XCTFail("The effect type is wrong."); return }
+        wait(for: [expectation], timeout: 1)
+        XCTAssertEqual(actions[0] as! Test2Action, action2)
     }
 
-    func testEffectCreatedFromCancellable() {
+    func testEffectRunNonDispatching() {
         // Given
-        let effectCreator = { (actionPublisher: AnyPublisher<Action, Never>) -> AnyCancellable in
-            actionPublisher.sink { print($0) }
+        let expectation = XCTestExpectation(description: debugDescription)
+        expectation.expectedFulfillmentCount = 1
+        let effect = Effect.nonDispatching {
+            $0.sink { _ in expectation.fulfill() }
         }
         // When
-        let effect = Effect.nonDispatching(effectCreator)
+        let action = Test1Action()
+        effect.run(with: action)
+        _ = effect.run(with: action) // Returns early because of wrong type
         // Then
-        guard case .nonDispatching = effect else { XCTFail("The effect type is wrong."); return }
+        wait(for: [expectation], timeout: 1)
     }
+}
+
+private struct Test1Action: Action {}
+private struct Test2Action: Action, Equatable {
+    let id = UUID()
 }
