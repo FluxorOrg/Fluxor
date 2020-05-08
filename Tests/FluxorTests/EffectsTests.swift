@@ -15,14 +15,14 @@ class EffectsTests: XCTestCase {
 
     func testEffectsLookup() {
         // Given
-        class TestEffects: Effects {
+        struct TestEffects: Effects {
             let notAnEffect = 42
             let anEffect = Effect.nonDispatching { $0.sink { _ in } }
         }
         // When
         let testEffects = TestEffects()
         // Then
-        XCTAssertEqual(testEffects.effects.count, 1)
+        XCTAssertEqual(testEffects.enabledEffects.count, 1)
     }
 
     func testEffectRunDispatching() {

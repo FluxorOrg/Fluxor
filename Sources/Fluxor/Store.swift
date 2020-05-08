@@ -77,7 +77,7 @@ open class Store<State: Encodable>: ObservableObject {
      - Parameter effects: The effects type to register
      */
     public func register(effects: Effects) {
-        effects.effects.forEach { effect in
+        effects.enabledEffects.forEach { effect in
             switch effect {
             case .dispatching(let effectCreator):
                 effectCreator(action.eraseToAnyPublisher())
