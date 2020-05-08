@@ -47,7 +47,7 @@ public extension Effect {
 
  Inspired by: https://vojtastavik.com/2019/12/11/combine-publisher-blocking-recorder/
  */
-private class ActionRecorder: Subscriber {
+private class ActionRecorder {
     typealias Input = Action
     typealias Failure = Never
 
@@ -82,7 +82,9 @@ private class ActionRecorder: Subscriber {
             throw RecordingError.expectedCountNotReached(message: errorMessage)
         }
     }
+}
 
+extension ActionRecorder: Subscriber {
     func receive(subscription: Subscription) {
         subscription.request(.unlimited)
     }

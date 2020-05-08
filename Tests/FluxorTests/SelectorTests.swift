@@ -171,12 +171,12 @@ class SelectorTests: XCTestCase {
     }
 
     /// Can the cache be overridden?
-    func testMemoizedSelectorSetsResult() {
+    func testMemoizedSelectorMockResult() {
         // Given
         let initialStateHash = UUID()
         let selector = fullNameSelector
         XCTAssertNil(selector.result)
-        selector.setResult(value: "Phil Schiller")
+        selector.mockResult(value: "Phil Schiller")
         // When
         XCTAssertEqual(selector.map(state, stateHash: initialStateHash), "Phil Schiller")
         // Then

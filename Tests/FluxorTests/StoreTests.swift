@@ -6,6 +6,7 @@
 
 import Combine
 @testable import Fluxor
+import FluxorTestSupport
 import XCTest
 
 // swiftlint:disable force_cast
@@ -49,7 +50,7 @@ class StoreTests: XCTestCase {
         store.dispatch(action: firstAction)
         // Then
         wait(for: [TestEffects.expectation], timeout: 1)
-        let dispatchedActions = interceptor.dispatchedActionsAndStates.map(\.action)
+        let dispatchedActions = interceptor.stateChanges.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 3)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
         XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, TestEffects.responseAction)
@@ -65,14 +66,14 @@ class StoreTests: XCTestCase {
         store.register(reducer: testReducer)
         store.register(interceptor: interceptor)
         let oldState = store.state
-        XCTAssertEqual(interceptor.dispatchedActionsAndStates.count, 0)
+        XCTAssertEqual(interceptor.stateChanges.count, 0)
         // When
         store.dispatch(action: action)
         // Then
-        XCTAssertEqual(interceptor.dispatchedActionsAndStates.count, 1)
-        XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].action as! TestAction, action)
-        XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].oldState, oldState)
-        XCTAssertEqual(interceptor.dispatchedActionsAndStates[0].newState, store.state)
+        XCTAssertEqual(interceptor.stateChanges.count, 1)
+        XCTAssertEqual(interceptor.stateChanges[0].action as! TestAction, action)
+        XCTAssertEqual(interceptor.stateChanges[0].oldState, oldState)
+        XCTAssertEqual(interceptor.stateChanges[0].newState, store.state)
     }
 
     /// Does a change in `State` publish new value for `Selector`?
@@ -135,6 +136,23 @@ class StoreTests: XCTestCase {
         // Then
         let valueAfterAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueAfterAction, .modified)
+    }
+
+    /// Can we get all state changes in a `MockStore`?
+    func testMockStoreStateChanges() {
+        // Given
+        let mockStore = MockStore(initialState: TestState(type: .initial, lastAction: nil))
+        let action = TestAction()
+        let modifiedState = TestState(type: .modified, lastAction: "Set State")
+        // When
+        mockStore.dispatch(action: action)
+        mockStore.setState(newState: modifiedState)
+        // Then
+        XCTAssertEqual(mockStore.stateChanges.count, 2)
+        XCTAssertEqual(mockStore.stateChanges[0].action as! TestAction, action)
+        let setStateAction = mockStore.stateChanges[1].action as! AnonymousAction<TestState>
+        XCTAssertEqual(setStateAction.id, "Set State")
+        XCTAssertEqual(mockStore.stateChanges[1].newState, modifiedState)
     }
 
     private struct TestAction: Action, Equatable {}
