@@ -51,10 +51,11 @@ class StoreTests: XCTestCase {
         // Then
         wait(for: [TestEffects.expectation], timeout: 1)
         let dispatchedActions = interceptor.stateChanges.map(\.action)
-        XCTAssertEqual(dispatchedActions.count, 3)
+        XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
         XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, TestEffects.responseAction)
         XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, TestEffects.generateAction)
+        XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, TestEffects.unrelatedAction)
         XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
     }
 
@@ -179,6 +180,8 @@ class StoreTests: XCTestCase {
         static let responseAction = TestEffects.responseActionTemplate.createAction()
         static let generateActionTemplate = ActionTemplate(id: "TestGenerateAction", payloadType: Int.self)
         static let generateAction = TestEffects.generateActionTemplate.createAction(payload: 42)
+        static let unrelatedActionTemplate = ActionTemplate(id: "UnrelatedAction")
+        static let unrelatedAction = TestEffects.unrelatedActionTemplate.createAction()
         static let expectation = XCTestExpectation()
         static var lastAction: AnonymousAction<Int>?
         static var threadCheck: (() -> Void)!
@@ -190,10 +193,10 @@ class StoreTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
 
-        let anotherTestEffect = Effect.dispatchingOne {
+        let anotherTestEffect = Effect.dispatchingMultiple {
             $0.withIdentifier(TestEffects.responseActionIdentifier)
                 .handleEvents(receiveOutput: { _ in TestEffects.threadCheck() })
-                .map { _ in TestEffects.generateAction }
+                .map { _ in [TestEffects.generateAction, TestEffects.unrelatedAction] }
                 .eraseToAnyPublisher()
         }
 
