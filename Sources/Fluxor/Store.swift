@@ -23,10 +23,11 @@ import struct Foundation.UUID
  To select a value in the `State` the callers can either use a `Selector` or a key path.
  It is possible to get a `Publisher` for the value or just to select the current value.
  */
-open class Store<State: Encodable>: ObservableObject {
-    @Published internal fileprivate(set) var state: State { willSet { stateHash = UUID() } }
+open class Store<State: Encodable> {
+    internal private(set) var state: CurrentValueSubject<State, Never>
     internal private(set) var stateHash = UUID()
-    private(set) var action = PassthroughSubject<Action, Never>()
+    private var stateHashSink: AnyCancellable!
+    private let action = PassthroughSubject<Action, Never>()
     private(set) var reducers = [Reducer<State>]()
     private(set) var effectCancellables = Set<AnyCancellable>()
     private(set) var interceptors = [AnyInterceptor<State>]()
@@ -39,9 +40,10 @@ open class Store<State: Encodable>: ObservableObject {
      - Parameter effects: The `Effect`s to register
      */
     public init(initialState: State, reducers: [Reducer<State>] = [], effects: [Effects] = []) {
-        state = initialState
+        state = .init(initialState)
         reducers.forEach(register(reducer:))
         effects.forEach(register(effects:))
+        stateHashSink = state.sink { _ in self.stateHash = UUID() }
     }
 
     /**
@@ -54,11 +56,11 @@ open class Store<State: Encodable>: ObservableObject {
      - Parameter action: The action to dispatch
      */
     public func dispatch(action: Action) {
-        let oldState = state
+        let oldState = state.value
         var newState = oldState
         reducers.forEach { $0.reduce(&newState, action) }
         interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: newState) }
-        state = newState
+        state.send(newState)
         self.action.send(action)
     }
 
@@ -112,7 +114,7 @@ open class Store<State: Encodable>: ObservableObject {
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
     public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
-        return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
+        return state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
     }
 
     /**
@@ -121,7 +123,7 @@ open class Store<State: Encodable>: ObservableObject {
      - Parameter keyPath: The key path to use when getting the value in the `State`
      */
     public func select<Value>(_ keyPath: KeyPath<State, Value>) -> AnyPublisher<Value, Never> {
-        return $state.map(keyPath).eraseToAnyPublisher()
+        return state.map(keyPath).eraseToAnyPublisher()
     }
 
     /**
@@ -130,7 +132,7 @@ open class Store<State: Encodable>: ObservableObject {
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      */
     public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
-        return selector.map(state, stateHash: stateHash)
+        return selector.map(state.value, stateHash: stateHash)
     }
 
     /**
@@ -139,6 +141,6 @@ open class Store<State: Encodable>: ObservableObject {
      - Parameter keyPath: The key path to use when getting the value in the `State`
      */
     public func selectCurrent<Value>(_ keyPath: KeyPath<State, Value>) -> Value {
-        return state[keyPath: keyPath]
+        return state.value[keyPath: keyPath]
     }
 }
