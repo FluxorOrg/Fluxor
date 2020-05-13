@@ -11,4 +11,8 @@ extension Store {
                                actionTemplate: ActionTemplate<Value>) -> ValueBinding<State, Value> {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
+
+    public func observe<Value>(selector: Fluxor.Selector<State, Value>) -> ObservableValue<State, Value> {
+        return .init(store: self, selector: selector)
+    }
 }
