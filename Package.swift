@@ -16,6 +16,9 @@ let package = Package(
         .library(
             name: "FluxorTestSupport",
             targets: ["FluxorTestSupport"]),
+        .library(
+            name: "FluxorSwiftUI",
+            targets: ["FluxorSwiftUI"]),
     ],
     targets: [
         .target(
@@ -31,6 +34,9 @@ let package = Package(
             dependencies: ["Fluxor", "FluxorTestSupport"]),
         .target(
             name: "FluxorTestSupport",
+            dependencies: ["Fluxor"]),
+        .target(
+            name: "FluxorSwiftUI",
             dependencies: ["Fluxor"]),
     ]
 )
