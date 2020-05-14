@@ -24,7 +24,7 @@ public extension ValueBinding where UpdateValue == Value {
     var binding: Binding<Value> {
         .init(get: { self.value }, set: update)
     }
-    
+
     func update(value: UpdateValue) {
         objectWillChange.send()
         store.dispatch(action: actionTemplate.createAction(payload: value))
@@ -35,9 +35,43 @@ public extension ValueBinding where UpdateValue == Void {
     var binding: Binding<Value> {
         .init(get: { self.value }, set: { _ in self.update() })
     }
-    
+
     func update() {
         objectWillChange.send()
         store.dispatch(action: actionTemplate.createAction())
+    }
+}
+
+public class DynamicValueBinding<State: Encodable, Value, UpdateValue>: ObservableValue<State, Value> {
+    public override var value: Value { store.selectCurrent(selector) }
+    private let actionTemplateForValue: (Value) -> ActionTemplate<UpdateValue>
+
+    public init(store: Fluxor.Store<State>,
+                selector: Fluxor.Selector<State, Value>,
+                actionTemplateForValue: @escaping (Value) -> ActionTemplate<UpdateValue>) {
+        self.actionTemplateForValue = actionTemplateForValue
+        super.init(store: store, selector: selector)
+    }
+}
+
+public extension DynamicValueBinding where UpdateValue == Value {
+    var binding: Binding<Value> {
+        .init(get: { self.value }, set: update)
+    }
+
+    func update(value: UpdateValue) {
+        objectWillChange.send()
+        store.dispatch(action: actionTemplateForValue(value).createAction(payload: value))
+    }
+}
+
+public extension DynamicValueBinding where UpdateValue == Void {
+    var binding: Binding<Value> {
+        .init(get: { self.value }, set: { _ in self.update() })
+    }
+
+    func update() {
+        objectWillChange.send()
+        store.dispatch(action: actionTemplateForValue(value).createAction())
     }
 }
