@@ -33,10 +33,10 @@ public extension ValueBinding where UpdateValue == Value {
 
 public extension ValueBinding where UpdateValue == Void {
     var binding: Binding<Value> {
-        .init(get: { self.value }, set: { _ in self.update() })
+        .init(get: { self.value }, set: { _ in self.toggle() })
     }
 
-    func update() {
+    func toggle() {
         objectWillChange.send()
         store.dispatch(action: actionTemplate.createAction())
     }
@@ -67,10 +67,10 @@ public extension DynamicValueBinding where UpdateValue == Value {
 
 public extension DynamicValueBinding where UpdateValue == Void {
     var binding: Binding<Value> {
-        .init(get: { self.value }, set: { _ in self.update() })
+        .init(get: { self.value }, set: { _ in self.toggle() })
     }
 
-    func update() {
+    func toggle() {
         objectWillChange.send()
         store.dispatch(action: actionTemplateForValue(value).createAction())
     }
