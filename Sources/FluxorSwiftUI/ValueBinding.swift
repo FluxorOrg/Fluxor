@@ -75,3 +75,14 @@ public extension DynamicValueBinding where UpdateValue == Void {
         store.dispatch(action: actionTemplateForValue(value).createAction())
     }
 }
+
+public extension DynamicValueBinding where Value == Bool, UpdateValue == Void {
+    var binding: Binding<Value> {
+        .init(get: { self.value }, set: { _ in self.toggle() })
+    }
+
+    func update(value: Value) {
+        objectWillChange.send()
+        store.dispatch(action: actionTemplateForValue(value).createAction())
+    }
+}
