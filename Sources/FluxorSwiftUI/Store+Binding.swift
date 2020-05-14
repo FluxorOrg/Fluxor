@@ -7,8 +7,9 @@
 import Fluxor
 
 extension Store {
-    public func binding<Value>(get selector: Fluxor.Selector<State, Value>,
-                               set actionTemplate: ActionTemplate<Value>) -> ValueBinding<State, Value> {
+    public func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
+                                            set actionTemplate: ActionTemplate<UpdateValue>)
+        -> ValueBinding<State, Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
 
