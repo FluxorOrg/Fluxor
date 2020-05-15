@@ -8,9 +8,16 @@ import Combine
 import Fluxor
 import SwiftUI
 
-public class ValueBinding<State: Encodable, Value, UpdateValue>: ObservableValue<State, Value> {
-    public override var value: Value { store.selectCurrent(selector) }
-    
+public class ValueBinding<State: Encodable, Value, UpdateValue>: ObservableObject {
+    public var value: Value { store.selectCurrent(selector) }
+    internal let store: Store<State>
+    internal let selector: Fluxor.Selector<State, Value>
+
+    public init(store: Store<State>, selector: Fluxor.Selector<State, Value>) {
+        self.store = store
+        self.selector = selector
+    }
+
     fileprivate func update(value: UpdateValue, with actionTemplate: ActionTemplate<UpdateValue>) {
         objectWillChange.send()
         store.dispatch(action: actionTemplate.createAction(payload: value))
@@ -88,7 +95,7 @@ public extension DynamicValueBinding where UpdateValue == Void {
 
 public extension DynamicValueBinding where Value == Bool, UpdateValue == Void {
     var binding: Binding<Value> {
-        .init(get: { self.value }, set: { _ in self.update()})
+        .init(get: { self.value }, set: { _ in self.update() })
     }
 
     func update(value: Value) {
