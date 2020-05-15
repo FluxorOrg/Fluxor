@@ -8,35 +8,35 @@ import Combine
 import Fluxor
 import SwiftUI
 
-public class ValueBinding<State: Encodable, Value, UpdateValue>: ObservableObject {
-    public var value: Value { store.selectCurrent(selector) }
-    internal let store: Store<State>
-    internal let selector: Fluxor.Selector<State, Value>
+public class ValueBinding<Value, UpdateValue>: ObservableObject {
+    public var value: Value { storeSelectCurrent() }
+    internal let storeDispatch: (Action) -> Void
+    internal let storeSelectCurrent: () -> Value
 
-    public init(store: Store<State>, selector: Fluxor.Selector<State, Value>) {
-        self.store = store
-        self.selector = selector
+    public init<State: Encodable>(store: Store<State>, selector: Fluxor.Selector<State, Value>) {
+        self.storeSelectCurrent = { store.selectCurrent(selector) }
+        self.storeDispatch = store.dispatch(action:)
     }
 
     fileprivate func update(value: UpdateValue, with actionTemplate: ActionTemplate<UpdateValue>) {
         objectWillChange.send()
-        store.dispatch(action: actionTemplate.createAction(payload: value))
+        storeDispatch(actionTemplate.createAction(payload: value))
     }
 }
 
 public extension ValueBinding where UpdateValue == Void {
     fileprivate func update(with actionTemplate: ActionTemplate<UpdateValue>) {
         objectWillChange.send()
-        store.dispatch(action: actionTemplate.createAction())
+        storeDispatch(actionTemplate.createAction())
     }
 }
 
-public class StaticTemplateValueBinding<State: Encodable, Value, UpdateValue>: ValueBinding<State, Value, UpdateValue> {
+public class StaticTemplateValueBinding<Value, UpdateValue>: ValueBinding<Value, UpdateValue> {
     private let actionTemplate: ActionTemplate<UpdateValue>
 
-    public init(store: Store<State>,
-                selector: Fluxor.Selector<State, Value>,
-                actionTemplate: ActionTemplate<UpdateValue>) {
+    public init<State: Encodable>(store: Store<State>,
+                                  selector: Fluxor.Selector<State, Value>,
+                                  actionTemplate: ActionTemplate<UpdateValue>) {
         self.actionTemplate = actionTemplate
         super.init(store: store, selector: selector)
     }
@@ -62,13 +62,13 @@ public extension StaticTemplateValueBinding where UpdateValue == Void {
     }
 }
 
-public class DynamicValueBinding<State: Encodable, Value, UpdateValue>: ValueBinding<State, Value, UpdateValue> {
-    private let actionTemplateForValue: (Value) -> ActionTemplate<UpdateValue>
+public class DynamicValueBinding<Value, UpdateValue>: ValueBinding<Value, UpdateValue> {
+    private let actionTemplate: (Value) -> ActionTemplate<UpdateValue>
 
-    public init(store: Store<State>,
-                selector: Fluxor.Selector<State, Value>,
-                actionTemplateForValue: @escaping (Value) -> ActionTemplate<UpdateValue>) {
-        self.actionTemplateForValue = actionTemplateForValue
+    public init<State: Encodable>(store: Store<State>,
+                                  selector: Fluxor.Selector<State, Value>,
+                                  actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>) {
+        self.actionTemplate = actionTemplate
         super.init(store: store, selector: selector)
     }
 }
@@ -79,7 +79,7 @@ public extension DynamicValueBinding where UpdateValue == Value {
     }
 
     func update(value: UpdateValue) {
-        super.update(value: value, with: actionTemplateForValue(value))
+        super.update(value: value, with: actionTemplate(value))
     }
 }
 
@@ -89,7 +89,7 @@ public extension DynamicValueBinding where UpdateValue == Void {
     }
 
     func update() {
-        super.update(with: actionTemplateForValue(value))
+        super.update(with: actionTemplate(value))
     }
 }
 
@@ -99,6 +99,6 @@ public extension DynamicValueBinding where Value == Bool, UpdateValue == Void {
     }
 
     func update(value: Value) {
-        super.update(with: actionTemplateForValue(value))
+        super.update(with: actionTemplate(value))
     }
 }

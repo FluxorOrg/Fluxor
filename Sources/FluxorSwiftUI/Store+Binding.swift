@@ -13,13 +13,13 @@ extension Store {
     
     public func binding<Value, UpdateValue>(get selector: Selector<State, Value>,
                                             set actionTemplate: ActionTemplate<UpdateValue>)
-        -> StaticTemplateValueBinding<State, Value, UpdateValue> {
+        -> StaticTemplateValueBinding<Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
 
     public func binding<Value, UpdateValue>(get selector: Selector<State, Value>,
-                                            set actionTemplateForValue: @escaping (Value) -> ActionTemplate<UpdateValue>)
-        -> DynamicValueBinding<State, Value, UpdateValue> {
-        return .init(store: self, selector: selector, actionTemplateForValue: actionTemplateForValue)
+                                            set actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>)
+        -> DynamicValueBinding<Value, UpdateValue> {
+        return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
 }
