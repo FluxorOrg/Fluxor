@@ -7,11 +7,11 @@
 import Combine
 import Fluxor
 
-public class ObservableValue<State: Encodable, Value>: ObservableObject {
+public class ObservableValue<Value>: ObservableObject {
     public private(set) var value: Value { willSet { objectWillChange.send() } }
     private var cancellable: AnyCancellable!
 
-    public init(store: Store<State>, selector: Selector<State, Value>) {
+    public init<State: Encodable>(store: Store<State>, selector: Selector<State, Value>) {
         self.value = store.selectCurrent(selector)
         self.cancellable = store.select(selector).sink { self.value = $0 }
     }
