@@ -7,9 +7,13 @@
 import Fluxor
 
 extension Store {
+    public func observe<Value>(_ selector: Fluxor.Selector<State, Value>) -> ObservableValue<State, Value> {
+        return .init(store: self, selector: selector)
+    }
+    
     public func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
                                             set actionTemplate: ActionTemplate<UpdateValue>)
-        -> ValueBinding<State, Value, UpdateValue> {
+        -> StaticTemplateValueBinding<State, Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
 
@@ -17,9 +21,5 @@ extension Store {
                                             set actionTemplateForValue: @escaping (Value) -> ActionTemplate<UpdateValue>)
         -> DynamicValueBinding<State, Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplateForValue: actionTemplateForValue)
-    }
-
-    public func observe<Value>(_ selector: Fluxor.Selector<State, Value>) -> ObservableValue<State, Value> {
-        return .init(store: self, selector: selector)
     }
 }

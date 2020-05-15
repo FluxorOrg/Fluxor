@@ -10,9 +10,24 @@ import SwiftUI
 
 public class ValueBinding<State: Encodable, Value, UpdateValue>: ObservableValue<State, Value> {
     public override var value: Value { store.selectCurrent(selector) }
+    
+    fileprivate func update(value: UpdateValue, with actionTemplate: ActionTemplate<UpdateValue>) {
+        objectWillChange.send()
+        store.dispatch(action: actionTemplate.createAction(payload: value))
+    }
+}
+
+public extension ValueBinding where UpdateValue == Void {
+    fileprivate func update(with actionTemplate: ActionTemplate<UpdateValue>) {
+        objectWillChange.send()
+        store.dispatch(action: actionTemplate.createAction())
+    }
+}
+
+public class StaticTemplateValueBinding<State: Encodable, Value, UpdateValue>: ValueBinding<State, Value, UpdateValue> {
     private let actionTemplate: ActionTemplate<UpdateValue>
 
-    public init(store: Fluxor.Store<State>,
+    public init(store: Store<State>,
                 selector: Fluxor.Selector<State, Value>,
                 actionTemplate: ActionTemplate<UpdateValue>) {
         self.actionTemplate = actionTemplate
@@ -20,33 +35,30 @@ public class ValueBinding<State: Encodable, Value, UpdateValue>: ObservableValue
     }
 }
 
-public extension ValueBinding where UpdateValue == Value {
+public extension StaticTemplateValueBinding where UpdateValue == Value {
     var binding: Binding<Value> {
         .init(get: { self.value }, set: update)
     }
 
     func update(value: UpdateValue) {
-        objectWillChange.send()
-        store.dispatch(action: actionTemplate.createAction(payload: value))
+        super.update(value: value, with: actionTemplate)
     }
 }
 
-public extension ValueBinding where UpdateValue == Void {
+public extension StaticTemplateValueBinding where UpdateValue == Void {
     var binding: Binding<Value> {
-        .init(get: { self.value }, set: { _ in self.toggle() })
+        .init(get: { self.value }, set: { _ in self.update() })
     }
 
-    func toggle() {
-        objectWillChange.send()
-        store.dispatch(action: actionTemplate.createAction())
+    func update() {
+        super.update(with: actionTemplate)
     }
 }
 
-public class DynamicValueBinding<State: Encodable, Value, UpdateValue>: ObservableValue<State, Value> {
-    public override var value: Value { store.selectCurrent(selector) }
+public class DynamicValueBinding<State: Encodable, Value, UpdateValue>: ValueBinding<State, Value, UpdateValue> {
     private let actionTemplateForValue: (Value) -> ActionTemplate<UpdateValue>
 
-    public init(store: Fluxor.Store<State>,
+    public init(store: Store<State>,
                 selector: Fluxor.Selector<State, Value>,
                 actionTemplateForValue: @escaping (Value) -> ActionTemplate<UpdateValue>) {
         self.actionTemplateForValue = actionTemplateForValue
@@ -60,29 +72,26 @@ public extension DynamicValueBinding where UpdateValue == Value {
     }
 
     func update(value: UpdateValue) {
-        objectWillChange.send()
-        store.dispatch(action: actionTemplateForValue(value).createAction(payload: value))
+        super.update(value: value, with: actionTemplateForValue(value))
     }
 }
 
 public extension DynamicValueBinding where UpdateValue == Void {
     var binding: Binding<Value> {
-        .init(get: { self.value }, set: { _ in self.toggle() })
+        .init(get: { self.value }, set: { _ in self.update() })
     }
 
-    func toggle() {
-        objectWillChange.send()
-        store.dispatch(action: actionTemplateForValue(value).createAction())
+    func update() {
+        super.update(with: actionTemplateForValue(value))
     }
 }
 
 public extension DynamicValueBinding where Value == Bool, UpdateValue == Void {
     var binding: Binding<Value> {
-        .init(get: { self.value }, set: { _ in self.toggle() })
+        .init(get: { self.value }, set: { _ in self.update()})
     }
 
     func update(value: Value) {
-        objectWillChange.send()
-        store.dispatch(action: actionTemplateForValue(value).createAction())
+        super.update(with: actionTemplateForValue(value))
     }
 }
