@@ -10,16 +10,16 @@ extension Store {
     public func observe<Value>(_ selector: Selector<State, Value>) -> ObservableValue<Value> {
         return .init(store: self, selector: selector)
     }
-    
+
     public func binding<Value, UpdateValue>(get selector: Selector<State, Value>,
                                             set actionTemplate: ActionTemplate<UpdateValue>)
-        -> StaticTemplateValueBinding<Value, UpdateValue> {
+        -> ValueBinding<Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
 
     public func binding<Value, UpdateValue>(get selector: Selector<State, Value>,
                                             set actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>)
-        -> DynamicValueBinding<Value, UpdateValue> {
-        return .init(store: self, selector: selector, actionTemplate: actionTemplate)
+        -> ValueBinding<Value, UpdateValue> {
+        return .init(store: self, selector: selector, actionTemplateForValue: actionTemplate)
     }
 }
