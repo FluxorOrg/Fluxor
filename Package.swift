@@ -38,5 +38,8 @@ let package = Package(
         .target(
             name: "FluxorSwiftUI",
             dependencies: ["Fluxor"]),
+        .testTarget(
+            name: "FluxorSwiftUITests",
+            dependencies: ["FluxorSwiftUI"]),
     ]
 )

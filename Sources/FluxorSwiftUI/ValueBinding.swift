@@ -8,6 +8,27 @@ import Combine
 import Fluxor
 import SwiftUI
 
+public extension Store {
+    func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
+                                     set actionTemplate: ActionTemplate<UpdateValue>)
+        -> ValueBinding<Value, UpdateValue> {
+        return .init(store: self, selector: selector, actionTemplate: actionTemplate)
+    }
+
+    func binding(get selector: Fluxor.Selector<State, Bool>,
+                 enable enableActionTemplate: ActionTemplate<Void>,
+                 disable disableActionTemplate: ActionTemplate<Void>)
+        -> ValueBinding<Bool, Void> {
+        return .init(store: self, selector: selector) { $0 ? enableActionTemplate : disableActionTemplate }
+    }
+
+    func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
+                                     set actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>)
+        -> ValueBinding<Value, UpdateValue> {
+        return .init(store: self, selector: selector, actionTemplateForValue: actionTemplate)
+    }
+}
+
 public class ValueBinding<Value, UpdateValue>: ObservableObject {
     public var current: Value { storeSelectCurrent() }
     private let storeDispatch: (Action) -> Void
@@ -38,11 +59,15 @@ public class ValueBinding<Value, UpdateValue>: ObservableObject {
 
 public extension ValueBinding where UpdateValue == Void {
     var binding: Binding<Value> {
-        .init(get: { self.current }, set: { _ in self.update() })
+        .init(get: { self.current }, set: update)
     }
 
     func update() {
-        update(value: current) { $0.createAction() }
+        update(value: current)
+    }
+
+    private func update(value: Value) {
+        update(value: value) { $0.createAction() }
     }
 }
 
