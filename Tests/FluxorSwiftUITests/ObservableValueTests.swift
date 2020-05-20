@@ -16,7 +16,7 @@ class ObservableValueTests: XCTestCase {
             ReduceOn(increment) { state, action in
                 state.counter += action.payload
             }
-        ),
+        )
     ])
 
     func testBindingWithOneActionTemplate() {

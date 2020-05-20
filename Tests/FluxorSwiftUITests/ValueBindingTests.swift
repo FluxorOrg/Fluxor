@@ -25,7 +25,7 @@ class ValueBindingTests: XCTestCase {
                 state.counter = 0
             },
             ReduceOn(doubleUp) { state, _ in
-                state.counter = state.counter * 2
+                state.counter *= 2
             },
             ReduceOn(lock) { state, _ in
                 state.locked = true
@@ -33,7 +33,7 @@ class ValueBindingTests: XCTestCase {
             ReduceOn(unlock) { state, _ in
                 state.locked = false
             }
-        ),
+        )
     ])
 
     func testBindingWithOneActionTemplate() {
