@@ -9,7 +9,7 @@ import Fluxor
 import SwiftUI
 
 public class ValueBinding<Value, UpdateValue>: ObservableObject {
-    public var value: Value { storeSelectCurrent() }
+    public var current: Value { storeSelectCurrent() }
     private let storeDispatch: (Action) -> Void
     private let storeSelectCurrent: () -> Value
     private let actionTemplateForValue: (Value) -> ActionTemplate<UpdateValue>
@@ -38,17 +38,17 @@ public class ValueBinding<Value, UpdateValue>: ObservableObject {
 
 public extension ValueBinding where UpdateValue == Void {
     var binding: Binding<Value> {
-        .init(get: { self.value }, set: { _ in self.update() })
+        .init(get: { self.current }, set: { _ in self.update() })
     }
 
     func update() {
-        update(value: value) { $0.createAction() }
+        update(value: current) { $0.createAction() }
     }
 }
 
 public extension ValueBinding where UpdateValue == Value {
     var binding: Binding<Value> {
-        .init(get: { self.value }, set: update)
+        .init(get: { self.current }, set: update)
     }
 
     func update(value: UpdateValue) {
