@@ -17,6 +17,13 @@ extension Store {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
 
+    public func binding(get selector: Selector<State, Bool>,
+                        enable enableActionTemplate: ActionTemplate<Void>,
+                        disable disableActionTemplate: ActionTemplate<Void>)
+        -> ValueBinding<Bool, Void> {
+        return .init(store: self, selector: selector) { $0 ? enableActionTemplate : disableActionTemplate }
+    }
+
     public func binding<Value, UpdateValue>(get selector: Selector<State, Value>,
                                             set actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>)
         -> ValueBinding<Value, UpdateValue> {
