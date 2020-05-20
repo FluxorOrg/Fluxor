@@ -57,6 +57,10 @@ public extension ValueBinding where UpdateValue == Value {
 }
 
 public extension ValueBinding where Value == Bool, UpdateValue == Void {
+    func toggle() {
+        update(value: !current) { $0.createAction() }
+    }
+
     func update(value: Value) {
         update(value: value) { $0.createAction() }
     }
