@@ -28,11 +28,6 @@ public class ValueBinding<Value, UpdateValue>: ObservableObject {
         self.init(store: store, selector: selector, actionTemplateForValue: { _ in actionTemplate })
     }
 
-    private func prepareUpdate(value: Value) -> ActionTemplate<UpdateValue> {
-        objectWillChange.send()
-        return actionTemplateForValue(value)
-    }
-
     private func update(value: Value, with actionCreator: (ActionTemplate<UpdateValue>) -> Action) {
         objectWillChange.send()
         let actionTemplate = actionTemplateForValue(value)
