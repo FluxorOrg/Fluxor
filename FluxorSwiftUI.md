@@ -13,12 +13,12 @@ The [`ObservableValue`](Sources/FluxorSwiftUI/ObservableValue.swift) can be used
 
 ```swift
 struct DrawView: View {
-	@ObservedObject var canClear = Current.store.observe(Selectors.canClear)
-	
-	var body: some View {
-	    Button(action: { ... }, label: { Text("Clear") })
-	        .disabled(!canClear.current)
-	}
+    @ObservedObject var canClear = Current.store.observe(Selectors.canClear)
+    
+    var body: some View {
+        Button(action: { ... }, label: { Text("Clear") })
+            .disabled(!canClear.current)
+    }
 }
 ```
 
@@ -28,11 +28,11 @@ The [`ValueBinding`](Sources/FluxorSwiftUI/ValueBinding.swift) can be used to cr
 
 ```swift
 struct GreetingView: View {
-	var greeting = Current.store.binding(get: Selectors.getGreeting, send: Actions.setGreeting)
-	
-	var body: some View {
-	    TextField("Greeting", text: greeting.binding)
-	}
+    var greeting = Current.store.binding(get: Selectors.getGreeting, send: Actions.setGreeting)
+    
+    var body: some View {
+        TextField("Greeting", text: greeting.binding)
+    }
 }
 ```
 
@@ -42,25 +42,25 @@ When the `ValueBinding` has a `Bool` value, it can be created with a `ActionTemp
 
 ```swift
 struct DrawView: View {
-	@ObservedObject var showClearActionSheet
-	    = Current.store.binding(get: Selectors.isClearOptionsVisible,
-	                            enable: Actions.askToClear,
-	                            disable: Actions.cancelClear)
-	
-	var body: some View {
-	    Button(action: { self.showClearActionSheet.enable() }, label: { Text("Clear") })
-	        .actionSheet(isPresented: showClearActionSheet.binding) {
-	            ActionSheet(title: Text("Clear"),
-	                        message: Text("Are you sure you want to clear?"),
-	                        buttons: [
-	                            .destructive(Text("Yes, clear")) {
-	                                Current.store.dispatch(action: Actions.clear())
-	                            },
-	                            .cancel(Text("Cancel")) {
-	                                self.showClearActionSheet.disable()
-	                            }
-	                        ])
-	        }
-	}
+    @ObservedObject var showClearActionSheet
+        = Current.store.binding(get: Selectors.isClearOptionsVisible,
+                                enable: Actions.askToClear,
+                                disable: Actions.cancelClear)
+    
+    var body: some View {
+        Button(action: { self.showClearActionSheet.enable() }, label: { Text("Clear") })
+            .actionSheet(isPresented: showClearActionSheet.binding) {
+                ActionSheet(title: Text("Clear"),
+                            message: Text("Are you sure you want to clear?"),
+                            buttons: [
+                                .destructive(Text("Yes, clear")) {
+                                    Current.store.dispatch(action: Actions.clear())
+                                },
+                                .cancel(Text("Cancel")) {
+                                    self.showClearActionSheet.disable()
+                                }
+                            ])
+            }
+    }
 }
 ```
