@@ -10,7 +10,7 @@ import SwiftUI
 
 public extension Store {
     func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
-                                     set actionTemplate: ActionTemplate<UpdateValue>)
+                                     send actionTemplate: ActionTemplate<UpdateValue>)
         -> ValueBinding<Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
@@ -23,7 +23,7 @@ public extension Store {
     }
 
     func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
-                                     set actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>)
+                                     send actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>)
         -> ValueBinding<Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplateForValue: actionTemplate)
     }

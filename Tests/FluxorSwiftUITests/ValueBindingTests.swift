@@ -37,7 +37,7 @@ class ValueBindingTests: XCTestCase {
     ])
 
     func testBindingWithOneActionTemplate() {
-        let valueBinding = store.binding(get: counterSelector, set: increment)
+        let valueBinding = store.binding(get: counterSelector, send: increment)
         let binding = valueBinding.binding
         XCTAssertEqual(valueBinding.current, 42)
         XCTAssertEqual(binding.wrappedValue, 42)
@@ -47,7 +47,7 @@ class ValueBindingTests: XCTestCase {
     }
 
     func testBindingWithActionTemplateClosure() {
-        let valueBinding = store.binding(get: counterSelector, set: { $0 >= 43 ? self.clear : self.doubleUp })
+        let valueBinding = store.binding(get: counterSelector, send: { $0 >= 43 ? self.clear : self.doubleUp })
         let binding = valueBinding.binding
         XCTAssertEqual(valueBinding.current, 42)
         XCTAssertEqual(binding.wrappedValue, 42)
