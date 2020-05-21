@@ -11,11 +11,13 @@ import XCTest
 class ValueBindingTests: XCTestCase {
     private let counterSelector = Selector(keyPath: \TestState.counter)
     private let lockedSelector = Selector(keyPath: \TestState.locked)
+    private let lightsOnSelector = Selector(keyPath: \TestState.lightsOn)
     private let increment = ActionTemplate(id: "Increment", payloadType: Int.self)
     private let clear = ActionTemplate(id: "Clear")
     private let doubleUp = ActionTemplate(id: "Double up")
     private let lock = ActionTemplate(id: "Lock")
     private let unlock = ActionTemplate(id: "Unlock")
+    private let changeLights = ActionTemplate(id: "Turn lights on/off", payloadType: Bool.self)
     private lazy var store = Store(initialState: TestState(), reducers: [
         Reducer<TestState>(
             ReduceOn(increment) { state, action in
@@ -32,12 +34,15 @@ class ValueBindingTests: XCTestCase {
             },
             ReduceOn(unlock) { state, _ in
                 state.locked = false
+            },
+            ReduceOn(changeLights) { state, action in
+                state.lightsOn = action.payload
             }
         )
     ])
 
     func testBindingWithOneActionTemplate() {
-        let valueBinding = store.binding(get: counterSelector, set: increment)
+        let valueBinding = store.binding(get: counterSelector, send: increment)
         let binding = valueBinding.binding
         XCTAssertEqual(valueBinding.current, 42)
         XCTAssertEqual(binding.wrappedValue, 42)
@@ -47,7 +52,7 @@ class ValueBindingTests: XCTestCase {
     }
 
     func testBindingWithActionTemplateClosure() {
-        let valueBinding = store.binding(get: counterSelector, set: { $0 >= 43 ? self.clear : self.doubleUp })
+        let valueBinding = store.binding(get: counterSelector, send: { $0 >= 43 ? self.clear : self.doubleUp })
         let binding = valueBinding.binding
         XCTAssertEqual(valueBinding.current, 42)
         XCTAssertEqual(binding.wrappedValue, 42)
@@ -70,10 +75,36 @@ class ValueBindingTests: XCTestCase {
         valueBinding.toggle()
         XCTAssertEqual(valueBinding.current, false)
         XCTAssertEqual(binding.wrappedValue, false)
+        valueBinding.enable()
+        XCTAssertEqual(valueBinding.current, true)
+        XCTAssertEqual(binding.wrappedValue, true)
+        valueBinding.disable()
+        XCTAssertEqual(valueBinding.current, false)
+        XCTAssertEqual(binding.wrappedValue, false)
+    }
+
+    func testBindingWithBoolUpdateValue() {
+        let valueBinding = store.binding(get: lightsOnSelector, send: changeLights)
+        let binding = valueBinding.binding
+        XCTAssertEqual(valueBinding.current, false)
+        XCTAssertEqual(binding.wrappedValue, false)
+        valueBinding.toggle()
+        XCTAssertEqual(valueBinding.current, true)
+        XCTAssertEqual(binding.wrappedValue, true)
+        valueBinding.toggle()
+        XCTAssertEqual(valueBinding.current, false)
+        XCTAssertEqual(binding.wrappedValue, false)
+        valueBinding.enable()
+        XCTAssertEqual(valueBinding.current, true)
+        XCTAssertEqual(binding.wrappedValue, true)
+        valueBinding.disable()
+        XCTAssertEqual(valueBinding.current, false)
+        XCTAssertEqual(binding.wrappedValue, false)
     }
 }
 
 private struct TestState: Encodable {
     var counter: Int = 42
     var locked: Bool = false
+    var lightsOn: Bool = false
 }

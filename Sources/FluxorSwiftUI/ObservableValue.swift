@@ -13,11 +13,11 @@ public extension Store {
     }
 }
 
-public class ObservableValue<T>: ObservableObject {
-    public private(set) var current: T { willSet { objectWillChange.send() } }
+public class ObservableValue<Value>: ObservableObject {
+    public private(set) var current: Value { willSet { objectWillChange.send() } }
     private var cancellable: AnyCancellable!
 
-    public init<State: Encodable>(store: Store<State>, selector: Selector<State, T>) {
+    public init<State: Encodable>(store: Store<State>, selector: Selector<State, Value>) {
         self.current = store.selectCurrent(selector)
         self.cancellable = store.select(selector).assign(to: \.current, on: self)
     }

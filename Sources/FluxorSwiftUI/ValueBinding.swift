@@ -10,7 +10,7 @@ import SwiftUI
 
 public extension Store {
     func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
-                                     set actionTemplate: ActionTemplate<UpdateValue>)
+                                     send actionTemplate: ActionTemplate<UpdateValue>)
         -> ValueBinding<Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
@@ -23,13 +23,13 @@ public extension Store {
     }
 
     func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
-                                     set actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>)
+                                     send actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>)
         -> ValueBinding<Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplateForValue: actionTemplate)
     }
 }
 
-public class ValueBinding<Value, UpdateValue>: ObservableObject {
+public class ValueBinding<Value, UpdateValue> {
     public var current: Value { storeSelectCurrent() }
     private let storeDispatch: (Action) -> Void
     private let storeSelectCurrent: () -> Value
@@ -50,7 +50,6 @@ public class ValueBinding<Value, UpdateValue>: ObservableObject {
     }
 
     private func update(value: Value, with actionCreator: (ActionTemplate<UpdateValue>) -> Action) {
-        objectWillChange.send()
         let actionTemplate = actionTemplateForValue(value)
         let action = actionCreator(actionTemplate)
         storeDispatch(action)
@@ -81,9 +80,31 @@ public extension ValueBinding where UpdateValue == Value {
     }
 }
 
+public extension ValueBinding where Value == Bool, UpdateValue == Bool {
+    func toggle() {
+        update(value: !current)
+    }
+
+    func enable() {
+        update(value: true)
+    }
+
+    func disable() {
+        update(value: false)
+    }
+}
+
 public extension ValueBinding where Value == Bool, UpdateValue == Void {
     func toggle() {
         update(value: !current)
+    }
+
+    func enable() {
+        update(value: true)
+    }
+
+    func disable() {
+        update(value: false)
     }
 
     func update(value: Value) {
