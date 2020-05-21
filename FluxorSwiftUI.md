@@ -38,7 +38,7 @@ struct GreetingView: View {
 
 ## Binding a value which can be enabled and disabled
 
-When the `ValueBinding` has a `Bool` value, it can be created with a `ActionTemplate` for enabling the value (making it `true`) and another one for disabling the value (making it `false`). When the value is `Bool` and the payload for the `ActionTemplate` is either `Void` or `Bool`, the `ValueBinding` gains more functions beside the `update` function to `toggle`, `enable` and `disable` the value∏.
+When the `ValueBinding` has a `Bool` value, it can be created with a `ActionTemplate` for enabling the value (making it `true`) and another one for disabling the value (making it `false`). When the value is `Bool` and the payload for the `ActionTemplate` is either `Void` or `Bool`, the `ValueBinding` gains more functions beside the `update` function to `toggle`, `enable` and `disable` the value.
 
 ```swift
 struct DrawView: View {
