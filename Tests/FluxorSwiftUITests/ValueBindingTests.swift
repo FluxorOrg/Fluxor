@@ -84,7 +84,7 @@ class ValueBindingTests: XCTestCase {
     }
 
     func testBindingWithBoolUpdateValue() {
-        let valueBinding = store.binding(get: lightsOnSelector, set: changeLights)
+        let valueBinding = store.binding(get: lightsOnSelector, send: changeLights)
         let binding = valueBinding.binding
         XCTAssertEqual(valueBinding.current, false)
         XCTAssertEqual(binding.wrappedValue, false)
