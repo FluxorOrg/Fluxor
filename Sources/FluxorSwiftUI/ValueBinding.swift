@@ -29,7 +29,7 @@ public extension Store {
     }
 }
 
-public class ValueBinding<Value, UpdateValue>: ObservableObject {
+public class ValueBinding<Value, UpdateValue> {
     public var current: Value { storeSelectCurrent() }
     private let storeDispatch: (Action) -> Void
     private let storeSelectCurrent: () -> Value
@@ -50,7 +50,6 @@ public class ValueBinding<Value, UpdateValue>: ObservableObject {
     }
 
     private func update(value: Value, with actionCreator: (ActionTemplate<UpdateValue>) -> Action) {
-        objectWillChange.send()
         let actionTemplate = actionTemplateForValue(value)
         let action = actionCreator(actionTemplate)
         storeDispatch(action)
