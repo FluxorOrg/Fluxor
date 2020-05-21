@@ -81,9 +81,31 @@ public extension ValueBinding where UpdateValue == Value {
     }
 }
 
+public extension ValueBinding where Value == Bool, UpdateValue == Bool {
+    func toggle() {
+        update(value: !current)
+    }
+
+    func enable() {
+        update(value: true)
+    }
+
+    func disable() {
+        update(value: false)
+    }
+}
+
 public extension ValueBinding where Value == Bool, UpdateValue == Void {
     func toggle() {
         update(value: !current)
+    }
+
+    func enable() {
+        update(value: true)
+    }
+
+    func disable() {
+        update(value: false)
     }
 
     func update(value: Value) {
