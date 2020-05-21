@@ -20,13 +20,13 @@ class MockStoreTests: XCTestCase {
     /// Can the state be set?
     func testSetState() {
         // Given
-        XCTAssertEqual(store.state, initialState)
+        XCTAssertEqual(store.state.value, initialState)
         let initialStateHash = store.stateHash
         // When
         let newState = TestState(counter: 42)
         store.setState(newState: newState)
         // Then
-        XCTAssertEqual(store.state, newState)
+        XCTAssertEqual(store.state.value, newState)
         XCTAssertNotEqual(store.stateHash, initialStateHash)
     }
 
