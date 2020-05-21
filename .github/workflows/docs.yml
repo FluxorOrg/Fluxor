@@ -11,14 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install swift-doc
-        run: |
-          git clone https://github.com/SwiftDocOrg/swift-doc
-          cd swift-doc
-          sudo make install
-          cd ..
       - name: Generate Documentation for Wiki
-        run: swift-doc generate Sources/Fluxor* --module-name Fluxor --output Documentation-Wiki
+        uses: SwiftDocOrg/swift-doc@master
+        with:
+          inputs: "Sources"
+          format: "commonmark"
+          module-name: Fluxor
+          output: "Documentation-Wiki"
       - name: Upload to Wiki
         uses: SwiftDocOrg/github-wiki-publish-action@v1
         with:
@@ -26,7 +25,12 @@ jobs:
         env:
           GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
       - name: Generate Documentation for Pages
-        run: swift-doc generate Sources/Fluxor* --module-name Fluxor --output Documentation-Pages --format html
+        uses: SwiftDocOrg/swift-doc@master
+        with:
+          inputs: "Sources"
+          format: html
+          module-name: Fluxor
+          output: "Documentation-Pages"
       - name: Upload to GitHub Pages
         uses: crazy-max/ghaction-github-pages@v1.4.1
         with:
