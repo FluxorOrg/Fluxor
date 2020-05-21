@@ -27,7 +27,7 @@ open class Store<State: Encodable> {
     internal private(set) var state: CurrentValueSubject<State, Never>
     internal private(set) var stateHash = UUID()
     private var stateHashSink: AnyCancellable!
-    private let action = PassthroughSubject<Action, Never>()
+    private let actions = PassthroughSubject<Action, Never>()
     private(set) var reducers = [Reducer<State>]()
     private(set) var effectCancellables = Set<AnyCancellable>()
     private(set) var interceptors = [AnyInterceptor<State>]()
@@ -41,9 +41,9 @@ open class Store<State: Encodable> {
      */
     public init(initialState: State, reducers: [Reducer<State>] = [], effects: [Effects] = []) {
         state = .init(initialState)
+        stateHashSink = state.sink { _ in self.stateHash = UUID() }
         reducers.forEach(register(reducer:))
         effects.forEach(register(effects:))
-        stateHashSink = state.sink { _ in self.stateHash = UUID() }
     }
 
     /**
@@ -61,7 +61,7 @@ open class Store<State: Encodable> {
         reducers.forEach { $0.reduce(&newState, action) }
         interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: newState) }
         state.send(newState)
-        self.action.send(action)
+        actions.send(action)
     }
 
     /**
@@ -83,15 +83,15 @@ open class Store<State: Encodable> {
             let cancellable: AnyCancellable
             switch effect {
             case .dispatchingOne(let effectCreator):
-                cancellable = effectCreator(action.eraseToAnyPublisher())
+                cancellable = effectCreator(actions.eraseToAnyPublisher())
                     .receive(on: DispatchQueue.main)
                     .sink(receiveValue: self.dispatch(action:))
             case .dispatchingMultiple(let effectCreator):
-                cancellable = effectCreator(action.eraseToAnyPublisher())
+                cancellable = effectCreator(actions.eraseToAnyPublisher())
                     .receive(on: DispatchQueue.main)
                     .sink { $0.forEach(self.dispatch(action:)) }
             case .nonDispatching(let effectCreator):
-                cancellable = effectCreator(action.eraseToAnyPublisher())
+                cancellable = effectCreator(actions.eraseToAnyPublisher())
             }
             cancellable.store(in: &effectCancellables)
         }
