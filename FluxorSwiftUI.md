@@ -42,25 +42,26 @@ When the `ValueBinding` has a `Bool` value, it can be created with a `ActionTemp
 
 ```swift
 struct DrawView: View {
-    @ObservedObject var showClearActionSheet
-        = Current.store.binding(get: Selectors.isClearOptionsVisible,
-                                enable: Actions.askToClear,
-                                disable: Actions.cancelClear)
-    
+    var showClearActionSheet = Current.store.binding(get: Selectors.isClearOptionsVisible,
+                                                     enable: Actions.askToClear,
+                                                     disable: Actions.cancelClear)
+
     var body: some View {
         Button(action: { self.showClearActionSheet.enable() }, label: { Text("Clear") })
-            .actionSheet(isPresented: showClearActionSheet.binding) {
-                ActionSheet(title: Text("Clear"),
-                            message: Text("Are you sure you want to clear?"),
-                            buttons: [
-                                .destructive(Text("Yes, clear")) {
-                                    Current.store.dispatch(action: Actions.clear())
-                                },
-                                .cancel(Text("Cancel")) {
-                                    self.showClearActionSheet.disable()
-                                }
-                            ])
-            }
+            .actionSheet(isPresented: showClearActionSheet.binding) { clearActionSheet }
+    }
+
+    private var clearActionSheet: ActionSheet {
+        .init(title: Text("Clear"),
+              message: Text("Are you sure you want to clear?"),
+              buttons: [
+                  .destructive(Text("Yes, clear")) {
+                      Current.store.dispatch(action: Actions.clear())
+                  },
+                  .cancel(Text("Cancel")) {
+                      self.showClearActionSheet.disable()
+                  }
+              ])
     }
 }
 ```
