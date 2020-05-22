@@ -51,7 +51,6 @@ public class Selector<State, Value>: SelectorProtocol {
      - Parameter selector1: The first `Selector`
      - Parameter projector: The closure to pass the value from the `Selector` to
      */
-
     public init<S1>(_ selector1: S1,
                     _ projector: @escaping (S1.Value) -> Value)
         where S1: SelectorProtocol, S1.State == State {
