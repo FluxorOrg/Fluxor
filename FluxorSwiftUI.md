@@ -27,7 +27,7 @@ struct DrawView: View {
 
 ## Binding a value which can be changed
 
-The [`ValueBinding`](Sources/FluxorSwiftUI/ValueBinding.swift) can be used to create a [`Binding`](https://developer.apple.com/documentation/swiftui/binding) to a value in the `State` and use an [`ActionTemplate`](Sources/Fluxor/Action.swift) to update the value through the [`Store`](Sources/Fluxor/Store.swift). The `binding` property on [`ValueBinding`](Sources/FluxorSwiftUI/ValueBinding.swift) will create a [`Binding`](https://developer.apple.com/documentation/swiftui/binding) which can be used like any other bindings. The value can also manually be updated using the [`update`](Sources/FluxorSwiftUI/ValueBinding.swift) function. This will dispatch an `Action` on the `Store` based on the specified [`ActionTemplate`](Sources/Fluxor/Action.swift).
+The [`ValueBinding`](Sources/FluxorSwiftUI/ValueBinding.swift) can be used to create a [`Binding`](https://developer.apple.com/documentation/swiftui/binding) to a value in the `State` and use an [`ActionTemplate`](Sources/Fluxor/Action.swift) to update the value through the [`Store`](Sources/Fluxor/Store.swift). The `binding` property on [`ValueBinding`](Sources/FluxorSwiftUI/ValueBinding.swift) will create a [`Binding`](https://developer.apple.com/documentation/swiftui/binding) which can be used like any other bindings. The value can also manually be updated using the `update` function. This will dispatch an [`Action`](Sources/Fluxor/Action.swift) on the [`Store`](Sources/Fluxor/Store.swift) based on the specified [`ActionTemplate`](Sources/Fluxor/Action.swift).
 
 ```swift
 import FluxorSwiftUI
