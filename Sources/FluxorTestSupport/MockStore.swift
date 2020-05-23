@@ -13,6 +13,7 @@ import Fluxor
  or override the value coming out of `Selector`s.
  */
 public class MockStore<State: Encodable>: Store<State> {
+    /// All the `Action`s and state changes
     public var stateChanges: [(action: Action, oldState: State, newState: State)] {
         self.testInterceptor.stateChanges
     }
