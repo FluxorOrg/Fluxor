@@ -10,6 +10,7 @@ import Foundation
 public class PrintInterceptor<State: Encodable>: Interceptor {
     private let print: (String) -> Void
 
+    /// Initializes the `PrintInterceptor`.
     public convenience init() {
         self.init(print: { Swift.print($0) })
     }
