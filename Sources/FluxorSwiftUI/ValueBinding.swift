@@ -136,14 +136,17 @@ public extension ValueBinding where UpdateValue == Value {
 }
 
 public extension ValueBinding where Value == Bool, UpdateValue == Bool {
+    /// Update the value by dispatching an `Action` with the opposite value of the current.
     func toggle() {
         update(value: !current)
     }
 
+    /// Disable the value by dispatching an `Action` with `true` as `payload`.
     func enable() {
         update(value: true)
     }
 
+    /// Disable the value by dispatching an `Action` with `false` as `payload`.
     func disable() {
         update(value: false)
     }
@@ -155,10 +158,12 @@ public extension ValueBinding where Value == Bool, UpdateValue == Void {
         update(value: !current)
     }
 
+    /// Enable the value by dispatching an `Action` from the `enableActionTemplate`.
     func enable() {
         update(value: true)
     }
 
+    /// Disable the value by dispatching an `Action` from the `disableActionTemplate`.
     func disable() {
         update(value: false)
     }
