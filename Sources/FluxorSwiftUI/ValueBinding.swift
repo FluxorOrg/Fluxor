@@ -18,7 +18,7 @@ public extension Store {
      - Parameter actionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value changes
      */
     func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
-                                     set actionTemplate: ActionTemplate<UpdateValue>)
+                                     send actionTemplate: ActionTemplate<UpdateValue>)
         -> ValueBinding<Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
@@ -52,7 +52,7 @@ public extension Store {
                         This can either be the current value or the one used for the update
      */
     func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
-                                     set actionTemplate: @escaping (_ value: Value) -> ActionTemplate<UpdateValue>)
+                                     send actionTemplate: @escaping (_ value: Value) -> ActionTemplate<UpdateValue>)
         -> ValueBinding<Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplateForValue: actionTemplate)
     }
@@ -135,10 +135,32 @@ public extension ValueBinding where UpdateValue == Value {
     }
 }
 
+public extension ValueBinding where Value == Bool, UpdateValue == Bool {
+    func toggle() {
+        update(value: !current)
+    }
+
+    func enable() {
+        update(value: true)
+    }
+
+    func disable() {
+        update(value: false)
+    }
+}
+
 public extension ValueBinding where Value == Bool, UpdateValue == Void {
     /// Update the value by dispatching an `Action` with the opposite value of the current.
     func toggle() {
         update(value: !current)
+    }
+
+    func enable() {
+        update(value: true)
+    }
+
+    func disable() {
+        update(value: false)
     }
 
     /**

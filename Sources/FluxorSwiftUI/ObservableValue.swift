@@ -22,9 +22,9 @@ public extension Store {
  An `ObservableValue` can be wrapped in an `ObservedObject`property wrapper.
  With the given `Selector` it selects a slice of the `State` for SwiftUI to automatically observe.
  */
-public class ObservableValue<T>: ObservableObject {
+public class ObservableValue<Value>: ObservableObject {
     /// The current value. This will change everytime the `State` in the `Store` changes
-    public private(set) var current: T { willSet { objectWillChange.send() } }
+    public private(set) var current: Value { willSet { objectWillChange.send() } }
     private var cancellable: AnyCancellable!
 
     /**
@@ -33,7 +33,7 @@ public class ObservableValue<T>: ObservableObject {
      - Parameter store: The `Store` to select from
      - Parameter selector: The `Selector`s to use for selecting
      */
-    public init<State: Encodable>(store: Store<State>, selector: Selector<State, T>) {
+    public init<State: Encodable>(store: Store<State>, selector: Selector<State, Value>) {
         self.current = store.selectCurrent(selector)
         self.cancellable = store.select(selector).assign(to: \.current, on: self)
     }
