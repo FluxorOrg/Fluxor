@@ -141,7 +141,7 @@ public extension ValueBinding where Value == Bool, UpdateValue == Bool {
         update(value: !current)
     }
 
-    /// Disable the value by dispatching an `Action` with `true` as `payload`.
+    /// Enable the value by dispatching an `Action` with `true` as `payload`.
     func enable() {
         update(value: true)
     }
