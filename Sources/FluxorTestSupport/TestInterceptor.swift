@@ -13,6 +13,7 @@ public class TestInterceptor<State>: Interceptor {
     /// A list of `Actions` and `State`s intercepted.
     public private(set) var stateChanges: [(action: Action, oldState: State, newState: State)] = []
 
+    /// Initializes the `TestInterceptor`.
     public init() {}
 
     public func actionDispatched(action: Action, oldState: State, newState: State) {
