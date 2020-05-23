@@ -21,7 +21,7 @@ public class MockStore<State: Encodable>: Store<State> {
     private let testInterceptor = TestInterceptor<State>()
 
     public override init(initialState: State, reducers: [Reducer<State>] = [], effects: [Effects] = []) {
-        let reducers = reducers + [Reducer<State>(ReduceOn(setState) { state, action in
+        let reducers = reducers + [Reducer(ReduceOn(setState) { state, action in
             state = action.payload
         })]
         super.init(initialState: initialState, reducers: reducers)
