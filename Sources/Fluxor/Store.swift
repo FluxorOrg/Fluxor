@@ -35,7 +35,7 @@ open class Store<State: Encodable> {
     /**
      Initializes the `Store` with an initial state and an `InitialAction`.
 
-     - Parameter initialState: The initial state for the store
+     - Parameter initialState: The initial `State` for the `Store`
      - Parameter reducers: The `Reducer`s to register
      - Parameter effects: The `Effect`s to register
      */
