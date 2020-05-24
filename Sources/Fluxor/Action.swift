@@ -34,9 +34,15 @@ public extension Action {
  The template can have a `Payload`type which is used when creating an actual `Action` from the template.
  */
 public struct ActionTemplate<Payload> {
-    let id: String
-    let payloadType: Payload.Type
+    fileprivate let id: String
+    private let payloadType: Payload.Type
 
+    /**
+     Initializes an `ActionTemplate` with the given `payloadType`.
+
+     - Parameter id: The identifier for the `ActionTemplate`
+     - Parameter payloadType: The type of the `Payload`
+     */
     public init(id: String, payloadType: Payload.Type) {
         self.id = id
         self.payloadType = payloadType
@@ -62,6 +68,11 @@ public struct ActionTemplate<Payload> {
 }
 
 public extension ActionTemplate where Payload == Void {
+    /**
+     Initializes an `ActionTemplate` with no `Payload`.
+
+     - Parameter id: The identifier for the `ActionTemplate`
+     */
     init(id: String) {
         self.init(id: id, payloadType: Payload.self)
     }
@@ -87,7 +98,9 @@ internal protocol IdentifiableAction: Action {
 
 /// An `Action` with an identifier. Created from `ActionTemplate`s.
 public struct AnonymousAction<Payload>: IdentifiableAction {
+    /// The identifier for the `AnonymousAction`
     public let id: String
+    /// The `Payload` for the `AnonymousAction`
     public private(set) var payload: Payload
 
     /**
