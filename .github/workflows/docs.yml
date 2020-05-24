@@ -17,6 +17,8 @@ jobs:
         uses: crazy-max/ghaction-github-pages@v1.4.1
         with:
           build_dir: "docs"
+        env:
+          GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
   wiki:
     name: Documentation for Wiki
     runs-on: ubuntu-latest
