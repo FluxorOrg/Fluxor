@@ -33,9 +33,9 @@ open class Store<State: Encodable> {
     private(set) var interceptors = [AnyInterceptor<State>]()
 
     /**
-     Initializes the `Store` with an initial state and an `InitialAction`.
+     Initializes the `Store` with an initial `State`.
 
-     - Parameter initialState: The initial state for the store
+     - Parameter initialState: The initial `State` for the `Store`
      - Parameter reducers: The `Reducer`s to register
      - Parameter effects: The `Effect`s to register
      */
@@ -59,8 +59,8 @@ open class Store<State: Encodable> {
         let oldState = state.value
         var newState = oldState
         reducers.forEach { $0.reduce(&newState, action) }
-        interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: newState) }
         state.send(newState)
+        interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: newState) }
         actions.send(action)
     }
 
@@ -112,6 +112,7 @@ open class Store<State: Encodable> {
      Creates a `Publisher` for a `Selector`.
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
+     - Returns: A `Publisher` for the `Value` in the `State`
      */
     public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
         return state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
@@ -121,6 +122,7 @@ open class Store<State: Encodable> {
      Creates a `Publisher` for a `KeyPath` in the `State`.
 
      - Parameter keyPath: The key path to use when getting the value in the `State`
+     - Returns: A `Publisher` for the `Value` in the `State`
      */
     public func select<Value>(_ keyPath: KeyPath<State, Value>) -> AnyPublisher<Value, Never> {
         return state.map(keyPath).eraseToAnyPublisher()
@@ -130,15 +132,17 @@ open class Store<State: Encodable> {
      Gets the current value in the `State` for a `Selector`.
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
+     - Returns: The `Value` in the `State`
      */
     public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return selector.map(state.value, stateHash: stateHash)
     }
 
     /**
-     Gets the current value in the `State` for a `Key path`.
+     Gets the current value in the `State` for a `KeyPath`.
 
      - Parameter keyPath: The key path to use when getting the value in the `State`
+     - Returns: The `Value` in the `State`
      */
     public func selectCurrent<Value>(_ keyPath: KeyPath<State, Value>) -> Value {
         return state.value[keyPath: keyPath]

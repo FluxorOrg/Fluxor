@@ -4,8 +4,8 @@
 </p>
 
 <p align="center">
-    <b>Unidirectional Data Flow in Swift - inspired by Redux and NgRx.</b><br />
-    Based on Combine - ideal for use with SwiftUI.<br />
+    <b>Unidirectional Data Flow in Swift - inspired by <a href="https://redux.js.org">Redux</a> and <a href="https://ngrx.io">NgRx</a>.</b><br />
+    Based on <a href="https://developer.apple.com/documentation/combine">Combine</a> - ideal for use with <a href="https://developer.apple.com/documentation/swiftui">SwiftUI</a>.<br />
     <br />
     <img src="https://img.shields.io/badge/Swift-5.2-brightgreen.svg" alt="Swift version" />
     <a href="https://swift.org/package-manager">
@@ -125,6 +125,12 @@ Fluxor comes with two implementations of `Interceptor`:
 
 * [**PrintInterceptor**](Sources/Fluxor/Interceptors/PrintInterceptor.swift) for printing `Action`s and state changes to the log.
 * [**TestInterceptor**](Sources/FluxorTestSupport/TestInterceptor.swift) to help assert that specific `Action`s was dispatched in unit tests.
+
+## Packages for using it with SwiftUI and testing
+Fluxor comes with packages, to make it easier to use it with SwiftUI and for testing apps using Fluxor.
+
+* [More info on how to use it with SwiftUI](FluxorSwiftUI.md)
+* [More info on how to test apps using Fluxor](FluxorTestSupport.md)
 
 ## Debugging with FluxorExplorer
 Fluxor has a companion app, [**FluxorExplorer**](https://github.com/FluxorOrg/FluxorExplorer), which helps when debugging apps using Fluxor. FluxorExplorer lets you look through the dispatched `Action`s and state changes, to debug the data flow of the app.

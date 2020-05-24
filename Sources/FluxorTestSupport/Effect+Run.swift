@@ -10,7 +10,9 @@ import Fluxor
 import XCTest
 
 public extension Effect {
+    /// `Error`s which can be thrown when running `Effect`s
     enum RunError: Error {
+        /// The `Effect` can't be run this way
         case wrongType
     }
 

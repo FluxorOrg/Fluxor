@@ -10,6 +10,7 @@ import Foundation
 public class PrintInterceptor<State: Encodable>: Interceptor {
     private let print: (String) -> Void
 
+    /// Initializes the `PrintInterceptor`.
     public convenience init() {
         self.init(print: { Swift.print($0) })
     }
@@ -18,6 +19,13 @@ public class PrintInterceptor<State: Encodable>: Interceptor {
         self.print = print
     }
 
+    /**
+     The function called when an `Action` is dispatched on a `Store`.
+
+     - Parameter action: The `Action` dispatched
+     - Parameter oldState: The `State` before the `Action` was dispatched
+     - Parameter newState: The `State` after the `Action` was dispatched
+     */
     public func actionDispatched(action: Action, oldState: State, newState: State) {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -30,11 +38,11 @@ public class PrintInterceptor<State: Encodable>: Interceptor {
             actionJSON.replacingOccurrences(of: "\n", with: "") != "{}" {
             actionLog += ", data: \(actionJSON)"
         }
-        print(actionLog)
+        self.print(actionLog)
 
         if let stateData = try? encoder.encode(newState),
             let newStateJSON = String(data: stateData, encoding: .utf8) {
-            print("\(name) - state changed to: \(newStateJSON)")
+            self.print("\(name) - state changed to: \(newStateJSON)")
         }
     }
 }
