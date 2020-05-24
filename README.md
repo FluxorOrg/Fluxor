@@ -126,7 +126,7 @@ Fluxor comes with two implementations of `Interceptor`:
 * [**PrintInterceptor**](Sources/Fluxor/Interceptors/PrintInterceptor.swift) for printing `Action`s and state changes to the log.
 * [**TestInterceptor**](Sources/FluxorTestSupport/TestInterceptor.swift) to help assert that specific `Action`s was dispatched in unit tests.
 
-## Packages for using SwiftUI and testing
+## Packages for using it with SwiftUI and testing
 Fluxor comes with packages, to make it easier to use it with SwiftUI and for testing apps using Fluxor.
 
 * [More info on how to use it with SwiftUI](FluxorSwiftUI.md)
