@@ -13,15 +13,15 @@ import struct Foundation.UUID
 
  A `Store` is configured by registering all the desired `Reducer`s and  `Effects`s.
 
- # Usage
+ ## Usage
  To update the `State` callers dispatch `Action`s on the `Store`.
 
- # Interceptors
- It is possible to intercept all `Action`s and `State` changes by registering an `Interceptor`.
-
- # Selecting
+ ## Selecting
  To select a value in the `State` the callers can either use a `Selector` or a key path.
  It is possible to get a `Publisher` for the value or just to select the current value.
+
+ ## Interceptors
+ It is possible to intercept all `Action`s and `State` changes by registering an `Interceptor`.
  */
 open class Store<State: Encodable> {
     internal private(set) var state: CurrentValueSubject<State, Never>
