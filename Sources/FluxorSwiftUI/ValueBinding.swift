@@ -16,6 +16,7 @@ public extension Store {
 
      - Parameter selector: The `Selector`s to use for getting the current value
      - Parameter actionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value changes
+     - Returns: An `ValueBinding` based on the given `Selector` and `ActionTemplate`
      */
     func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
                                      send actionTemplate: ActionTemplate<UpdateValue>)
@@ -31,6 +32,7 @@ public extension Store {
      - Parameter selector: The `Selector`s to use for getting the current value
      - Parameter enableActionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value should be enabled
      - Parameter disableActionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value should be disabled
+     - Returns: An `ValueBinding` based on the given `Selector` and `ActionTemplate`s
      */
     func binding(get selector: Fluxor.Selector<State, Bool>,
                  enable enableActionTemplate: ActionTemplate<Void>,
@@ -50,6 +52,7 @@ public extension Store {
                                  for dispatching an `Action` when the value changes
      - Parameter value: The value used to decide which `ActionTemplate` to use for the update.
                         This can either be the current value or the one used for the update
+     - Returns: An `ValueBinding` based on the given `Selector` and `ActionTemplate`
      */
     func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
                                      send actionTemplate: @escaping (_ value: Value) -> ActionTemplate<UpdateValue>)
@@ -58,6 +61,11 @@ public extension Store {
     }
 }
 
+/**
+ An `ValueBinding` can be used as a two-way connection between a slice of the `Store` and a `View`.
+ The `current` property will always hold the current `Value` in the `State` and when
+ one of the `update` functions are called, an `Action` is dispatched on the `Store`.
+ */
 public class ValueBinding<Value, UpdateValue> {
     /// The current value. This will change everytime the `State` in the `Store` changes
     public var current: Value { storeSelectCurrent() }

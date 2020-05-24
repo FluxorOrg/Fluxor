@@ -17,7 +17,7 @@ import Combine
 public enum Effect {
     /// An `Effect` that publishes an `Action` to dispatch.
     case dispatchingOne(_ publisher: (AnyPublisher<Action, Never>) -> AnyPublisher<Action, Never>)
-    /// An `Effect` that publishes multiple`Action`s to dispatch.
+    /// An `Effect` that publishes multiple `Action`s to dispatch.
     case dispatchingMultiple(_ publisher: (AnyPublisher<Action, Never>) -> AnyPublisher<[Action], Never>)
     /// An `Effect` that handles the action but doesn't publish a new `Action`.
     case nonDispatching(_ cancellable: (AnyPublisher<Action, Never>) -> AnyCancellable)

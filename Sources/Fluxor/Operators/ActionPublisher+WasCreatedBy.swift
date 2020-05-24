@@ -6,6 +6,7 @@
 
 import Combine
 
+/// Operators for narrowing down `Action`s in Publisher streams.
 extension Publisher where Output == Action {
     /**
      Only lets `Action`s created from the given `ActionTemplate`s get through the stream.

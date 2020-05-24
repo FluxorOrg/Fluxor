@@ -12,6 +12,7 @@ public extension Store {
      Creates an `ObservableValue` from the given `Selector`.
 
      - Parameter selector: The `Selector`s to use for observing
+     - Returns: An `ObservableValue` based on the given `Selector`
      */
     func observe<Value>(_ selector: Selector<State, Value>) -> ObservableValue<Value> {
         return .init(store: self, selector: selector)

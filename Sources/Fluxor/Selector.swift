@@ -12,7 +12,12 @@ public protocol SelectorProtocol {
     associatedtype State
     /// The output of the `Selector`,
     associatedtype Value
-    /// A pure function which takes a `State` and returns a `Value` from it.
+    /**
+     A pure function which takes a `State` and returns a `Value` from it.
+
+     - Parameter state: The `State` to map
+     - Returns: The `Value` mapped with the `projector`
+     */
     func map(_ state: State) -> Value
 }
 
@@ -145,6 +150,12 @@ public class Selector<State, Value>: SelectorProtocol {
                           selector5.map($0)) }
     }
 
+    /**
+     A pure function which takes a `State` and returns a `Value` from it.
+
+     - Parameter state: The `State` to map
+     - Returns: The `Value` mapped with the `projector`
+     */
     public func map(_ state: State) -> Value {
         return map(state)
     }
@@ -173,6 +184,7 @@ extension Selector {
 
      - Parameter state: The `State` to select from
      - Parameter stateHash: The hash of the state to select from
+     - Returns: The `Value` mapped with the `projector`
      */
     internal func map(_ state: State, stateHash: UUID) -> Value {
         if let result = result, result.stateHash == nil || result.stateHash == stateHash {

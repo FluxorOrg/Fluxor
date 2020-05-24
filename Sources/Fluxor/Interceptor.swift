@@ -6,6 +6,7 @@
 
 /// A type which intercepts all `Action`s and the  `State` changes happening in a `Store`.
 public protocol Interceptor {
+    /// The type of `State` the `Interceptor` will get.
     associatedtype State
     /**
      The function called when an `Action` is dispatched on a `Store`.
