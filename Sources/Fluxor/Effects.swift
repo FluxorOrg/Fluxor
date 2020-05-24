@@ -9,7 +9,10 @@ import Combine
 /**
  A side effect that happens as a response to a dispatched `Action`.
 
- An `Effect` can give a new `Action` to dispatch (a `dispatching` effect) or nothing (a `nonDispatching` effect).
+ An `Effect` can:
+ - give a new `Action` to dispatch (a `dispatchingOne` effect)
+ - give an array of new `Action`s to dispatch (a `dispatchingMultiple` effect)
+ - give nothing (a `nonDispatching` effect)
  */
 public enum Effect {
     /// An `Effect` that publishes an `Action` to dispatch.
