@@ -27,11 +27,14 @@ public extension Store {
     /**
      Creates a `ValueBinding` from the given `Selector` and `ActionTemplate`s for enabling and disabling the value.
 
-      When the value is enabled/disabled an `Action`, created from one of the `ActionTemplate`s, is dispatched on the `Store`.
+      When the value is enabled/disabled, an `Action`, created from one of the `ActionTemplate`s,
+     is dispatched on the `Store`.
 
      - Parameter selector: The `Selector`s to use for getting the current value
-     - Parameter enableActionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value should be enabled
-     - Parameter disableActionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value should be disabled
+     - Parameter enableActionTemplate: The `ActionTemplate` to use for dispatching an `Action`
+                                       when the value should be enabled
+     - Parameter disableActionTemplate: The `ActionTemplate` to use for dispatching an `Action`
+                                        when the value should be disabled
      - Returns: An `ValueBinding` based on the given `Selector` and `ActionTemplate`s
      */
     func binding(get selector: Fluxor.Selector<State, Bool>,
