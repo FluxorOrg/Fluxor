@@ -10,12 +10,6 @@ import Fluxor
 import XCTest
 
 public extension Effect {
-    /// `Error`s which can be thrown when running `Effect`s
-    enum RunError: Error {
-        /// The `Effect` can't be run this way
-        case wrongType
-    }
-
     /**
      Run the `Effect` with the specified `Action` and return the published `Action`s.
 
@@ -53,6 +47,12 @@ public extension Effect {
         var cancellables: [AnyCancellable] = []
         effectCreator(actions.eraseToAnyPublisher()).store(in: &cancellables)
         actions.send(action)
+    }
+
+    /// `Error`s which can be thrown when running `Effect`s
+    internal enum RunError: Error {
+        /// The `Effect` can't be run this way
+        case wrongType
     }
 }
 
