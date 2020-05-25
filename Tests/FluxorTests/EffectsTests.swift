@@ -6,6 +6,7 @@
 
 import Combine
 @testable import Fluxor
+import FluxorTestSupport
 import XCTest
 
 // swiftlint:disable nesting force_cast
@@ -42,12 +43,12 @@ class EffectsTests: XCTestCase {
         }
         // When
         let action = Test1Action()
-        let actions: [Action] = try effect.run(with: action)
-        effect.run(with: action) // Returns early because of wrong type
+        let actions: [Action] = try EffectRunner.run(effect, with: action)
+        EffectRunner.run(effect, with: action) // Returns early because of wrong type
         // Then
         wait(for: [expectation], timeout: 1)
         XCTAssertEqual(actions[0] as! Test2Action, action2)
-        XCTAssertThrowsError(try effect.run(with: action, expectedCount: 2))
+        XCTAssertThrowsError(try EffectRunner.run(effect, with: action, expectedCount: 2))
     }
 
     /// Can we run a multi dispatching `Effect`?
@@ -67,8 +68,8 @@ class EffectsTests: XCTestCase {
         }
         // When
         let action = Test1Action()
-        let actions: [Action] = try effect.run(with: action, expectedCount: 2)
-        effect.run(with: action) // Returns early because of wrong type
+        let actions: [Action] = try EffectRunner.run(effect, with: action, expectedCount: 2)
+        EffectRunner.run(effect, with: action) // Returns early because of wrong type
         // Then
         wait(for: [expectation], timeout: 1)
         XCTAssertEqual(actions[0] as! Test2Action, action2)
@@ -85,8 +86,8 @@ class EffectsTests: XCTestCase {
         }
         // When
         let action = Test1Action()
-        effect.run(with: action)
-        XCTAssertThrowsError(try effect.run(with: action, expectedCount: 1)) // Returns early because of wrong type
+        EffectRunner.run(effect, with: action)
+        XCTAssertThrowsError(try EffectRunner.run(effect, with: action, expectedCount: 1))
         // Then
         wait(for: [expectation], timeout: 1)
     }
@@ -102,7 +103,7 @@ class EffectsTests: XCTestCase {
             }
             return publisher.eraseToAnyPublisher()
         }
-        _ = try effect.run(with: Test1Action(), expectedCount: 1)
+        _ = try EffectRunner.run(effect, with: Test1Action(), expectedCount: 1)
         XCTAssertNotNil(cancellable)
     }
 }

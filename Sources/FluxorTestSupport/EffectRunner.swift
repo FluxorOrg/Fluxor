@@ -9,20 +9,20 @@ import Dispatch
 import Fluxor
 import XCTest
 
-public extension Effect {
+public struct EffectRunner {
     /**
-     __TestSupport:__ Run the `Effect` with the specified `Action` and return the published `Action`s.
+     Run the `Effect` with the specified `Action` and return the published `Action`s.
 
      The `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned.
 
      - Parameter action: The `Action` to send to the `Effect`
      - Parameter expectedCount: The count of `Action`s to wait for
      */
-    func run(with action: Action, expectedCount: Int = 1) throws -> [Action] {
+    public static func run(_ effect: Effect, with action: Action, expectedCount: Int = 1) throws -> [Action] {
         let actions = PassthroughSubject<Action, Never>()
         let recorder = ActionRecorder(numberOfActions: expectedCount)
         let publisher: AnyPublisher<[Action], Never>
-        switch self {
+        switch effect {
         case .dispatchingOne(let effectCreator):
             publisher = effectCreator(actions.eraseToAnyPublisher()).map { [$0] }.eraseToAnyPublisher()
         case .dispatchingMultiple(let effectCreator):
@@ -37,13 +37,13 @@ public extension Effect {
     }
 
     /**
-     __TestSupport:__ Run the `Effect` with the specified `Action`.
+     Run the `Effect` with the specified `Action`.
 
      - Parameter action: The `Action` to send to the `Effect`
      */
-    func run(with action: Action) {
+    public static func run(_ effect: Effect, with action: Action) {
         let actions = PassthroughSubject<Action, Never>()
-        guard case .nonDispatching(let effectCreator) = self else { return }
+        guard case .nonDispatching(let effectCreator) = effect else { return }
         var cancellables: [AnyCancellable] = []
         effectCreator(actions.eraseToAnyPublisher()).store(in: &cancellables)
         actions.send(action)
