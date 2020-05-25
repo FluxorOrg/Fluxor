@@ -6,28 +6,34 @@ on:
     - master
 
 jobs:
+  pages:
+    name: Documentation for Pages
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Generate Documentation for Pages
+        uses: sersoft-gmbh/swifty-docs-action@v1
+      - name: Upload to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v1.4.1
+        with:
+          build_dir: "docs"
+        env:
+          GITHUB_PAT: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
   wiki:
-    name: Documentation
+    name: Documentation for Wiki
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install swift-doc
-        run: |
-          git clone https://github.com/SwiftDocOrg/swift-doc
-          cd swift-doc
-          sudo make install
-          cd ..
       - name: Generate Documentation for Wiki
-        run: swift-doc generate Sources/Fluxor* --module-name Fluxor --output Documentation-Wiki
+        uses: SwiftDocOrg/swift-doc@master
+        with:
+          inputs: "Sources"
+          format: "commonmark"
+          module-name: Fluxor
+          output: "Documentation-Wiki"
       - name: Upload to Wiki
         uses: SwiftDocOrg/github-wiki-publish-action@v1
         with:
           path: "Documentation-Wiki"
         env:
           GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-#      - name: Generate Documentation for Pages
-#        run: swift-doc generate Sources/Fluxor* --module-name Fluxor --output Documentation-Pages --format html
-#      - name: Upload to GitHub Pages
-#        uses: crazy-max/ghaction-github-pages@v1.4.1
-#        with:
-#          build_dir: "Documentation-Pages"

@@ -1,4 +1,4 @@
-/**
+/*
  * FluxorTestSupport
  *  Copyright (c) Morten Bjerg Gregersen 2020
  *  MIT license, see LICENSE file for details
@@ -10,14 +10,8 @@ import Fluxor
 import XCTest
 
 public extension Effect {
-    /// `Error`s which can be thrown when running `Effect`s
-    enum RunError: Error {
-        /// The `Effect` can't be run this way
-        case wrongType
-    }
-
     /**
-     Run the `Effect` with the specified `Action` and return the published `Action`s.
+     __TestSupport:__ Run the `Effect` with the specified `Action` and return the published `Action`s.
 
      The `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned.
 
@@ -43,7 +37,7 @@ public extension Effect {
     }
 
     /**
-     Run the `Effect` with the specified `Action`.
+     __TestSupport:__ Run the `Effect` with the specified `Action`.
 
      - Parameter action: The `Action` to send to the `Effect`
      */
@@ -53,6 +47,12 @@ public extension Effect {
         var cancellables: [AnyCancellable] = []
         effectCreator(actions.eraseToAnyPublisher()).store(in: &cancellables)
         actions.send(action)
+    }
+
+    /// `Error`s which can be thrown when running `Effect`s
+    internal enum RunError: Error {
+        /// The `Effect` can't be run this way
+        case wrongType
     }
 }
 
