@@ -3,7 +3,7 @@ name: Docs
 on:
   push:
     branches:
-    - enable-html-docs
+    - master
 
 jobs:
   pages:
@@ -37,14 +37,3 @@ jobs:
           path: "Documentation-Wiki"
         env:
           GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-#      - name: Generate Documentation for Pages
-#        uses: SwiftDocOrg/swift-doc@master
-#        with:
-#          inputs: "Sources"
-#          format: html
-#          module-name: Fluxor
-#          output: "Documentation-Pages"
-#      - name: Upload to GitHub Pages
-#        uses: crazy-max/ghaction-github-pages@v1.4.1
-#        with:
-#          build_dir: "Documentation-Pages"
