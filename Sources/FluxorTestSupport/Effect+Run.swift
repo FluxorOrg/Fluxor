@@ -11,7 +11,7 @@ import XCTest
 
 public extension Effect {
     /**
-     Run the `Effect` with the specified `Action` and return the published `Action`s.
+     __TestSupport:__ Run the `Effect` with the specified `Action` and return the published `Action`s.
 
      The `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned.
 
@@ -37,7 +37,7 @@ public extension Effect {
     }
 
     /**
-     Run the `Effect` with the specified `Action`.
+     __TestSupport:__ Run the `Effect` with the specified `Action`.
 
      - Parameter action: The `Action` to send to the `Effect`
      */
