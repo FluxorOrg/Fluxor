@@ -14,45 +14,33 @@ public struct EffectRunner {
      Run the `Effect` with the specified `Action` and return the published `Action`s.
 
      The `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned.
+     If the `Effect` is `.nonDispatching`, the `expectedCount` is ignored.
 
      - Parameter action: The `Action` to send to the `Effect`
      - Parameter expectedCount: The count of `Action`s to wait for
+     - Returns: The `Action`s published by the `Effect` if it is dispatching
      */
-    public static func run(_ effect: Effect, with action: Action, expectedCount: Int = 1) throws -> [Action] {
+    @discardableResult
+    public static func run(_ effect: Effect, with action: Action, expectedCount: Int = 1) throws -> [Action]? {
         let actions = PassthroughSubject<Action, Never>()
-        let recorder = ActionRecorder(numberOfActions: expectedCount)
-        let publisher: AnyPublisher<[Action], Never>
+        let runDispatchingEffect: (AnyPublisher<[Action], Never>) throws -> [Action] = { publisher in
+            let recorder = ActionRecorder(numberOfActions: expectedCount)
+            publisher.subscribe(recorder)
+            actions.send(action)
+            try recorder.waitForAllActions()
+            return recorder.actions
+        }
         switch effect {
         case .dispatchingOne(let effectCreator):
-            publisher = effectCreator(actions.eraseToAnyPublisher()).map { [$0] }.eraseToAnyPublisher()
+            return try runDispatchingEffect(effectCreator(actions.eraseToAnyPublisher()).map { [$0] }.eraseToAnyPublisher())
         case .dispatchingMultiple(let effectCreator):
-            publisher = effectCreator(actions.eraseToAnyPublisher())
-        case .nonDispatching:
-            throw RunError.wrongType
+            return try runDispatchingEffect(effectCreator(actions.eraseToAnyPublisher()))
+        case .nonDispatching(let effectCreator):
+            var cancellables: [AnyCancellable] = []
+            effectCreator(actions.eraseToAnyPublisher()).store(in: &cancellables)
+            actions.send(action)
+            return nil
         }
-        publisher.subscribe(recorder)
-        actions.send(action)
-        try recorder.waitForAllActions()
-        return recorder.actions
-    }
-
-    /**
-     Run the `Effect` with the specified `Action`.
-
-     - Parameter action: The `Action` to send to the `Effect`
-     */
-    public static func run(_ effect: Effect, with action: Action) {
-        let actions = PassthroughSubject<Action, Never>()
-        guard case .nonDispatching(let effectCreator) = effect else { return }
-        var cancellables: [AnyCancellable] = []
-        effectCreator(actions.eraseToAnyPublisher()).store(in: &cancellables)
-        actions.send(action)
-    }
-
-    /// `Error`s which can be thrown when running `Effect`s
-    internal enum RunError: Error {
-        /// The `Effect` can't be run this way
-        case wrongType
     }
 }
 
