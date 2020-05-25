@@ -1,0 +1,45 @@
+module: Fluxor
+author: Morten Bjerg Gregersen
+github_url: https://github.com/FluxorOrg/Fluxor
+copyright: '© 2020 under [open source license](https://github.com/FluxorOrg/Fluxor/blob/master/LICENSE).'
+swift_version: 5.2
+
+documentation: "Documentation/Guides/*.md"
+abstract: "Documentation/Abstracts/*.md"
+
+custom_categories:
+  - name: Store
+    children:
+    - Store
+  - name: Actions
+    children:
+    - Action
+    - ActionTemplate
+    - AnonymousAction
+  - name: Reducers
+    children:
+    - Reducer
+    - ReduceOn
+  - name: Selectors
+    children:
+    - SelectorProtocol
+    - Selector
+  - name: Effects
+    children:
+    - Effects
+    - Effect
+  - name: Extensions
+    children:
+    - Publisher
+  - name: Debugging
+    children:
+    - Interceptor
+    - PrintInterceptor
+  - name: SwiftUI
+    children:
+    - ObservableValue
+    - ValueBinding
+  - name: Test Support
+    children:
+    - MockStore
+    - TestInterceptor
