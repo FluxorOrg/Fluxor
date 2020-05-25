@@ -82,7 +82,7 @@ private class ActionRecorder {
         let errorMessage = "Waiting for \(formattedExpectedActions) timed out. Received only \(formattedActions)."
         throw RecordingError.expectedCountNotReached(message: errorMessage)
     }
-    
+
     enum RecordingError: Error {
         case expectedCountNotReached(message: String)
     }
