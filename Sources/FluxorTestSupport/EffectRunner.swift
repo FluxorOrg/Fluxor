@@ -24,11 +24,10 @@ public struct EffectRunner {
     public static func run(_ effect: Effect, with action: Action, expectedCount: Int = 1) throws -> [Action]? {
         let actions = PassthroughSubject<Action, Never>()
         let runDispatchingEffect: (AnyPublisher<[Action], Never>) throws -> [Action] = { publisher in
-            let recorder = ActionRecorder(numberOfActions: expectedCount)
+            let recorder = ActionRecorder(expectedNumberOfActions: expectedCount)
             publisher.subscribe(recorder)
             actions.send(action)
-            try recorder.waitForAllActions()
-            return recorder.actions
+            return try recorder.waitForAllActions()
         }
         switch effect {
         case .dispatchingOne(let effectCreator):
@@ -52,37 +51,37 @@ public struct EffectRunner {
 private class ActionRecorder {
     typealias Input = [Action]
     typealias Failure = Never
-
-    enum RecordingError: Error {
-        case expectedCountNotReached(message: String)
-    }
-
     private let expectation = XCTestExpectation()
-    private let waiter = XCTWaiter()
     private(set) var actions = [Action]() { didSet { expectation.fulfill() } }
 
-    init(numberOfActions: Int) {
-        expectation.expectedFulfillmentCount = numberOfActions
+    /**
+     Initializes an `ActionRecorder` with the given `expectedNumberOfActions`.
+
+     - Parameter expectedNumberOfActions: The number of `Action`s to wait for
+     */
+    init(expectedNumberOfActions: Int) {
+        expectation.expectedFulfillmentCount = expectedNumberOfActions
     }
 
     /**
      Wait for all the expected `Action`s to be published.
 
      - Parameter timeout: The time waiting for the `Action`s
+     - Returns: The `Actions` recorded
      */
-    func waitForAllActions(timeout: TimeInterval = 1) throws {
-        guard actions.count < expectation.expectedFulfillmentCount else { return }
-        let waitResult = waiter.wait(for: [expectation], timeout: timeout)
-        if waitResult != .completed {
-            func valueFormatter(_ count: Int) -> String {
-                "\(count) action" + (count == 1 ? "" : "s")
-            }
-            let formattedNumberOfActions = valueFormatter(expectation.expectedFulfillmentCount)
-            let formattedActions = valueFormatter(actions.count)
+    func waitForAllActions(timeout: TimeInterval = 1) throws -> [Action] {
+        guard actions.count < expectation.expectedFulfillmentCount else { return actions }
+        let waitResult = XCTWaiter().wait(for: [expectation], timeout: timeout)
+        guard waitResult != .completed else { return actions }
 
-            let errorMessage = "Waiting for \(formattedNumberOfActions) timed out. Received only \(formattedActions)."
-            throw RecordingError.expectedCountNotReached(message: errorMessage)
+        enum RecordingError: Error {
+            case expectedCountNotReached(message: String)
         }
+        let valueFormatter = { (count: Int) in "\(count) action" + (count == 1 ? "" : "s") }
+        let formattedExpectedActions = valueFormatter(expectation.expectedFulfillmentCount)
+        let formattedActions = valueFormatter(actions.count)
+        let errorMessage = "Waiting for \(formattedExpectedActions) timed out. Received only \(formattedActions)."
+        throw RecordingError.expectedCountNotReached(message: errorMessage)
     }
 }
 
