@@ -92,7 +92,8 @@ class SettingsEffectsTests: XCTestCase {
     func testSetBackground() {
         let effects = SettingsEffects()
         let action = Actions.setBackgroundColor(payload: .red)
-        let result: [Action] = try effects.setBackgroundColor.run(with: action)
+        let result = try EffectRunner.run(EffectRunnereffects.setBackgroundColor, with: action)!
+        XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result[0], Actions.hideColorPicker())
     }
 }
