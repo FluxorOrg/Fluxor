@@ -16,6 +16,7 @@ public struct EffectRunner {
      The `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned.
      If the `Effect` is `.nonDispatching`, the `expectedCount` is ignored.
 
+     - Parameter effect: The `Effect` to run
      - Parameter action: The `Action` to send to the `Effect`
      - Parameter expectedCount: The count of `Action`s to wait for
      - Returns: The `Action`s published by the `Effect` if it is dispatching
@@ -23,7 +24,7 @@ public struct EffectRunner {
     @discardableResult
     public static func run(_ effect: Effect, with action: Action, expectedCount: Int = 1) throws -> [Action]? {
         let actions = PassthroughSubject<Action, Never>()
-        let runDispatchingEffect: (AnyPublisher<[Action], Never>) throws -> [Action] = { publisher in
+        let runDispatchingEffect = { (publisher: AnyPublisher<[Action], Never>) throws -> [Action] in
             let recorder = ActionRecorder(expectedNumberOfActions: expectedCount)
             publisher.subscribe(recorder)
             actions.send(action)
@@ -31,7 +32,8 @@ public struct EffectRunner {
         }
         switch effect {
         case .dispatchingOne(let effectCreator):
-            return try runDispatchingEffect(effectCreator(actions.eraseToAnyPublisher()).map { [$0] }.eraseToAnyPublisher())
+            return try runDispatchingEffect(effectCreator(actions.eraseToAnyPublisher())
+                .map { [$0] }.eraseToAnyPublisher())
         case .dispatchingMultiple(let effectCreator):
             return try runDispatchingEffect(effectCreator(actions.eraseToAnyPublisher()))
         case .nonDispatching(let effectCreator):
