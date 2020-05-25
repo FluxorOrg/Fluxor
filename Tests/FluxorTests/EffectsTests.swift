@@ -6,6 +6,7 @@
 
 import Combine
 @testable import Fluxor
+import FluxorTestSupport
 import XCTest
 
 // swiftlint:disable nesting force_cast
@@ -29,64 +30,70 @@ class EffectsTests: XCTestCase {
     /// Can we run a single dispatching `Effect`?
     func testEffectRunDispatchingOne() throws {
         // Given
+        let action1 = Test1Action()
         let action2 = Test2Action()
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.expectedFulfillmentCount = 1
         let effect = Effect.dispatchingOne {
             $0.ofType(Test1Action.self)
-                .map { _ in
+                .map {
+                    XCTAssertEqual($0, action1)
                     expectation.fulfill()
                     return action2
                 }
                 .eraseToAnyPublisher()
         }
         // When
-        let action = Test1Action()
-        let actions: [Action] = try effect.run(with: action)
-        effect.run(with: action) // Returns early because of wrong type
+        let actions = try EffectRunner.run(effect, with: action1)!
         // Then
         wait(for: [expectation], timeout: 1)
+        XCTAssertEqual(actions.count, 1)
         XCTAssertEqual(actions[0] as! Test2Action, action2)
-        XCTAssertThrowsError(try effect.run(with: action, expectedCount: 2))
+        XCTAssertThrowsError(try EffectRunner.run(effect, with: action1, expectedCount: 2))
     }
 
     /// Can we run a multi dispatching `Effect`?
     func testEffectRunDispatchingMultiple() throws {
         // Given
+        let action1 = Test1Action()
         let action2 = Test2Action()
         let action3 = Test3Action()
         let expectation = XCTestExpectation(description: debugDescription)
         expectation.expectedFulfillmentCount = 1
         let effect = Effect.dispatchingMultiple {
             $0.ofType(Test1Action.self)
-                .map { _ in
+                .map {
+                    XCTAssertEqual($0, action1)
                     expectation.fulfill()
                     return [action2, action3]
                 }
                 .eraseToAnyPublisher()
         }
         // When
-        let action = Test1Action()
-        let actions: [Action] = try effect.run(with: action, expectedCount: 2)
-        effect.run(with: action) // Returns early because of wrong type
+        let actions = try EffectRunner.run(effect, with: action1, expectedCount: 2)!
         // Then
         wait(for: [expectation], timeout: 1)
+        XCTAssertEqual(actions.count, 2)
         XCTAssertEqual(actions[0] as! Test2Action, action2)
         XCTAssertEqual(actions[1] as! Test3Action, action3)
+        XCTAssertThrowsError(try EffectRunner.run(effect, with: action1, expectedCount: 3))
     }
 
     /// Can we run a non dispatching `Effect`?
     func testEffectRunNonDispatching() throws {
         // Given
         let expectation = XCTestExpectation(description: debugDescription)
-        expectation.expectedFulfillmentCount = 1
+        expectation.expectedFulfillmentCount = 2
+        let action = Test1Action()
         let effect = Effect.nonDispatching {
-            $0.sink { _ in expectation.fulfill() }
+            $0.sink {
+                XCTAssertEqual($0 as! Test1Action, action)
+                expectation.fulfill()
+            }
         }
         // When
-        let action = Test1Action()
-        effect.run(with: action)
-        XCTAssertThrowsError(try effect.run(with: action, expectedCount: 1)) // Returns early because of wrong type
+        XCTAssertNil(try EffectRunner.run(effect, with: action))
+        XCTAssertNil(try EffectRunner.run(effect, with: action, expectedCount: 9))
         // Then
         wait(for: [expectation], timeout: 1)
     }
@@ -102,12 +109,14 @@ class EffectsTests: XCTestCase {
             }
             return publisher.eraseToAnyPublisher()
         }
-        _ = try effect.run(with: Test1Action(), expectedCount: 1)
+        try EffectRunner.run(effect, with: Test1Action(), expectedCount: 1)
         XCTAssertNotNil(cancellable)
     }
 }
 
-private struct Test1Action: Action {}
+private struct Test1Action: Action, Equatable {
+    let id = UUID()
+}
 
 private struct Test2Action: Action, Equatable {
     let id = UUID()
