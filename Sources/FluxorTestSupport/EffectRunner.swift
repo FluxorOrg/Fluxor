@@ -76,14 +76,15 @@ private class ActionRecorder {
         let waitResult = XCTWaiter().wait(for: [expectation], timeout: timeout)
         guard waitResult != .completed else { return actions }
 
-        enum RecordingError: Error {
-            case expectedCountNotReached(message: String)
-        }
         let valueFormatter = { (count: Int) in "\(count) action" + (count == 1 ? "" : "s") }
         let formattedExpectedActions = valueFormatter(expectation.expectedFulfillmentCount)
         let formattedActions = valueFormatter(actions.count)
         let errorMessage = "Waiting for \(formattedExpectedActions) timed out. Received only \(formattedActions)."
         throw RecordingError.expectedCountNotReached(message: errorMessage)
+    }
+    
+    enum RecordingError: Error {
+        case expectedCountNotReached(message: String)
     }
 }
 
