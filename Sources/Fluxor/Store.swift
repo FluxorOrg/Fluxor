@@ -23,11 +23,12 @@ import struct Foundation.UUID
  ## Interceptors
  It is possible to intercept all `Action`s and `State` changes by registering an `Interceptor`.
  */
-open class Store<State: Encodable> {
+open class Store<State: Encodable, Environment> {
     internal private(set) var state: CurrentValueSubject<State, Never>
     internal private(set) var stateHash = UUID()
     private var stateHashSink: AnyCancellable!
     private let actions = PassthroughSubject<Action, Never>()
+    private let environment: Environment
     private(set) var reducers = [Reducer<State>]()
     private(set) var effectCancellables = Set<AnyCancellable>()
     private(set) var interceptors = [AnyInterceptor<State>]()
@@ -39,11 +40,11 @@ open class Store<State: Encodable> {
      - Parameter reducers: The `Reducer`s to register
      - Parameter effects: The `Effect`s to register
      */
-    public init(initialState: State, reducers: [Reducer<State>] = [], effects: [Effects] = []) {
+    public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
         state = .init(initialState)
+        self.environment = environment
         stateHashSink = state.sink { _ in self.stateHash = UUID() }
         reducers.forEach(register(reducer:))
-        effects.forEach(register(effects:))
     }
 
     /**
@@ -78,20 +79,20 @@ open class Store<State: Encodable> {
 
      - Parameter effects: The effects type to register
      */
-    public func register(effects: Effects) {
+    public func register<E: Effects>(effects: E) where E.Environment == Environment {
         effects.enabledEffects.forEach { effect in
             let cancellable: AnyCancellable
             switch effect {
             case .dispatchingOne(let effectCreator):
-                cancellable = effectCreator(actions.eraseToAnyPublisher())
+                cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
                     .receive(on: DispatchQueue.main)
                     .sink(receiveValue: self.dispatch(action:))
             case .dispatchingMultiple(let effectCreator):
-                cancellable = effectCreator(actions.eraseToAnyPublisher())
+                cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
                     .receive(on: DispatchQueue.main)
                     .sink { $0.forEach(self.dispatch(action:)) }
             case .nonDispatching(let effectCreator):
-                cancellable = effectCreator(actions.eraseToAnyPublisher())
+                cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
             }
             cancellable.store(in: &effectCancellables)
         }

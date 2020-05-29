@@ -22,7 +22,7 @@ public struct EffectRunner {
      - Returns: The `Action`s published by the `Effect` if it is dispatching
      */
     @discardableResult
-    public static func run(_ effect: Effect, with action: Action, expectedCount: Int = 1) throws -> [Action]? {
+    public static func run<Environment>(_ effect: Effect<Environment>, with action: Action, environment: Environment, expectedCount: Int = 1) throws -> [Action]? {
         let actions = PassthroughSubject<Action, Never>()
         let runDispatchingEffect = { (publisher: AnyPublisher<[Action], Never>) throws -> [Action] in
             let recorder = ActionRecorder(expectedNumberOfActions: expectedCount)
@@ -32,13 +32,13 @@ public struct EffectRunner {
         }
         switch effect {
         case .dispatchingOne(let effectCreator):
-            return try runDispatchingEffect(effectCreator(actions.eraseToAnyPublisher())
+            return try runDispatchingEffect(effectCreator(actions.eraseToAnyPublisher(), environment)
                 .map { [$0] }.eraseToAnyPublisher())
         case .dispatchingMultiple(let effectCreator):
-            return try runDispatchingEffect(effectCreator(actions.eraseToAnyPublisher()))
+            return try runDispatchingEffect(effectCreator(actions.eraseToAnyPublisher(), environment))
         case .nonDispatching(let effectCreator):
             var cancellables: [AnyCancellable] = []
-            effectCreator(actions.eraseToAnyPublisher()).store(in: &cancellables)
+            effectCreator(actions.eraseToAnyPublisher(), environment).store(in: &cancellables)
             actions.send(action)
             return nil
         }

@@ -9,12 +9,12 @@ import FluxorTestSupport
 import XCTest
 
 class MockStoreTests: XCTestCase {
-    private var store: MockStore<TestState>!
+    private var store: MockStore<TestState, TestEnvironment>!
     private let initialState = TestState(counter: 0)
 
     override func setUp() {
         super.setUp()
-        store = MockStore(initialState: initialState)
+        store = MockStore(initialState: initialState, environment: TestEnvironment())
     }
 
     /// Can the state be set?
@@ -60,4 +60,6 @@ class MockStoreTests: XCTestCase {
     private struct TestState: Encodable, Equatable {
         var counter: Int
     }
+
+    private struct TestEnvironment {}
 }

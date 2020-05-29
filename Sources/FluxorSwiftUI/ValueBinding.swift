@@ -85,9 +85,9 @@ public class ValueBinding<Value, UpdateValue> {
      - Parameter actionTemplateForValue: A closure used to decide which`ActionTemplate` to use
                                          for dispatching an `Action` when the value changes
      */
-    public init<State: Encodable>(store: Store<State>,
-                                  selector: Fluxor.Selector<State, Value>,
-                                  actionTemplateForValue: @escaping (Value) -> ActionTemplate<UpdateValue>) {
+    public init<State: Encodable, Environment>(store: Store<State, Environment>,
+                                               selector: Fluxor.Selector<State, Value>,
+                                               actionTemplateForValue: @escaping (Value) -> ActionTemplate<UpdateValue>) {
         self.storeSelectCurrent = { store.selectCurrent(selector) }
         self.storeDispatch = store.dispatch(action:)
         self.actionTemplateForValue = actionTemplateForValue
@@ -101,9 +101,9 @@ public class ValueBinding<Value, UpdateValue> {
      - Parameter selector: The `Selector`s to use for selecting
      - Parameter actionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value changes
      */
-    public convenience init<State: Encodable>(store: Store<State>,
-                                              selector: Fluxor.Selector<State, Value>,
-                                              actionTemplate: ActionTemplate<UpdateValue>) {
+    public convenience init<State: Encodable, Environment>(store: Store<State, Environment>,
+                                                           selector: Fluxor.Selector<State, Value>,
+                                                           actionTemplate: ActionTemplate<UpdateValue>) {
         self.init(store: store, selector: selector, actionTemplateForValue: { _ in actionTemplate })
     }
 

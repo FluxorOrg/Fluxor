@@ -12,12 +12,12 @@ import XCTest
 // swiftlint:disable force_cast
 
 class StoreTests: XCTestCase {
-    private var store: Store<TestState>!
+    private var store: Store<TestState, TestEnvironment>!
     private var reducer: ((TestState, Action) -> TestState)!
 
     override func setUp() {
         super.setUp()
-        store = Store(initialState: TestState(type: .initial, lastAction: nil))
+        store = Store(initialState: TestState(type: .initial, lastAction: nil), environment: TestEnvironment())
     }
 
     /// Does the `Reducer`s get called?
@@ -81,7 +81,9 @@ class StoreTests: XCTestCase {
     func testSelectMapPublisher() {
         // Given
         let selector = Selector(keyPath: \TestState.type)
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil),
+                          environment: TestEnvironment(),
+                          reducers: [testReducer])
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = store.select(selector).sink {
             if $0 == .modified {
@@ -98,7 +100,9 @@ class StoreTests: XCTestCase {
     /// Does a change in `State` publish new value for key path?
     func testSelectKeyPathPublisher() {
         // Given
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil),
+                          environment: TestEnvironment(),
+                          reducers: [testReducer])
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = store.select(\.type).sink {
             if $0 == .modified {
@@ -116,7 +120,9 @@ class StoreTests: XCTestCase {
     func testSelectMap() {
         // Given
         let selector = Selector(keyPath: \TestState.type)
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil),
+                          environment: TestEnvironment(),
+                          reducers: [testReducer])
         let valueBeforeAction = store.selectCurrent(selector)
         XCTAssertEqual(valueBeforeAction, .initial)
         // When
@@ -129,7 +135,9 @@ class StoreTests: XCTestCase {
     /// Can we select the current value for key path?
     func testSelectKeyPath() {
         // Given
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil),
+                          environment: TestEnvironment(),
+                          reducers: [testReducer])
         let valueBeforeAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueBeforeAction, .initial)
         // When
@@ -142,7 +150,8 @@ class StoreTests: XCTestCase {
     /// Can we get all state changes in a `MockStore`?
     func testMockStoreStateChanges() {
         // Given
-        let mockStore = MockStore(initialState: TestState(type: .initial, lastAction: nil))
+        let mockStore = MockStore(initialState: TestState(type: .initial, lastAction: nil),
+                                  environment: TestEnvironment())
         let action = TestAction()
         let modifiedState = TestState(type: .modified, lastAction: "Set State")
         // When
@@ -163,6 +172,8 @@ class StoreTests: XCTestCase {
         var lastAction: String?
     }
 
+    private struct TestEnvironment {}
+
     private enum TestType: String, Encodable {
         case initial
         case modified
@@ -175,6 +186,7 @@ class StoreTests: XCTestCase {
     }
 
     private struct TestEffects: Effects {
+        typealias Environment = TestEnvironment
         static let responseActionIdentifier = "TestResponseAction"
         static let responseActionTemplate = ActionTemplate(id: TestEffects.responseActionIdentifier)
         static let responseAction = TestEffects.responseActionTemplate.createAction()
@@ -186,22 +198,22 @@ class StoreTests: XCTestCase {
         static var lastAction: AnonymousAction<Int>?
         static var threadCheck: (() -> Void)!
 
-        let testEffect = Effect.dispatchingOne {
-            $0.ofType(TestAction.self)
+        let testEffect = Effect<Environment>.dispatchingOne { actions, _ in
+            actions.ofType(TestAction.self)
                 .receive(on: DispatchQueue.global(qos: .background))
                 .map { _ in TestEffects.responseAction }
                 .eraseToAnyPublisher()
         }
 
-        let anotherTestEffect = Effect.dispatchingMultiple {
-            $0.withIdentifier(TestEffects.responseActionIdentifier)
+        let anotherTestEffect = Effect<Environment>.dispatchingMultiple { actions, _ in
+            actions.withIdentifier(TestEffects.responseActionIdentifier)
                 .handleEvents(receiveOutput: { _ in TestEffects.threadCheck() })
                 .map { _ in [TestEffects.generateAction, TestEffects.unrelatedAction] }
                 .eraseToAnyPublisher()
         }
 
-        let yetAnotherTestEffect = Effect.nonDispatching {
-            $0.wasCreated(from: TestEffects.generateActionTemplate)
+        let yetAnotherTestEffect = Effect<Environment>.nonDispatching { actions, _ in
+            actions.wasCreated(from: TestEffects.generateActionTemplate)
                 .sink(receiveValue: { action in
                     TestEffects.lastAction = action
                     TestEffects.expectation.fulfill()
