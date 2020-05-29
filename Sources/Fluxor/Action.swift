@@ -92,11 +92,13 @@ public extension ActionTemplate where Payload == Void {
     }
 }
 
-internal protocol IdentifiableAction: Action {
+/// An `Action` with an identifier.
+public protocol IdentifiableAction: Action {
+    /// The identifier
     var id: String { get }
 }
 
-/// An `Action` with an identifier. Created from `ActionTemplate`s.
+/// An `Action` created from an `ActionTemplate`.
 public struct AnonymousAction<Payload>: IdentifiableAction {
     /// The identifier for the `AnonymousAction`
     public let id: String
