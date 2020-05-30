@@ -23,15 +23,15 @@ import struct Foundation.UUID
  ## Interceptors
  It is possible to intercept all `Action`s and `State` changes by registering an `Interceptor`.
  */
-open class Store<State: Encodable, Environment> {
-    internal private(set) var state: CurrentValueSubject<State, Never>
+open class Store<State: Encodable, Environment>: ObservableObject {
+    @Published public private(set) var state: State
     internal private(set) var stateHash = UUID()
     private var stateHashSink: AnyCancellable!
     private let actions = PassthroughSubject<Action, Never>()
     private let environment: Environment
-    private(set) var reducers = [Reducer<State>]()
-    private(set) var effectCancellables = Set<AnyCancellable>()
-    private(set) var interceptors = [AnyInterceptor<State>]()
+    private var reducers = [Reducer<State>]()
+    private var effectCancellables = Set<AnyCancellable>()
+    private var interceptors = [AnyInterceptor<State>]()
 
     /**
      Initializes the `Store` with an initial `State`.
@@ -41,9 +41,9 @@ open class Store<State: Encodable, Environment> {
      - Parameter effects: The `Effect`s to register
      */
     public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
-        state = .init(initialState)
+        state = initialState
         self.environment = environment
-        stateHashSink = state.sink { _ in self.stateHash = UUID() }
+        stateHashSink = $state.sink { _ in self.stateHash = UUID() }
         reducers.forEach(register(reducer:))
     }
 
@@ -57,10 +57,10 @@ open class Store<State: Encodable, Environment> {
      - Parameter action: The action to dispatch
      */
     public func dispatch(action: Action) {
-        let oldState = state.value
+        let oldState = state
         var newState = oldState
         reducers.forEach { $0.reduce(&newState, action) }
-        state.send(newState)
+        state = newState
         interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: newState) }
         actions.send(action)
     }
@@ -116,17 +116,7 @@ open class Store<State: Encodable, Environment> {
      - Returns: A `Publisher` for the `Value` in the `State`
      */
     public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
-        return state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
-    }
-
-    /**
-     Creates a `Publisher` for a `KeyPath` in the `State`.
-
-     - Parameter keyPath: The key path to use when getting the value in the `State`
-     - Returns: A `Publisher` for the `Value` in the `State`
-     */
-    public func select<Value>(_ keyPath: KeyPath<State, Value>) -> AnyPublisher<Value, Never> {
-        return state.map(keyPath).eraseToAnyPublisher()
+        return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
     }
 
     /**
@@ -136,16 +126,6 @@ open class Store<State: Encodable, Environment> {
      - Returns: The `Value` in the `State`
      */
     public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
-        return selector.map(state.value, stateHash: stateHash)
-    }
-
-    /**
-     Gets the current value in the `State` for a `KeyPath`.
-
-     - Parameter keyPath: The key path to use when getting the value in the `State`
-     - Returns: The `Value` in the `State`
-     */
-    public func selectCurrent<Value>(_ keyPath: KeyPath<State, Value>) -> Value {
-        return state.value[keyPath: keyPath]
+        return selector.map(state, stateHash: stateHash)
     }
 }

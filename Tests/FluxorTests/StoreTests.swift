@@ -24,8 +24,8 @@ class StoreTests: XCTestCase {
     func testDispatchUsesReducers() {
         // Given
         let action = TestAction()
-        XCTAssertEqual(store.state.value.type, .initial)
-        XCTAssertNil(store.state.value.lastAction)
+        XCTAssertEqual(store.state.type, .initial)
+        XCTAssertNil(store.state.lastAction)
         store.register(reducer: testReducer)
         store.register(reducer: Reducer<TestState> { state, action in
             state.type = .modifiedAgain
@@ -34,8 +34,8 @@ class StoreTests: XCTestCase {
         // When
         store.dispatch(action: action)
         // Then
-        XCTAssertEqual(store.state.value.type, .modifiedAgain)
-        XCTAssertEqual(store.state.value.lastAction, String(describing: action))
+        XCTAssertEqual(store.state.type, .modifiedAgain)
+        XCTAssertEqual(store.state.lastAction, String(describing: action))
     }
 
     /// Does the `Effects` get triggered?
@@ -66,7 +66,7 @@ class StoreTests: XCTestCase {
         let interceptor = TestInterceptor<TestState>()
         store.register(reducer: testReducer)
         store.register(interceptor: interceptor)
-        let oldState = store.state.value
+        let oldState = store.state
         XCTAssertEqual(interceptor.stateChanges.count, 0)
         // When
         store.dispatch(action: action)
@@ -74,7 +74,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(interceptor.stateChanges.count, 1)
         XCTAssertEqual(interceptor.stateChanges[0].action as! TestAction, action)
         XCTAssertEqual(interceptor.stateChanges[0].oldState, oldState)
-        XCTAssertEqual(interceptor.stateChanges[0].newState, store.state.value)
+        XCTAssertEqual(interceptor.stateChanges[0].newState, store.state)
     }
 
     /// Does a change in `State` publish new value for `Selector`?
@@ -86,25 +86,6 @@ class StoreTests: XCTestCase {
                           reducers: [testReducer])
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = store.select(selector).sink {
-            if $0 == .modified {
-                expectation.fulfill()
-            }
-        }
-        // When
-        store.dispatch(action: TestAction())
-        // Then
-        wait(for: [expectation], timeout: 1)
-        XCTAssertNotNil(cancellable)
-    }
-
-    /// Does a change in `State` publish new value for key path?
-    func testSelectKeyPathPublisher() {
-        // Given
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil),
-                          environment: TestEnvironment(),
-                          reducers: [testReducer])
-        let expectation = XCTestExpectation(description: debugDescription)
-        let cancellable = store.select(\.type).sink {
             if $0 == .modified {
                 expectation.fulfill()
             }
@@ -129,21 +110,6 @@ class StoreTests: XCTestCase {
         store.dispatch(action: TestAction())
         // Then
         let valueAfterAction = store.selectCurrent(selector)
-        XCTAssertEqual(valueAfterAction, .modified)
-    }
-
-    /// Can we select the current value for key path?
-    func testSelectKeyPath() {
-        // Given
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil),
-                          environment: TestEnvironment(),
-                          reducers: [testReducer])
-        let valueBeforeAction = store.selectCurrent(\.type)
-        XCTAssertEqual(valueBeforeAction, .initial)
-        // When
-        store.dispatch(action: TestAction())
-        // Then
-        let valueAfterAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueAfterAction, .modified)
     }
 
