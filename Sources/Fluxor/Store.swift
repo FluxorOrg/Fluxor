@@ -119,16 +119,6 @@ open class Store<State: Encodable>: ObservableObject {
     }
 
     /**
-     Creates a `Publisher` for a `KeyPath` in the `State`.
-
-     - Parameter keyPath: The key path to use when getting the value in the `State`
-     - Returns: A `Publisher` for the `Value` in the `State`
-     */
-    public func select<Value>(_ keyPath: KeyPath<State, Value>) -> AnyPublisher<Value, Never> {
-        return $state.map(keyPath).eraseToAnyPublisher()
-    }
-
-    /**
      Gets the current value in the `State` for a `Selector`.
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
@@ -136,15 +126,5 @@ open class Store<State: Encodable>: ObservableObject {
      */
     public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return selector.map(state, stateHash: stateHash)
-    }
-
-    /**
-     Gets the current value in the `State` for a `KeyPath`.
-
-     - Parameter keyPath: The key path to use when getting the value in the `State`
-     - Returns: The `Value` in the `State`
-     */
-    public func selectCurrent<Value>(_ keyPath: KeyPath<State, Value>) -> Value {
-        return state[keyPath: keyPath]
     }
 }

@@ -95,23 +95,6 @@ class StoreTests: XCTestCase {
         XCTAssertNotNil(cancellable)
     }
 
-    /// Does a change in `State` publish new value for key path?
-    func testSelectKeyPathPublisher() {
-        // Given
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
-        let expectation = XCTestExpectation(description: debugDescription)
-        let cancellable = store.select(\.type).sink {
-            if $0 == .modified {
-                expectation.fulfill()
-            }
-        }
-        // When
-        store.dispatch(action: TestAction())
-        // Then
-        wait(for: [expectation], timeout: 1)
-        XCTAssertNotNil(cancellable)
-    }
-
     /// Can we select the current value for `Selector`?
     func testSelectMap() {
         // Given
@@ -123,19 +106,6 @@ class StoreTests: XCTestCase {
         store.dispatch(action: TestAction())
         // Then
         let valueAfterAction = store.selectCurrent(selector)
-        XCTAssertEqual(valueAfterAction, .modified)
-    }
-
-    /// Can we select the current value for key path?
-    func testSelectKeyPath() {
-        // Given
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
-        let valueBeforeAction = store.selectCurrent(\.type)
-        XCTAssertEqual(valueBeforeAction, .initial)
-        // When
-        store.dispatch(action: TestAction())
-        // Then
-        let valueAfterAction = store.selectCurrent(\.type)
         XCTAssertEqual(valueAfterAction, .modified)
     }
 
