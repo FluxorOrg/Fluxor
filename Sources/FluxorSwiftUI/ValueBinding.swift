@@ -60,7 +60,7 @@ public extension Store {
     func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
                                      send actionTemplate: @escaping (_ value: Value) -> ActionTemplate<UpdateValue>)
         -> ValueBinding<Value, UpdateValue> {
-        return .init(store: self, selector: selector, actionTemplateForValue: actionTemplate)
+        return .init(store: self, selector: selector, actionTemplate: actionTemplate)
     }
 }
 
@@ -87,10 +87,10 @@ public class ValueBinding<Value, UpdateValue> {
      */
     public init<State: Encodable, Environment>(store: Store<State, Environment>,
                                                selector: Fluxor.Selector<State, Value>,
-                                               actionTemplateForValue: @escaping (Value) -> ActionTemplate<UpdateValue>) {
+                                               actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>) {
         self.storeSelectCurrent = { store.selectCurrent(selector) }
         self.storeDispatch = store.dispatch(action:)
-        self.actionTemplateForValue = actionTemplateForValue
+        self.actionTemplateForValue = actionTemplate
     }
 
     /**
@@ -104,7 +104,7 @@ public class ValueBinding<Value, UpdateValue> {
     public convenience init<State: Encodable, Environment>(store: Store<State, Environment>,
                                                            selector: Fluxor.Selector<State, Value>,
                                                            actionTemplate: ActionTemplate<UpdateValue>) {
-        self.init(store: store, selector: selector, actionTemplateForValue: { _ in actionTemplate })
+        self.init(store: store, selector: selector, actionTemplate: { _ in actionTemplate })
     }
 
     private func update(value: Value, with actionCreator: (ActionTemplate<UpdateValue>) -> Action) {
