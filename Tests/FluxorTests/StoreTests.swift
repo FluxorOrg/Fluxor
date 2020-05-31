@@ -177,12 +177,12 @@ class StoreTests: XCTestCase {
         }
 
         let id = UUID()
-        let responseActionIdentifier = "TestResponseAction"
-        let responseActionTemplate: ActionTemplate<Void>
+        let responseActionIdentifier = "ResponseAction"
+        var responseActionTemplate: ActionTemplate<Void> { ActionTemplate(id: responseActionIdentifier) }
         var responseAction: AnonymousAction<Void> { responseActionTemplate.createAction() }
-        let generateActionTemplate: ActionTemplate<Int>
+        var generateActionTemplate: ActionTemplate<Int> { ActionTemplate(id: "GenerateAction", payloadType: Int.self) }
         var generateAction: AnonymousAction<Int> { generateActionTemplate.createAction(payload: 42) }
-        let unrelatedActionTemplate: ActionTemplate<Void>
+        var unrelatedActionTemplate: ActionTemplate<Void> { ActionTemplate(id: "UnrelatedAction") }
         var unrelatedAction: AnonymousAction<Void> { unrelatedActionTemplate.createAction() }
         var lastAction: AnonymousAction<Int>?
         var mainThreadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
@@ -191,12 +191,6 @@ class StoreTests: XCTestCase {
             expectation.expectedFulfillmentCount = 3
             return expectation
         }()
-
-        init() {
-            responseActionTemplate = ActionTemplate(id: responseActionIdentifier)
-            generateActionTemplate = ActionTemplate(id: "TestGenerateAction", payloadType: Int.self)
-            unrelatedActionTemplate = ActionTemplate(id: "UnrelatedAction")
-        }
     }
 
     private enum TestType: String, Encodable {
