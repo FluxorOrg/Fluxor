@@ -9,12 +9,12 @@ import FluxorTestSupport
 import XCTest
 
 class MockStoreTests: XCTestCase {
-    private var store: MockStore<TestState, TestEnvironment>!
+    private var store: MockStore<TestState, Void>!
     private let initialState = TestState(counter: 0)
 
     override func setUp() {
         super.setUp()
-        store = MockStore(initialState: initialState, environment: TestEnvironment())
+        store = MockStore(initialState: initialState)
     }
 
     /// Can the state be set?
@@ -56,12 +56,11 @@ class MockStoreTests: XCTestCase {
         wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
     }
-    
+
     /// Can we get all state changes in a `MockStore`?
     func testMockStoreStateChanges() {
         // Given
-        let mockStore = MockStore(initialState: TestState(counter: 0),
-                                  environment: TestEnvironment())
+        let mockStore = MockStore(initialState: TestState(counter: 0))
         let action = TestAction(increment: 1)
         let modifiedState = TestState(counter: 2)
         // When
@@ -79,8 +78,6 @@ class MockStoreTests: XCTestCase {
         var counter: Int
     }
 
-    private struct TestEnvironment {}
-    
     private struct TestAction: Action, Equatable {
         let increment: Int
     }

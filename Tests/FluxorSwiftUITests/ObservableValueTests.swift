@@ -11,7 +11,7 @@ import XCTest
 class ObservableValueTests: XCTestCase {
     private let counterSelector = Selector(keyPath: \TestState.counter)
     private let increment = ActionTemplate(id: "Increment", payloadType: Int.self)
-    private lazy var store = Store(initialState: TestState(), environment: TestEnvironment(), reducers: [
+    private lazy var store = Store(initialState: TestState(), reducers: [
         Reducer<TestState>(
             ReduceOn(increment) { state, action in
                 state.counter += action.payload
@@ -30,5 +30,3 @@ class ObservableValueTests: XCTestCase {
 private struct TestState: Encodable {
     var counter: Int = 42
 }
-
-private struct TestEnvironment {}

@@ -12,12 +12,14 @@ import XCTest
 // swiftlint:disable force_cast
 
 class StoreTests: XCTestCase {
+    private var environment: TestEnvironment!
     private var store: Store<TestState, TestEnvironment>!
     private var reducer: ((TestState, Action) -> TestState)!
 
     override func setUp() {
         super.setUp()
-        store = Store(initialState: TestState(type: .initial, lastAction: nil), environment: TestEnvironment())
+        environment = TestEnvironment()
+        store = Store(initialState: TestState(type: .initial, lastAction: nil), environment: environment)
     }
 
     /// Does the `Reducer`s get called?
@@ -41,15 +43,18 @@ class StoreTests: XCTestCase {
     /// Does the `Effects` get triggered?
     func testEffects() {
         // Given
+        let envCheckExpectation = XCTestExpectation(description: debugDescription)
+        envCheckExpectation.expectedFulfillmentCount = 3
         let interceptor = TestInterceptor<TestState>()
         TestEffects.threadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
+        TestEffects.envCheck = { XCTAssertEqual($0, self.environment); envCheckExpectation.fulfill() }
         store.register(effects: TestEffects())
         store.register(interceptor: interceptor)
         let firstAction = TestAction()
         // When
         store.dispatch(action: firstAction)
         // Then
-        wait(for: [TestEffects.expectation], timeout: 1)
+        wait(for: [TestEffects.expectation, envCheckExpectation], timeout: 1)
         let dispatchedActions = interceptor.stateChanges.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
@@ -112,7 +117,7 @@ class StoreTests: XCTestCase {
         let valueAfterAction = store.selectCurrent(selector)
         XCTAssertEqual(valueAfterAction, .modified)
     }
-    
+
     /// Does the convenience initializer give an `Void` environment?
     func testEmptyEnvironment() {
         // Given
@@ -132,7 +137,9 @@ class StoreTests: XCTestCase {
         var lastAction: String?
     }
 
-    private struct TestEnvironment {}
+    private struct TestEnvironment: Equatable {
+        let id = UUID()
+    }
 
     private enum TestType: String, Encodable {
         case initial
@@ -157,23 +164,27 @@ class StoreTests: XCTestCase {
         static let expectation = XCTestExpectation()
         static var lastAction: AnonymousAction<Int>?
         static var threadCheck: (() -> Void)!
+        static var envCheck: ((Environment) -> Void)!
 
-        let testEffect = Effect<Environment>.dispatchingOne { actions, _ in
+        let testEffect = Effect<Environment>.dispatchingOne { actions, environment in
             actions.ofType(TestAction.self)
+                .handleEvents(receiveOutput: { _ in TestEffects.envCheck(environment) })
                 .receive(on: DispatchQueue.global(qos: .background))
                 .map { _ in TestEffects.responseAction }
                 .eraseToAnyPublisher()
         }
 
-        let anotherTestEffect = Effect<Environment>.dispatchingMultiple { actions, _ in
+        let anotherTestEffect = Effect<Environment>.dispatchingMultiple { actions, environment in
             actions.withIdentifier(TestEffects.responseActionIdentifier)
                 .handleEvents(receiveOutput: { _ in TestEffects.threadCheck() })
+                .handleEvents(receiveOutput: { _ in TestEffects.envCheck(environment) })
                 .map { _ in [TestEffects.generateAction, TestEffects.unrelatedAction] }
                 .eraseToAnyPublisher()
         }
 
-        let yetAnotherTestEffect = Effect<Environment>.nonDispatching { actions, _ in
+        let yetAnotherTestEffect = Effect<Environment>.nonDispatching { actions, environment in
             actions.wasCreated(from: TestEffects.generateActionTemplate)
+                .handleEvents(receiveOutput: { _ in TestEffects.envCheck(environment) })
                 .sink(receiveValue: { action in
                     TestEffects.lastAction = action
                     TestEffects.expectation.fulfill()

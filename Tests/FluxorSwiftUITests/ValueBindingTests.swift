@@ -18,7 +18,7 @@ class ValueBindingTests: XCTestCase {
     private let lock = ActionTemplate(id: "Lock")
     private let unlock = ActionTemplate(id: "Unlock")
     private let changeLights = ActionTemplate(id: "Turn lights on/off", payloadType: Bool.self)
-    private lazy var store = Store(initialState: TestState(), environment: TestEnvironment(), reducers: [
+    private lazy var store = Store(initialState: TestState(), reducers: [
         Reducer<TestState>(
             ReduceOn(increment) { state, action in
                 state.counter += action.payload
@@ -108,5 +108,3 @@ private struct TestState: Encodable {
     var locked: Bool = false
     var lightsOn: Bool = false
 }
-
-private struct TestEnvironment {}
