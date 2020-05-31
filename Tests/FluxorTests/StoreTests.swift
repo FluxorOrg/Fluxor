@@ -112,23 +112,17 @@ class StoreTests: XCTestCase {
         let valueAfterAction = store.selectCurrent(selector)
         XCTAssertEqual(valueAfterAction, .modified)
     }
-
-    /// Can we get all state changes in a `MockStore`?
-    func testMockStoreStateChanges() {
+    
+    /// Does the convenience initializer give an `Void` environment?
+    func testEmptyEnvironment() {
         // Given
-        let mockStore = MockStore(initialState: TestState(type: .initial, lastAction: nil),
-                                  environment: TestEnvironment())
-        let action = TestAction()
-        let modifiedState = TestState(type: .modified, lastAction: "Set State")
+        VoidTestEffects.envCheck = { XCTAssertEqual(String(describing: $0), "()") }
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil))
+        store.register(effects: VoidTestEffects())
         // When
-        mockStore.dispatch(action: action)
-        mockStore.setState(newState: modifiedState)
+        store.dispatch(action: TestAction())
         // Then
-        XCTAssertEqual(mockStore.stateChanges.count, 2)
-        XCTAssertEqual(mockStore.stateChanges[0].action as! TestAction, action)
-        let setStateAction = mockStore.stateChanges[1].action as! AnonymousAction<TestState>
-        XCTAssertEqual(setStateAction.id, "Set State")
-        XCTAssertEqual(mockStore.stateChanges[1].newState, modifiedState)
+        wait(for: [VoidTestEffects.expectation], timeout: 1)
     }
 
     private struct TestAction: Action, Equatable {}
@@ -184,6 +178,19 @@ class StoreTests: XCTestCase {
                     TestEffects.lastAction = action
                     TestEffects.expectation.fulfill()
                 })
+        }
+    }
+
+    private struct VoidTestEffects: Effects {
+        typealias Environment = Void
+        static let expectation = XCTestExpectation()
+        static var envCheck: ((Environment) -> Void)!
+
+        let testEffect = Effect<Environment>.nonDispatching { actions, env in
+            actions.sink { _ in
+                VoidTestEffects.envCheck(env)
+                VoidTestEffects.expectation.fulfill()
+            }
         }
     }
 }

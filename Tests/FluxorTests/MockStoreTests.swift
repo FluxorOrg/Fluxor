@@ -56,10 +56,32 @@ class MockStoreTests: XCTestCase {
         wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(cancellable)
     }
+    
+    /// Can we get all state changes in a `MockStore`?
+    func testMockStoreStateChanges() {
+        // Given
+        let mockStore = MockStore(initialState: TestState(counter: 0),
+                                  environment: TestEnvironment())
+        let action = TestAction(increment: 1)
+        let modifiedState = TestState(counter: 2)
+        // When
+        mockStore.dispatch(action: action)
+        mockStore.setState(newState: modifiedState)
+        // Then
+        XCTAssertEqual(mockStore.stateChanges.count, 2)
+        XCTAssertEqual(mockStore.stateChanges[0].action as! TestAction, action)
+        let setStateAction = mockStore.stateChanges[1].action as! AnonymousAction<TestState>
+        XCTAssertEqual(setStateAction.id, "Set State")
+        XCTAssertEqual(mockStore.stateChanges[1].newState, modifiedState)
+    }
 
     private struct TestState: Encodable, Equatable {
         var counter: Int
     }
 
     private struct TestEnvironment {}
+    
+    private struct TestAction: Action, Equatable {
+        let increment: Int
+    }
 }

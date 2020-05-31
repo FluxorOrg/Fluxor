@@ -34,11 +34,11 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     private var interceptors = [AnyInterceptor<State>]()
 
     /**
-     Initializes the `Store` with an initial `State`.
+     Initializes the `Store` with an initial `State`, an `Environment` and eventually `Reducer`s.
 
      - Parameter initialState: The initial `State` for the `Store`
+     - Parameter environment: The `Environment` to pass to `Effect`s
      - Parameter reducers: The `Reducer`s to register
-     - Parameter effects: The `Effect`s to register
      */
     public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
         state = initialState
@@ -127,5 +127,19 @@ open class Store<State: Encodable, Environment>: ObservableObject {
      */
     public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return selector.map(state, stateHash: stateHash)
+    }
+}
+
+public extension Store where Environment == Void {
+    /**
+     Initializes the `Store` with an initial `State` and eventually `Reducer`s.
+
+     Using this initializer will give all `Effects` a `Void` environment.
+
+     - Parameter initialState: The initial `State` for the `Store`
+     - Parameter reducers: The `Reducer`s to register
+     */
+    convenience init(initialState: State, reducers: [Reducer<State>] = []) {
+        self.init(initialState: initialState, environment: Void(), reducers: reducers)
     }
 }
