@@ -80,7 +80,16 @@ open class Store<State: Encodable, Environment>: ObservableObject {
      - Parameter effects: The `Effects` to register
      */
     public func register<E: Effects>(effects: E) where E.Environment == Environment {
-        effects.enabledEffects.forEach(register(effect:))
+        register(effects: effects.enabledEffects)
+    }
+
+    /**
+     Registers the given `Effect`s. The `Effect`s will receive all subsequent actions.
+
+     - Parameter effects: The array of `Effect`s to register
+     */
+    public func register(effects: [Effect<Environment>]) {
+        effects.forEach(register(effect:))
     }
 
     /**

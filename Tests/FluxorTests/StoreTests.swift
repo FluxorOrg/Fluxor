@@ -40,57 +40,66 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.lastAction, String(describing: action))
     }
 
-    /// Does the `Effects` get triggered?
-    func testEffects() {
+    /// Does the `Effect`s get triggered?
+    func testRegisteringEffectsType() {
         // Given
-        let envCheckExpectation = XCTestExpectation(description: debugDescription)
-        envCheckExpectation.expectedFulfillmentCount = 3
         let interceptor = TestInterceptor<TestState>()
-        TestEffects.threadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
-        TestEffects.envCheck = { XCTAssertEqual($0, self.environment); envCheckExpectation.fulfill() }
         store.register(effects: TestEffects())
         store.register(interceptor: interceptor)
         let firstAction = TestAction()
         // When
         store.dispatch(action: firstAction)
         // Then
-        wait(for: [TestEffects.expectation, envCheckExpectation], timeout: 1)
+        wait(for: [environment.expectation], timeout: 1)
         let dispatchedActions = interceptor.stateChanges.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
-        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, TestEffects.responseAction)
-        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, TestEffects.generateAction)
-        XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, TestEffects.unrelatedAction)
-        XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, environment.responseAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, environment.generateAction)
+        XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, environment.unrelatedAction)
+        XCTAssertEqual(environment.lastAction, environment.generateAction)
+    }
+
+    /// Does the `Effect`s get triggered?
+    func testRegisteringEffectsArray() {
+        // Given
+        let interceptor = TestInterceptor<TestState>()
+        store.register(effects: TestEffects().enabledEffects)
+        store.register(interceptor: interceptor)
+        let firstAction = TestAction()
+        // When
+        store.dispatch(action: firstAction)
+        // Then
+        wait(for: [environment.expectation], timeout: 1)
+        let dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions.count, 4)
+        XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, environment.responseAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, environment.generateAction)
+        XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, environment.unrelatedAction)
+        XCTAssertEqual(environment.lastAction, environment.generateAction)
     }
 
     /// Does the `Effect` get triggered?
-    func testEffect() throws {
+    func testRegisteringEffect() throws {
         // Given
-        let envCheckExpectation = XCTestExpectation(description: debugDescription)
+        environment.expectation.expectedFulfillmentCount = 1
         let interceptor = TestInterceptor<TestState>()
-        TestEffects.threadCheck = {
-            XCTAssertEqual(Thread.current, Thread.main)
-        }
-        TestEffects.envCheck = {
-            XCTAssertEqual($0, self.environment); envCheckExpectation.fulfill()
-        }
-        TestEffects.expectation.expectedFulfillmentCount = 1
         store.register(effect: TestEffects().anotherTestEffect)
         store.register(interceptor: interceptor)
         // When
-        store.dispatch(action: TestEffects.responseAction)
+        store.dispatch(action: environment.responseAction)
         // Then
         try interceptor.waitForActions(expectedNumberOfActions: 3)
-        wait(for: [TestEffects.expectation, envCheckExpectation], timeout: 1)
+        wait(for: [environment.expectation], timeout: 1)
         let dispatchedActions = interceptor.stateChanges.map(\.action)
-        XCTAssertEqual(dispatchedActions[0] as! AnonymousAction<Void>, TestEffects.responseAction)
-        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Int>, TestEffects.generateAction)
-        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Void>, TestEffects.unrelatedAction)
+        XCTAssertEqual(dispatchedActions[0] as! AnonymousAction<Void>, environment.responseAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Int>, environment.generateAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Void>, environment.unrelatedAction)
     }
 
     /// Does the `Interceptor` receive the right `Action` and modified `State`?
-    func testInterceptors() {
+    func testRegisteringInterceptors() {
         // Given
         let action = TestAction()
         let interceptor = TestInterceptor<TestState>()
@@ -162,8 +171,32 @@ class StoreTests: XCTestCase {
         var lastAction: String?
     }
 
-    private struct TestEnvironment: Equatable {
+    private class TestEnvironment: Equatable {
+        static func == (lhs: TestEnvironment, rhs: TestEnvironment) -> Bool {
+            lhs.id == rhs.id
+        }
+
         let id = UUID()
+        let responseActionIdentifier = "TestResponseAction"
+        let responseActionTemplate: ActionTemplate<Void>
+        var responseAction: AnonymousAction<Void> { responseActionTemplate.createAction() }
+        let generateActionTemplate: ActionTemplate<Int>
+        var generateAction: AnonymousAction<Int> { generateActionTemplate.createAction(payload: 42) }
+        let unrelatedActionTemplate: ActionTemplate<Void>
+        var unrelatedAction: AnonymousAction<Void> { unrelatedActionTemplate.createAction() }
+        var lastAction: AnonymousAction<Int>?
+        var mainThreadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
+        let expectation: XCTestExpectation = {
+            let expectation = XCTestExpectation(description: String(describing: TestEffects.self))
+            expectation.expectedFulfillmentCount = 3
+            return expectation
+        }()
+
+        init() {
+            responseActionTemplate = ActionTemplate(id: responseActionIdentifier)
+            generateActionTemplate = ActionTemplate(id: "TestGenerateAction", payloadType: Int.self)
+            unrelatedActionTemplate = ActionTemplate(id: "UnrelatedAction")
+        }
     }
 
     private enum TestType: String, Encodable {
@@ -179,50 +212,30 @@ class StoreTests: XCTestCase {
 
     private struct TestEffects: Effects {
         typealias Environment = TestEnvironment
-        static let responseActionIdentifier = "TestResponseAction"
-        static let responseActionTemplate = ActionTemplate(id: TestEffects.responseActionIdentifier)
-        static let responseAction = TestEffects.responseActionTemplate.createAction()
-        static let generateActionTemplate = ActionTemplate(id: "TestGenerateAction", payloadType: Int.self)
-        static let generateAction = TestEffects.generateActionTemplate.createAction(payload: 42)
-        static let unrelatedActionTemplate = ActionTemplate(id: "UnrelatedAction")
-        static let unrelatedAction = TestEffects.unrelatedActionTemplate.createAction()
-        static var lastAction: AnonymousAction<Int>?
-        static var threadCheck: (() -> Void)!
-        static var envCheck: ((Environment) -> Void)!
-        static let expectation: XCTestExpectation = {
-            let expectation = XCTestExpectation(description: String(describing: TestEffects.self))
-            expectation.expectedFulfillmentCount = 3
-            return expectation
-        }()
 
         let testEffect = Effect<Environment>.dispatchingOne { actions, environment in
             actions.ofType(TestAction.self)
-                .handleEvents(receiveOutput: { _ in
-                    TestEffects.envCheck(environment)
-                    TestEffects.expectation.fulfill()
-                })
+                .handleEvents(receiveOutput: { _ in environment.expectation.fulfill() })
                 .receive(on: DispatchQueue.global(qos: .background))
-                .map { _ in TestEffects.responseAction }
+                .map { _ in environment.responseAction }
                 .eraseToAnyPublisher()
         }
 
         let anotherTestEffect = Effect<Environment>.dispatchingMultiple { actions, environment in
-            actions.withIdentifier(TestEffects.responseActionIdentifier)
+            actions.withIdentifier(environment.responseActionIdentifier)
                 .handleEvents(receiveOutput: { _ in
-                    TestEffects.threadCheck()
-                    TestEffects.envCheck(environment)
-                    TestEffects.expectation.fulfill()
+                    environment.mainThreadCheck()
+                    environment.expectation.fulfill()
                 })
-                .map { _ in [TestEffects.generateAction, TestEffects.unrelatedAction] }
+                .map { _ in [environment.generateAction, environment.unrelatedAction] }
                 .eraseToAnyPublisher()
         }
 
         let yetAnotherTestEffect = Effect<Environment>.nonDispatching { actions, environment in
-            actions.wasCreated(from: TestEffects.generateActionTemplate)
-                .handleEvents(receiveOutput: { _ in TestEffects.envCheck(environment) })
+            actions.wasCreated(from: environment.generateActionTemplate)
                 .sink(receiveValue: { action in
-                    TestEffects.lastAction = action
-                    TestEffects.expectation.fulfill()
+                    environment.lastAction = action
+                    environment.expectation.fulfill()
                 })
         }
     }
