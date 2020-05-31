@@ -152,7 +152,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(valueAfterAction, .modified)
     }
 
-    /// Does the convenience initializer give an `Void` environment?
+    /// Does the convenience initializer give a `Void` environment?
     func testEmptyEnvironment() {
         // Given
         VoidTestEffects.envCheck = { XCTAssertEqual(String(describing: $0), "()") }
@@ -162,6 +162,23 @@ class StoreTests: XCTestCase {
         store.dispatch(action: TestAction())
         // Then
         wait(for: [VoidTestEffects.expectation], timeout: 1)
+    }
+
+    /// Can we get all state changes in a `MockStore`?
+    func testMockStoreStateChanges() {
+        // Given
+        let mockStore = MockStore(initialState: TestState(type: .initial, lastAction: nil))
+        let action = TestAction()
+        let modifiedState = TestState(type: .modified, lastAction: "Set State")
+        // When
+        mockStore.dispatch(action: action)
+        mockStore.setState(newState: modifiedState)
+        // Then
+        XCTAssertEqual(mockStore.stateChanges.count, 2)
+        XCTAssertEqual(mockStore.stateChanges[0].action as! TestAction, action)
+        let setStateAction = mockStore.stateChanges[1].action as! AnonymousAction<TestState>
+        XCTAssertEqual(setStateAction.id, "Set State")
+        XCTAssertEqual(mockStore.stateChanges[1].newState, modifiedState)
     }
 
     private struct TestAction: Action, Equatable {}
