@@ -180,87 +180,87 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(setStateAction.id, "Set State")
         XCTAssertEqual(mockStore.stateChanges[1].newState, modifiedState)
     }
+}
 
-    private struct TestAction: Action, Equatable {}
+private struct TestAction: Action, Equatable {}
 
-    private struct TestState: Encodable, Equatable {
-        var type: TestType
-        var lastAction: String?
+private struct TestState: Encodable, Equatable {
+    var type: TestType
+    var lastAction: String?
+}
+
+private class TestEnvironment: Equatable {
+    static func == (lhs: TestEnvironment, rhs: TestEnvironment) -> Bool {
+        lhs.id == rhs.id
     }
 
-    private class TestEnvironment: Equatable {
-        static func == (lhs: TestEnvironment, rhs: TestEnvironment) -> Bool {
-            lhs.id == rhs.id
-        }
+    let id = UUID()
+    let responseActionIdentifier = "ResponseAction"
+    var responseActionTemplate: ActionTemplate<Void> { ActionTemplate(id: responseActionIdentifier) }
+    var responseAction: AnonymousAction<Void> { responseActionTemplate.createAction() }
+    var generateActionTemplate: ActionTemplate<Int> { ActionTemplate(id: "GenerateAction", payloadType: Int.self) }
+    var generateAction: AnonymousAction<Int> { generateActionTemplate.createAction(payload: 42) }
+    var unrelatedActionTemplate: ActionTemplate<Void> { ActionTemplate(id: "UnrelatedAction") }
+    var unrelatedAction: AnonymousAction<Void> { unrelatedActionTemplate.createAction() }
+    var lastAction: AnonymousAction<Int>?
+    var mainThreadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
+    let expectation: XCTestExpectation = {
+        let expectation = XCTestExpectation(description: String(describing: TestEffects.self))
+        expectation.expectedFulfillmentCount = 3
+        return expectation
+    }()
+}
 
-        let id = UUID()
-        let responseActionIdentifier = "ResponseAction"
-        var responseActionTemplate: ActionTemplate<Void> { ActionTemplate(id: responseActionIdentifier) }
-        var responseAction: AnonymousAction<Void> { responseActionTemplate.createAction() }
-        var generateActionTemplate: ActionTemplate<Int> { ActionTemplate(id: "GenerateAction", payloadType: Int.self) }
-        var generateAction: AnonymousAction<Int> { generateActionTemplate.createAction(payload: 42) }
-        var unrelatedActionTemplate: ActionTemplate<Void> { ActionTemplate(id: "UnrelatedAction") }
-        var unrelatedAction: AnonymousAction<Void> { unrelatedActionTemplate.createAction() }
-        var lastAction: AnonymousAction<Int>?
-        var mainThreadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
-        let expectation: XCTestExpectation = {
-            let expectation = XCTestExpectation(description: String(describing: TestEffects.self))
-            expectation.expectedFulfillmentCount = 3
-            return expectation
-        }()
+private enum TestType: String, Encodable {
+    case initial
+    case modified
+    case modifiedAgain
+}
+
+private let testReducer = Reducer<TestState> { state, action in
+    state.type = .modified
+    state.lastAction = String(describing: action)
+}
+
+private struct TestEffects: Effects {
+    typealias Environment = TestEnvironment
+
+    let testEffect = Effect<Environment>.dispatchingOne { actions, environment in
+        actions.ofType(TestAction.self)
+            .handleEvents(receiveOutput: { _ in environment.expectation.fulfill() })
+            .receive(on: DispatchQueue.global(qos: .background))
+            .map { _ in environment.responseAction }
+            .eraseToAnyPublisher()
     }
 
-    private enum TestType: String, Encodable {
-        case initial
-        case modified
-        case modifiedAgain
+    let anotherTestEffect = Effect<Environment>.dispatchingMultiple { actions, environment in
+        actions.withIdentifier(environment.responseActionIdentifier)
+            .handleEvents(receiveOutput: { _ in
+                environment.mainThreadCheck()
+                environment.expectation.fulfill()
+            })
+            .map { _ in [environment.generateAction, environment.unrelatedAction] }
+            .eraseToAnyPublisher()
     }
 
-    private let testReducer = Reducer<TestState> { state, action in
-        state.type = .modified
-        state.lastAction = String(describing: action)
+    let yetAnotherTestEffect = Effect<Environment>.nonDispatching { actions, environment in
+        actions.wasCreated(from: environment.generateActionTemplate)
+            .sink(receiveValue: { action in
+                environment.lastAction = action
+                environment.expectation.fulfill()
+            })
     }
+}
 
-    private struct TestEffects: Effects {
-        typealias Environment = TestEnvironment
+private struct VoidTestEffects: Effects {
+    typealias Environment = Void
+    static let expectation = XCTestExpectation()
+    static var envCheck: ((Environment) -> Void)!
 
-        let testEffect = Effect<Environment>.dispatchingOne { actions, environment in
-            actions.ofType(TestAction.self)
-                .handleEvents(receiveOutput: { _ in environment.expectation.fulfill() })
-                .receive(on: DispatchQueue.global(qos: .background))
-                .map { _ in environment.responseAction }
-                .eraseToAnyPublisher()
-        }
-
-        let anotherTestEffect = Effect<Environment>.dispatchingMultiple { actions, environment in
-            actions.withIdentifier(environment.responseActionIdentifier)
-                .handleEvents(receiveOutput: { _ in
-                    environment.mainThreadCheck()
-                    environment.expectation.fulfill()
-                })
-                .map { _ in [environment.generateAction, environment.unrelatedAction] }
-                .eraseToAnyPublisher()
-        }
-
-        let yetAnotherTestEffect = Effect<Environment>.nonDispatching { actions, environment in
-            actions.wasCreated(from: environment.generateActionTemplate)
-                .sink(receiveValue: { action in
-                    environment.lastAction = action
-                    environment.expectation.fulfill()
-                })
-        }
-    }
-
-    private struct VoidTestEffects: Effects {
-        typealias Environment = Void
-        static let expectation = XCTestExpectation()
-        static var envCheck: ((Environment) -> Void)!
-
-        let testEffect = Effect<Environment>.nonDispatching { actions, env in
-            actions.sink { _ in
-                VoidTestEffects.envCheck(env)
-                VoidTestEffects.expectation.fulfill()
-            }
+    let testEffect = Effect<Environment>.nonDispatching { actions, env in
+        actions.sink { _ in
+            VoidTestEffects.envCheck(env)
+            VoidTestEffects.expectation.fulfill()
         }
     }
 }

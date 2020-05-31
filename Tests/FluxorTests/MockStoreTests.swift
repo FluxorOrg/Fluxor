@@ -8,6 +8,8 @@
 import FluxorTestSupport
 import XCTest
 
+// swiftlint:disable force_cast
+
 class MockStoreTests: XCTestCase {
     private var store: MockStore<TestState, Void>!
     private let initialState = TestState(counter: 0)
