@@ -19,8 +19,7 @@ extension Publisher where Output == Action {
 
      - Parameter identifierToMatch: A identifier to match
      */
-    public func withIdentifier(_ identifierToMatch: String)
-        -> AnyPublisher<Action, Self.Failure> {
+    public func withIdentifier(_ identifierToMatch: String) -> AnyPublisher<Action, Self.Failure> {
         filter { ($0 as? IdentifiableAction)?.id == identifierToMatch }
             .eraseToAnyPublisher()
     }

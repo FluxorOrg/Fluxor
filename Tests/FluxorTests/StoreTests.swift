@@ -64,6 +64,31 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
     }
 
+    /// Does the `Effect` get triggered?
+    func testEffect() throws {
+        // Given
+        let envCheckExpectation = XCTestExpectation(description: debugDescription)
+        let interceptor = TestInterceptor<TestState>()
+        TestEffects.threadCheck = {
+            XCTAssertEqual(Thread.current, Thread.main)
+        }
+        TestEffects.envCheck = {
+            XCTAssertEqual($0, self.environment); envCheckExpectation.fulfill()
+        }
+        TestEffects.expectation.expectedFulfillmentCount = 1
+        store.register(effect: TestEffects().anotherTestEffect)
+        store.register(interceptor: interceptor)
+        // When
+        store.dispatch(action: TestEffects.responseAction)
+        // Then
+        try interceptor.waitForActions(expectedNumberOfActions: 3)
+        wait(for: [TestEffects.expectation, envCheckExpectation], timeout: 1)
+        let dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions[0] as! AnonymousAction<Void>, TestEffects.responseAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Int>, TestEffects.generateAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Void>, TestEffects.unrelatedAction)
+    }
+
     /// Does the `Interceptor` receive the right `Action` and modified `State`?
     func testInterceptors() {
         // Given
@@ -161,14 +186,21 @@ class StoreTests: XCTestCase {
         static let generateAction = TestEffects.generateActionTemplate.createAction(payload: 42)
         static let unrelatedActionTemplate = ActionTemplate(id: "UnrelatedAction")
         static let unrelatedAction = TestEffects.unrelatedActionTemplate.createAction()
-        static let expectation = XCTestExpectation()
         static var lastAction: AnonymousAction<Int>?
         static var threadCheck: (() -> Void)!
         static var envCheck: ((Environment) -> Void)!
+        static let expectation: XCTestExpectation = {
+            let expectation = XCTestExpectation(description: String(describing: TestEffects.self))
+            expectation.expectedFulfillmentCount = 3
+            return expectation
+        }()
 
         let testEffect = Effect<Environment>.dispatchingOne { actions, environment in
             actions.ofType(TestAction.self)
-                .handleEvents(receiveOutput: { _ in TestEffects.envCheck(environment) })
+                .handleEvents(receiveOutput: { _ in
+                    TestEffects.envCheck(environment)
+                    TestEffects.expectation.fulfill()
+                })
                 .receive(on: DispatchQueue.global(qos: .background))
                 .map { _ in TestEffects.responseAction }
                 .eraseToAnyPublisher()
@@ -176,8 +208,11 @@ class StoreTests: XCTestCase {
 
         let anotherTestEffect = Effect<Environment>.dispatchingMultiple { actions, environment in
             actions.withIdentifier(TestEffects.responseActionIdentifier)
-                .handleEvents(receiveOutput: { _ in TestEffects.threadCheck() })
-                .handleEvents(receiveOutput: { _ in TestEffects.envCheck(environment) })
+                .handleEvents(receiveOutput: { _ in
+                    TestEffects.threadCheck()
+                    TestEffects.envCheck(environment)
+                    TestEffects.expectation.fulfill()
+                })
                 .map { _ in [TestEffects.generateAction, TestEffects.unrelatedAction] }
                 .eraseToAnyPublisher()
         }

@@ -66,7 +66,7 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     }
 
     /**
-     Registers the given reducer. The reducer will be run for all subsequent actions.
+     Registers the given `Reducer`. The `Reducer` will be run for all subsequent actions.
 
      - Parameter reducer: The reducer to register
      */
@@ -75,27 +75,34 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     }
 
     /**
-     Registers the given effects. The effects will receive all subsequent actions.
+     Registers the given `Effects`. The `Effects` will receive all subsequent actions.
 
-     - Parameter effects: The effects type to register
+     - Parameter effects: The `Effects` to register
      */
     public func register<E: Effects>(effects: E) where E.Environment == Environment {
-        effects.enabledEffects.forEach { effect in
-            let cancellable: AnyCancellable
-            switch effect {
-            case .dispatchingOne(let effectCreator):
-                cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
-                    .receive(on: DispatchQueue.main)
-                    .sink(receiveValue: self.dispatch(action:))
-            case .dispatchingMultiple(let effectCreator):
-                cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
-                    .receive(on: DispatchQueue.main)
-                    .sink { $0.forEach(self.dispatch(action:)) }
-            case .nonDispatching(let effectCreator):
-                cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
-            }
-            cancellable.store(in: &effectCancellables)
+        effects.enabledEffects.forEach(register(effect:))
+    }
+
+    /**
+     Registers the given `Effect`. The `Effect` will receive all subsequent actions.
+
+     - Parameter effect: The `Effect` to register
+     */
+    public func register(effect: Effect<Environment>) {
+        let cancellable: AnyCancellable
+        switch effect {
+        case .dispatchingOne(let effectCreator):
+            cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
+                .receive(on: DispatchQueue.main)
+                .sink(receiveValue: self.dispatch(action:))
+        case .dispatchingMultiple(let effectCreator):
+            cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
+                .receive(on: DispatchQueue.main)
+                .sink { $0.forEach(self.dispatch(action:)) }
+        case .nonDispatching(let effectCreator):
+            cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
         }
+        cancellable.store(in: &effectCancellables)
     }
 
     /**
