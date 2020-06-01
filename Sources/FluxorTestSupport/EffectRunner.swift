@@ -73,7 +73,7 @@ private class ActionRecorder {
      Wait for all the expected `Action`s to be published.
 
      - Parameter timeout: The time waiting for the `Action`s
-     - Returns: The `Actions` recorded
+     - Returns: The `Action`s recorded
      */
     func waitForAllActions(timeout: TimeInterval = 1) throws -> [Action] {
         guard actions.count < expectation.expectedFulfillmentCount else { return actions }

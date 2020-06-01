@@ -96,7 +96,7 @@ store.dispatch(action: IncrementAction(increment: 42))
 ### Side Effects
 The above example is a simple use case, where an `Action` is dispatched and the state is updated by a `Reducer`. In cases where something should happen when an `Action` is dispatched (eg. fetching data from the internet or some system service), Fluxor provides `Effects`.
 
-`Effects` are registered in the `Store` and will receive all `Actions` dispatched. An `Effect` will in most cases be a `Publisher` mapped from the dispatched `Action` - the mapped `Action` will be dispatched on the `Store`.
+`Effects` are registered in the `Store` and will receive all `Action`s dispatched. An `Effect` will in most cases be a `Publisher` mapped from the dispatched `Action` - the mapped `Action` will be dispatched on the `Store`.
 
 Alternatively an `Effect` can also be a `Cancellable` when it don't need to have an `Action` dispatched.
 
@@ -119,7 +119,7 @@ class TodosEffects: Effects {
 ```
 
 ### Intercepting actions and changes
-If read-only access to all `Actions` dispatched and state changes is needed, an `Interceptor` can be used. `Interceptor` is just a protocol, and when registered in the `Store`, instances of types conforming to this protocol will receive a callback everytime an `Action` is dispatched.
+If read-only access to all `Action`s dispatched and state changes is needed, an `Interceptor` can be used. `Interceptor` is just a protocol, and when registered in the `Store`, instances of types conforming to this protocol will receive a callback everytime an `Action` is dispatched.
 
 Fluxor comes with two implementations of `Interceptor`:
 
