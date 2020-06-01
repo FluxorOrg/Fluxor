@@ -29,7 +29,7 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     private var stateHashSink: AnyCancellable!
     private let actions = PassthroughSubject<Action, Never>()
     private let environment: Environment
-    private var reducers = [Reducer<State>]()
+    private var reducers = [KeyedReducer<State>]()
     private var effectCancellables = Set<AnyCancellable>()
     private var interceptors = [AnyInterceptor<State>]()
 
@@ -71,7 +71,17 @@ open class Store<State: Encodable, Environment>: ObservableObject {
      - Parameter reducer: The `Reducer` to register
      */
     public func register(reducer: Reducer<State>) {
-        reducers.append(reducer)
+        register(reducer: reducer, for: \.self)
+    }
+
+    /**
+    Registers the given `Reducer` for a slice of the `State`. The `Reducer` will be run for all subsequent actions.
+
+    - Parameter reducer: The `Reducer` to register
+    - Parameter keyPath: The `KeyPath` for which the `Reducer` should be run
+    */
+    public func register<SubState>(reducer: Reducer<SubState>, for keyPath: WritableKeyPath<State, SubState>) {
+        reducers.append(KeyedReducer(keyPath: keyPath, reducer: reducer))
     }
 
     /**
@@ -157,5 +167,17 @@ public extension Store where Environment == Void {
      */
     convenience init(initialState: State, reducers: [Reducer<State>] = []) {
         self.init(initialState: initialState, environment: Void(), reducers: reducers)
+    }
+}
+
+private struct KeyedReducer<State> {
+    let reduce: (inout State, Action) -> Void
+    
+    init<Substate>(keyPath: WritableKeyPath<State, Substate>, reducer: Reducer<Substate>) {
+        self.reduce = { state, action in
+            var substate = state[keyPath: keyPath]
+            reducer.reduce(&substate, action)
+            state[keyPath: keyPath] = substate
+        }
     }
 }

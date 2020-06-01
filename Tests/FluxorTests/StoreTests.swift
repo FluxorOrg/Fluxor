@@ -23,12 +23,11 @@ class StoreTests: XCTestCase {
     }
 
     /// Does the `Reducer`s get called?
-    func testDispatchUsesReducers() {
+    func testRegisteringReducers() {
         // Given
         let action = TestAction()
         XCTAssertEqual(store.state.type, .initial)
         XCTAssertNil(store.state.lastAction)
-        store.register(reducer: testReducer)
         store.register(reducer: Reducer<TestState> { state, action in
             state.type = .modifiedAgain
             state.lastAction = String(describing: action)
@@ -39,6 +38,22 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.type, .modifiedAgain)
         XCTAssertEqual(store.state.lastAction, String(describing: action))
     }
+    
+    /// Does the `Reducer`s for substates get called?
+    func testRegisteringSubstateReducers() {
+        // Given
+        let incrementActionTemplate = ActionTemplate(id: "Increment", payloadType: Int.self)
+        XCTAssertEqual(store.state.todos.counter, 0)
+        store.register(reducer: Reducer<TodosState>(
+            ReduceOn(incrementActionTemplate) { todosState, action in
+                todosState.counter += action.payload
+            }
+        ), for: \.todos)
+        // When
+        store.dispatch(action: incrementActionTemplate.createAction(payload: 42))
+        XCTAssertEqual(store.state.todos.counter, 42)
+    }
+
 
     /// Does the `Effect`s get triggered?
     func testRegisteringEffectsType() {
@@ -187,6 +202,11 @@ private struct TestAction: Action, Equatable {}
 private struct TestState: Encodable, Equatable {
     var type: TestType
     var lastAction: String?
+    var todos = TodosState()
+}
+
+private struct TodosState: Encodable, Equatable {
+    var counter: Int = 0
 }
 
 private class TestEnvironment: Equatable {
