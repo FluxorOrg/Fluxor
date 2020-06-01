@@ -80,7 +80,7 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     - Parameter reducer: The `Reducer` to register
     - Parameter keyPath: The `KeyPath` for which the `Reducer` should be run
     */
-    public func register<SubState>(reducer: Reducer<SubState>, for keyPath: WritableKeyPath<State, SubState>) {
+    public func register<Substate>(reducer: Reducer<Substate>, for keyPath: WritableKeyPath<State, Substate>) {
         reducers.append(KeyedReducer(keyPath: keyPath, reducer: reducer))
     }
 
