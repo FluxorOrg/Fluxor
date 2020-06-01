@@ -12,12 +12,14 @@ import XCTest
 // swiftlint:disable force_cast
 
 class StoreTests: XCTestCase {
-    private var store: Store<TestState>!
+    private var environment: TestEnvironment!
+    private var store: Store<TestState, TestEnvironment>!
     private var reducer: ((TestState, Action) -> TestState)!
 
     override func setUp() {
         super.setUp()
-        store = Store(initialState: TestState(type: .initial, lastAction: nil))
+        environment = TestEnvironment()
+        store = Store(initialState: TestState(type: .initial, lastAction: nil), environment: environment)
     }
 
     /// Does the `Reducer`s get called?
@@ -38,29 +40,66 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.lastAction, String(describing: action))
     }
 
-    /// Does the `Effects` get triggered?
-    func testEffects() {
+    /// Does the `Effect`s get triggered?
+    func testRegisteringEffectsType() {
         // Given
         let interceptor = TestInterceptor<TestState>()
-        TestEffects.threadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
         store.register(effects: TestEffects())
         store.register(interceptor: interceptor)
         let firstAction = TestAction()
         // When
         store.dispatch(action: firstAction)
         // Then
-        wait(for: [TestEffects.expectation], timeout: 1)
+        wait(for: [environment.expectation], timeout: 1)
         let dispatchedActions = interceptor.stateChanges.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
-        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, TestEffects.responseAction)
-        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, TestEffects.generateAction)
-        XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, TestEffects.unrelatedAction)
-        XCTAssertEqual(TestEffects.lastAction, TestEffects.generateAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, environment.responseAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, environment.generateAction)
+        XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, environment.unrelatedAction)
+        XCTAssertEqual(environment.lastAction, environment.generateAction)
+    }
+
+    /// Does the `Effect`s get triggered?
+    func testRegisteringEffectsArray() {
+        // Given
+        let interceptor = TestInterceptor<TestState>()
+        store.register(effects: TestEffects().enabledEffects)
+        store.register(interceptor: interceptor)
+        let firstAction = TestAction()
+        // When
+        store.dispatch(action: firstAction)
+        // Then
+        wait(for: [environment.expectation], timeout: 1)
+        let dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions.count, 4)
+        XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, environment.responseAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, environment.generateAction)
+        XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, environment.unrelatedAction)
+        XCTAssertEqual(environment.lastAction, environment.generateAction)
+    }
+
+    /// Does the `Effect` get triggered?
+    func testRegisteringEffect() throws {
+        // Given
+        environment.expectation.expectedFulfillmentCount = 1
+        let interceptor = TestInterceptor<TestState>()
+        store.register(effect: TestEffects().anotherTestEffect)
+        store.register(interceptor: interceptor)
+        // When
+        store.dispatch(action: environment.responseAction)
+        // Then
+        try interceptor.waitForActions(expectedNumberOfActions: 3)
+        wait(for: [environment.expectation], timeout: 1)
+        let dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions[0] as! AnonymousAction<Void>, environment.responseAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Int>, environment.generateAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Void>, environment.unrelatedAction)
     }
 
     /// Does the `Interceptor` receive the right `Action` and modified `State`?
-    func testInterceptors() {
+    func testRegisteringInterceptors() {
         // Given
         let action = TestAction()
         let interceptor = TestInterceptor<TestState>()
@@ -81,7 +120,9 @@ class StoreTests: XCTestCase {
     func testSelectMapPublisher() {
         // Given
         let selector = Selector(keyPath: \TestState.type)
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil),
+                          environment: TestEnvironment(),
+                          reducers: [testReducer])
         let expectation = XCTestExpectation(description: debugDescription)
         let cancellable = store.select(selector).sink {
             if $0 == .modified {
@@ -99,7 +140,9 @@ class StoreTests: XCTestCase {
     func testSelectMap() {
         // Given
         let selector = Selector(keyPath: \TestState.type)
-        let store = Store(initialState: TestState(type: .initial, lastAction: nil), reducers: [testReducer])
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil),
+                          environment: TestEnvironment(),
+                          reducers: [testReducer])
         let valueBeforeAction = store.selectCurrent(selector)
         XCTAssertEqual(valueBeforeAction, .initial)
         // When
@@ -107,6 +150,18 @@ class StoreTests: XCTestCase {
         // Then
         let valueAfterAction = store.selectCurrent(selector)
         XCTAssertEqual(valueAfterAction, .modified)
+    }
+
+    /// Does the convenience initializer give a `Void` environment?
+    func testEmptyEnvironment() {
+        // Given
+        VoidTestEffects.envCheck = { XCTAssertEqual(String(describing: $0), "()") }
+        let store = Store(initialState: TestState(type: .initial, lastAction: nil))
+        store.register(effects: VoidTestEffects())
+        // When
+        store.dispatch(action: TestAction())
+        // Then
+        wait(for: [VoidTestEffects.expectation], timeout: 1)
     }
 
     /// Can we get all state changes in a `MockStore`?
@@ -125,57 +180,87 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(setStateAction.id, "Set State")
         XCTAssertEqual(mockStore.stateChanges[1].newState, modifiedState)
     }
+}
 
-    private struct TestAction: Action, Equatable {}
+private struct TestAction: Action, Equatable {}
 
-    private struct TestState: Encodable, Equatable {
-        var type: TestType
-        var lastAction: String?
+private struct TestState: Encodable, Equatable {
+    var type: TestType
+    var lastAction: String?
+}
+
+private class TestEnvironment: Equatable {
+    static func == (lhs: TestEnvironment, rhs: TestEnvironment) -> Bool {
+        lhs.id == rhs.id
     }
 
-    private enum TestType: String, Encodable {
-        case initial
-        case modified
-        case modifiedAgain
+    let id = UUID()
+    let responseActionIdentifier = "ResponseAction"
+    var responseActionTemplate: ActionTemplate<Void> { ActionTemplate(id: responseActionIdentifier) }
+    var responseAction: AnonymousAction<Void> { responseActionTemplate.createAction() }
+    var generateActionTemplate: ActionTemplate<Int> { ActionTemplate(id: "GenerateAction", payloadType: Int.self) }
+    var generateAction: AnonymousAction<Int> { generateActionTemplate.createAction(payload: 42) }
+    var unrelatedActionTemplate: ActionTemplate<Void> { ActionTemplate(id: "UnrelatedAction") }
+    var unrelatedAction: AnonymousAction<Void> { unrelatedActionTemplate.createAction() }
+    var lastAction: AnonymousAction<Int>?
+    var mainThreadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
+    let expectation: XCTestExpectation = {
+        let expectation = XCTestExpectation(description: String(describing: TestEffects.self))
+        expectation.expectedFulfillmentCount = 3
+        return expectation
+    }()
+}
+
+private enum TestType: String, Encodable {
+    case initial
+    case modified
+    case modifiedAgain
+}
+
+private let testReducer = Reducer<TestState> { state, action in
+    state.type = .modified
+    state.lastAction = String(describing: action)
+}
+
+private struct TestEffects: Effects {
+    typealias Environment = TestEnvironment
+
+    let testEffect = Effect<Environment>.dispatchingOne { actions, environment in
+        actions.ofType(TestAction.self)
+            .handleEvents(receiveOutput: { _ in environment.expectation.fulfill() })
+            .receive(on: DispatchQueue.global(qos: .background))
+            .map { _ in environment.responseAction }
+            .eraseToAnyPublisher()
     }
 
-    private let testReducer = Reducer<TestState> { state, action in
-        state.type = .modified
-        state.lastAction = String(describing: action)
+    let anotherTestEffect = Effect<Environment>.dispatchingMultiple { actions, environment in
+        actions.withIdentifier(environment.responseActionIdentifier)
+            .handleEvents(receiveOutput: { _ in
+                environment.mainThreadCheck()
+                environment.expectation.fulfill()
+            })
+            .map { _ in [environment.generateAction, environment.unrelatedAction] }
+            .eraseToAnyPublisher()
     }
 
-    private struct TestEffects: Effects {
-        static let responseActionIdentifier = "TestResponseAction"
-        static let responseActionTemplate = ActionTemplate(id: TestEffects.responseActionIdentifier)
-        static let responseAction = TestEffects.responseActionTemplate.createAction()
-        static let generateActionTemplate = ActionTemplate(id: "TestGenerateAction", payloadType: Int.self)
-        static let generateAction = TestEffects.generateActionTemplate.createAction(payload: 42)
-        static let unrelatedActionTemplate = ActionTemplate(id: "UnrelatedAction")
-        static let unrelatedAction = TestEffects.unrelatedActionTemplate.createAction()
-        static let expectation = XCTestExpectation()
-        static var lastAction: AnonymousAction<Int>?
-        static var threadCheck: (() -> Void)!
+    let yetAnotherTestEffect = Effect<Environment>.nonDispatching { actions, environment in
+        actions.wasCreated(from: environment.generateActionTemplate)
+            .sink(receiveValue: { action in
+                environment.lastAction = action
+                environment.expectation.fulfill()
+            })
+    }
+}
 
-        let testEffect = Effect.dispatchingOne {
-            $0.ofType(TestAction.self)
-                .receive(on: DispatchQueue.global(qos: .background))
-                .map { _ in TestEffects.responseAction }
-                .eraseToAnyPublisher()
-        }
+private struct VoidTestEffects: Effects {
+    typealias Environment = Void
+    static let expectation = XCTestExpectation()
+    static var envCheck: ((Environment) -> Void)!
 
-        let anotherTestEffect = Effect.dispatchingMultiple {
-            $0.withIdentifier(TestEffects.responseActionIdentifier)
-                .handleEvents(receiveOutput: { _ in TestEffects.threadCheck() })
-                .map { _ in [TestEffects.generateAction, TestEffects.unrelatedAction] }
-                .eraseToAnyPublisher()
-        }
-
-        let yetAnotherTestEffect = Effect.nonDispatching {
-            $0.wasCreated(from: TestEffects.generateActionTemplate)
-                .sink(receiveValue: { action in
-                    TestEffects.lastAction = action
-                    TestEffects.expectation.fulfill()
-                })
+    let testEffect = Effect<Environment>.nonDispatching { actions, env in
+        actions.sink { _ in
+            VoidTestEffects.envCheck(env)
+            VoidTestEffects.expectation.fulfill()
         }
     }
 }

@@ -106,10 +106,10 @@ import Fluxor
 import Foundation
 
 class TodosEffects: Effects {
-    let fetchTodos = Effect.dispatchingOne {
-        $0.ofType(FetchTodosAction.self)
+    let fetchTodos = Effect.dispatchingOne { actions, environment in
+        actions.ofType(FetchTodosAction.self)
             .flatMap { _ in
-                Current.todoService.fetchTodos()
+                environment.todoService.fetchTodos()
                     .map { DidFetchTodosAction(todos: $0) }
                     .catch { _ in Just(DidFailFetchingTodosAction(error: "An error occurred.")) }
             }
