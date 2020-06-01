@@ -48,13 +48,13 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     }
 
     /**
-     Dispatches an action and creates a new `State` by running the current `State` and the `Action`
+     Dispatches an `Action` and creates a new `State` by running the current `State` and the `Action`
      through all registered `Reducer`s.
 
      After the `State` is set, all registered `Interceptor`s are notified of the change.
      Lastly the `Action` is dispatched to all registered `Effect`s.
 
-     - Parameter action: The action to dispatch
+     - Parameter action: The `Action` to dispatch
      */
     public func dispatch(action: Action) {
         let oldState = state
@@ -68,7 +68,7 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     /**
      Registers the given `Reducer`. The `Reducer` will be run for all subsequent actions.
 
-     - Parameter reducer: The reducer to register
+     - Parameter reducer: The `Reducer` to register
      */
     public func register(reducer: Reducer<State>) {
         reducers.append(reducer)
@@ -115,11 +115,11 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     }
 
     /**
-     Registers the given interceptor. The interceptor will receive all subsequent actions and state changes.
+     Registers the given `Interceptor`. The `Interceptor` will receive all subsequent `Action`s and state changes.
 
-     The associated type `State` on the interceptor must match the generic `State` on the `Store`.
+     The associated type `State` on the `Interceptor` must match the generic `State` on the `Store`.
 
-     - Parameter interceptor: The interceptor to register
+     - Parameter interceptor: The `Interceptor` to register
      */
     public func register<I: Interceptor>(interceptor: I) where I.State == State {
         interceptors.append(AnyInterceptor(interceptor))
@@ -139,7 +139,7 @@ open class Store<State: Encodable, Environment>: ObservableObject {
      Gets the current value in the `State` for a `Selector`.
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
-     - Returns: The `Value` in the `State`
+     - Returns: The current `Value` in the `State`
      */
     public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return selector.map(state, stateHash: stateHash)
