@@ -17,7 +17,7 @@ class TestInterceptorTests: XCTestCase {
     private let action2 = ActionTemplate(id: "Action2").createAction()
     private let oldState2 = TestState(counter: 2)
     private let newState2 = TestState(counter: 22)
-    
+
     /// Is the dispatched `Action`, the `oldState` and the `newState` saved correctly?
     func testActionDispatched() {
         // Given
@@ -35,7 +35,7 @@ class TestInterceptorTests: XCTestCase {
         XCTAssertEqual(second.oldState, oldState2)
         XCTAssertEqual(second.newState, newState2)
     }
-    
+
     func testWaitEarlyExit() throws {
         // Given
         let interceptor = TestInterceptor<TestState>()
@@ -45,7 +45,7 @@ class TestInterceptorTests: XCTestCase {
         // Then
         try interceptor.waitForActions(expectedNumberOfActions: 1, timeout: 0)
     }
-    
+
     func testWaitFail() throws {
         // Given
         let interceptor = TestInterceptor<TestState>()
