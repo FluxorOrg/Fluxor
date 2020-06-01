@@ -38,7 +38,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(store.state.type, .modifiedAgain)
         XCTAssertEqual(store.state.lastAction, String(describing: action))
     }
-    
+
     /// Does the `Reducer`s for substates get called?
     func testRegisteringSubstateReducers() {
         // Given
@@ -53,7 +53,6 @@ class StoreTests: XCTestCase {
         store.dispatch(action: incrementActionTemplate.createAction(payload: 42))
         XCTAssertEqual(store.state.todos.counter, 42)
     }
-
 
     /// Does the `Effect`s get triggered?
     func testRegisteringEffectsType() {

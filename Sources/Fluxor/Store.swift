@@ -75,11 +75,11 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     }
 
     /**
-    Registers the given `Reducer` for a slice of the `State`. The `Reducer` will be run for all subsequent actions.
+     Registers the given `Reducer` for a slice of the `State`. The `Reducer` will be run for all subsequent actions.
 
-    - Parameter reducer: The `Reducer` to register
-    - Parameter keyPath: The `KeyPath` for which the `Reducer` should be run
-    */
+     - Parameter reducer: The `Reducer` to register
+     - Parameter keyPath: The `KeyPath` for which the `Reducer` should be run
+     */
     public func register<Substate>(reducer: Reducer<Substate>, for keyPath: WritableKeyPath<State, Substate>) {
         reducers.append(KeyedReducer(keyPath: keyPath, reducer: reducer))
     }
@@ -172,7 +172,7 @@ public extension Store where Environment == Void {
 
 private struct KeyedReducer<State> {
     let reduce: (inout State, Action) -> Void
-    
+
     init<Substate>(keyPath: WritableKeyPath<State, Substate>, reducer: Reducer<Substate>) {
         self.reduce = { state, action in
             var substate = state[keyPath: keyPath]
