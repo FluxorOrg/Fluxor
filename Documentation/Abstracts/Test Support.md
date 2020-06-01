@@ -55,7 +55,7 @@ class GreetingView: XCTestCase {
 
 ## Intercepting `State` changes
 
-The [`TestInterceptor`](Sources/FluxorTestSupport/TestInterceptor.swift) can be registered on the [`Store`](Sources/Fluxor/Store.swift). When registered it gets all [`Actions`](Sources/Fluxor/Action.swift) dispatched and `State` changes. Everything it intercepts gets saved in an array in the order received. This can be used to assert which [`Actions`](Sources/Fluxor/Action.swift) are dispatched in a test.
+The [`TestInterceptor`](Sources/FluxorTestSupport/TestInterceptor.swift) can be registered on the [`Store`](Sources/Fluxor/Store.swift). When registered it gets all [`Action`s](Sources/Fluxor/Action.swift) dispatched and `State` changes. Everything it intercepts gets saved in an array in the order received. This can be used to assert which [`Action`s](Sources/Fluxor/Action.swift) are dispatched in a test.
 
 ```swift
 import FluxorTestSupport
@@ -80,7 +80,7 @@ The [`MockStore`](Sources/FluxorTestSupport/MockStore.swift) uses this internall
 
 An [`Effect`](Sources/Fluxor/Effects.swift) is inherently asynchronous, so in order to test it in a synchronous test, without a lot of boilerplate code, FluxorTestSupport comes with a` run` function that executes the [`Effect`](Sources/Fluxor/Effects.swift) with a specific [`Action`](Sources/Fluxor/Action.swift). It is possible to run both `.dispatchingOne`,` .dispatchingMultiple` and `.nonDispatching`, but the result will be different.
 
-When running `.dispatchingOne` and` .dispatchingMultiple`, it is possible to specify the expected number of dispatched [`Actions`](Sources/Fluxor/Action.swift) and the dispatched [`Actions`](Sources/Fluxor/Action.swift) will also be returned.
+When running `.dispatchingOne` and` .dispatchingMultiple`, it is possible to specify the expected number of dispatched [`Action`s](Sources/Fluxor/Action.swift) and the dispatched [`Action`s](Sources/Fluxor/Action.swift) will also be returned.
 
 When running `.nonDispatching`, nothing is awaited and nothing is returned.
 
