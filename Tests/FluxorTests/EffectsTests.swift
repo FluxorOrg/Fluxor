@@ -118,7 +118,7 @@ class EffectsTests: XCTestCase {
             }
             return publisher.eraseToAnyPublisher()
         }
-        try EffectRunner.run(effect, with: Test1Action(), environment: Void(), expectedCount: 1)
+        try EffectRunner.run(effect, with: Test1Action(), expectedCount: 1)
         XCTAssertNotNil(cancellable)
     }
 }
