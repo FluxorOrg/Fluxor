@@ -57,7 +57,7 @@ class StoreTests: XCTestCase {
     /// Does the `Effect`s get triggered?
     func testRegisteringEffectsType() {
         // Given
-        let interceptor = TestInterceptor<TestState>()
+        var interceptor = TestInterceptor<TestState>()
         store.register(effects: TestEffects())
         store.register(interceptor: interceptor)
         let firstAction = TestAction()
@@ -65,12 +65,40 @@ class StoreTests: XCTestCase {
         store.dispatch(action: firstAction)
         // Then
         wait(for: [environment.expectation], timeout: 1)
-        let dispatchedActions = interceptor.stateChanges.map(\.action)
+        var dispatchedActions = interceptor.stateChanges.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
         XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, environment.responseAction)
         XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, environment.generateAction)
         XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, environment.unrelatedAction)
+        XCTAssertEqual(environment.lastAction, environment.generateAction)
+
+        // Given
+        store.unregisterEffects(ofType: TestEffects.self)
+        store.unregisterInterceptors(ofType: TestInterceptor<TestState>.self)
+        interceptor = TestInterceptor<TestState>()
+        store.register(interceptor: interceptor)
+        // When
+        store.dispatch(action: firstAction)
+        // Then
+        XCTAssertThrowsError(try interceptor.waitForActions(expectedNumberOfActions: 3))
+        dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions.count, 1)
+        XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
+
+        // Given
+        environment.resetExpectation()
+        store.register(effects: TestEffects())
+        // When
+        store.dispatch(action: firstAction)
+        // Then
+        wait(for: [environment.expectation], timeout: 1)
+        dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions.count, 5)
+        XCTAssertEqual(dispatchedActions[1] as! TestAction, firstAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Void>, environment.responseAction)
+        XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Int>, environment.generateAction)
+        XCTAssertEqual(dispatchedActions[4] as! AnonymousAction<Void>, environment.unrelatedAction)
         XCTAssertEqual(environment.lastAction, environment.generateAction)
     }
 
@@ -128,6 +156,20 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(interceptor.stateChanges[0].action as! TestAction, action)
         XCTAssertEqual(interceptor.stateChanges[0].oldState, oldState)
         XCTAssertEqual(interceptor.stateChanges[0].newState, store.state)
+
+        // Given
+        store.unregisterInterceptors(ofType: TestInterceptor<TestState>.self)
+        // When
+        store.dispatch(action: action)
+        // Then
+        XCTAssertEqual(interceptor.stateChanges.count, 1)
+
+        // Given
+        store.register(interceptor: interceptor)
+        // When
+        store.dispatch(action: action)
+        // Then
+        XCTAssertEqual(interceptor.stateChanges.count, 2)
     }
 
     /// Does a change in `State` publish new value for `Selector`?
@@ -209,10 +251,6 @@ private struct TodosState: Encodable, Equatable {
 }
 
 private class TestEnvironment: Equatable {
-    static func == (lhs: TestEnvironment, rhs: TestEnvironment) -> Bool {
-        lhs.id == rhs.id
-    }
-
     let id = UUID()
     let responseActionIdentifier = "ResponseAction"
     var responseActionTemplate: ActionTemplate<Void> { ActionTemplate(id: responseActionIdentifier) }
@@ -223,11 +261,20 @@ private class TestEnvironment: Equatable {
     var unrelatedAction: AnonymousAction<Void> { unrelatedActionTemplate.createAction() }
     var lastAction: AnonymousAction<Int>?
     var mainThreadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
-    let expectation: XCTestExpectation = {
-        let expectation = XCTestExpectation(description: String(describing: TestEffects.self))
+    var expectation: XCTestExpectation!
+
+    init() {
+        resetExpectation()
+    }
+
+    func resetExpectation() {
+        expectation = XCTestExpectation(description: String(describing: TestEffects.self))
         expectation.expectedFulfillmentCount = 3
-        return expectation
-    }()
+    }
+
+    static func == (lhs: TestEnvironment, rhs: TestEnvironment) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 private enum TestType: String, Encodable {

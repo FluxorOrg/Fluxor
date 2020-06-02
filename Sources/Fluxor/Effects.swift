@@ -28,10 +28,14 @@ public protocol Effects {
     associatedtype Environment
     /// The `Effect`s to register on the `Store`.
     var enabledEffects: [Effect<Environment>] { get }
+    /// The identifier for the `Effects`
+    static var id: String { get }
 }
 
 public extension Effects {
     var enabledEffects: [Effect<Environment>] {
         Mirror(reflecting: self).children.compactMap { $0.value as? Effect<Environment> }
     }
+
+    static var id: String { .init(describing: Self.self) }
 }

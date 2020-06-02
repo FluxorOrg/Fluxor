@@ -4,14 +4,18 @@
  *  MIT license, see LICENSE file for details
  */
 
+import struct Foundation.UUID
+
 /// A type which takes a `State` and `Action` returns a new `State`.
 public struct Reducer<State> {
+    /// An unique identifier used when registering/unregistering the `Reducer` on the `Store`.
+    internal let id = UUID()
     /// A pure function which takes the a `State` and an `Action` and returns a new `State`.
     public let reduce: (inout State, Action) -> Void
 
     /**
      Creates a `Reducer` from a `reduce` function.
-     
+
      The `reduce` function is a pure function which takes the a `State` and an `Action` and returns a new `State`.
 
      - Parameter reduce: The `reduce` function to create a `Reducer` from
