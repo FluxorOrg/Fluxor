@@ -9,7 +9,7 @@ import struct Foundation.UUID
 /// A type which takes a `State` and `Action` returns a new `State`.
 public struct Reducer<State> {
     /// An unique identifier used when registering/unregistering the `Reducer` on the `Store`.
-    internal let id = UUID()
+    public let id: String
     /// A pure function which takes the a `State` and an `Action` and returns a new `State`.
     public let reduce: (inout State, Action) -> Void
 
@@ -22,7 +22,8 @@ public struct Reducer<State> {
      - Parameter state: The `State` to mutate
      - Parameter action: The `Action` dispatched
      */
-    public init(reduce: @escaping (_ state: inout State, _ action: Action) -> Void) {
+    public init(id: String = UUID().uuidString, reduce: @escaping (_ state: inout State, _ action: Action) -> Void) {
+        self.id = id
         self.reduce = reduce
     }
 
@@ -31,7 +32,8 @@ public struct Reducer<State> {
 
      - Parameter reduceOns: The `ReduceOn`s which the created `Reducer` should contain
      */
-    public init(_ reduceOns: ReduceOn<State>...) {
+    public init(id: String = UUID().uuidString, _ reduceOns: ReduceOn<State>...) {
+        self.id = id
         self.reduce = { state, action in
             reduceOns.forEach { $0.reduce(&state, action) }
         }

@@ -44,10 +44,10 @@ class StoreTests: XCTestCase {
         // Given
         let incrementActionTemplate = ActionTemplate(id: "Increment", payloadType: Int.self)
         let reducer = Reducer<TodosState>(
+            id: "Todos Reducer",
             ReduceOn(incrementActionTemplate) { todosState, action in
                 todosState.counter += action.payload
-            }
-        )
+        })
         XCTAssertEqual(store.state.todos.counter, 0)
         store.register(reducer: reducer, for: \.todos)
         // When

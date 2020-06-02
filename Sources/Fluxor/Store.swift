@@ -237,7 +237,7 @@ extension Store {
 
 /// A wrapper for a `Reducer` for a specific `KeyPath`.
 private struct KeyedReducer<State> {
-    let id: UUID
+    let id: String
     let reduce: (inout State, Action) -> Void
 
     init<Substate>(keyPath: WritableKeyPath<State, Substate>, reducer: Reducer<Substate>) {
