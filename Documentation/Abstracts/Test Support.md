@@ -1,5 +1,3 @@
-# Test support
-
 Every part of an application using Fluxor is highly testable. The separation of the `Action` (instructions), `Selector`s (reading), `Reducer` (mutating) and `Effect` (asynchronous) make each part decoupled, testable and easier to grasp.
 
 But to help out when testing components using Fluxor or asynchronous `Effect`s, Fluxor comes with a separate package (**FluxorTestSupport**) with a `MockStore`, `TestInterceptor` and an `EffectRunner` to make `Effect`s run syncronously.
