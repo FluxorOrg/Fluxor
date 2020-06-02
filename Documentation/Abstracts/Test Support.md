@@ -1,4 +1,4 @@
-# Testing Selectors, Reducers and Effects
+# Test support
 
 Every part of an application using Fluxor is highly testable. The separation of the `Action` (instructions), `Selector`s (reading), `Reducer` (mutating) and `Effect` (asynchronous) make each part decoupled, testable and easier to grasp.
 
