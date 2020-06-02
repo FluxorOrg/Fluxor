@@ -43,15 +43,31 @@ class StoreTests: XCTestCase {
     func testRegisteringSubstateReducers() {
         // Given
         let incrementActionTemplate = ActionTemplate(id: "Increment", payloadType: Int.self)
-        XCTAssertEqual(store.state.todos.counter, 0)
-        store.register(reducer: Reducer<TodosState>(
+        let reducer = Reducer<TodosState>(
             ReduceOn(incrementActionTemplate) { todosState, action in
                 todosState.counter += action.payload
             }
-        ), for: \.todos)
+        )
+        XCTAssertEqual(store.state.todos.counter, 0)
+        store.register(reducer: reducer, for: \.todos)
         // When
         store.dispatch(action: incrementActionTemplate.createAction(payload: 42))
+        // Then
         XCTAssertEqual(store.state.todos.counter, 42)
+        
+        // Given
+        store.unregister(reducer: reducer)
+        // When
+        store.dispatch(action: incrementActionTemplate.createAction(payload: 42))
+        // Then
+        XCTAssertEqual(store.state.todos.counter, 42)
+        
+        // Given
+        store.register(reducer: reducer, for: \.todos)
+        // When
+        store.dispatch(action: incrementActionTemplate.createAction(payload: 42))
+        // Then
+        XCTAssertEqual(store.state.todos.counter, 84)
     }
 
     /// Does the `Effect`s get triggered?

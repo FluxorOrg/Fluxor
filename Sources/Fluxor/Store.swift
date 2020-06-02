@@ -85,6 +85,15 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     }
 
     /**
+     Unregisters the given `Reducer`. The `Reducer` will no longer be run when `Action`s are dispatched.
+
+     - Parameter reducer: The `Reducer` to unregister
+     */
+    public func unregister<SomeState>(reducer: Reducer<SomeState>) {
+        reducers.removeAll { $0.id == reducer.id }
+    }
+
+    /**
      Registers the given `Effects`. The `Effects` will receive all subsequent actions.
 
      - Parameter effects: The `Effects` to register
