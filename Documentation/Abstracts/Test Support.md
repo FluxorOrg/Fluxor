@@ -1,8 +1,3 @@
-<p align="center">
-    <br />
-    <img src="https://raw.githubusercontent.com/FluxorOrg/Fluxor/master/Assets/Fluxor-logo.png" width="400" max-width="90%" alt="Fluxor" />
-</p>
-
 # Testing Selectors, Reducers and Effects
 
 Every part of an application using Fluxor is highly testable. The separation of the `Action` (instructions), `Selector`s (reading), `Reducer` (mutating) and `Effect` (asynchronous) make each part decoupled, testable and easier to grasp.
