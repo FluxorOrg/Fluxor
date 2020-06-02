@@ -14,9 +14,9 @@ custom_categories:
   - name: Actions
     children:
     - Action
-    - IdentifiableAction
     - ActionTemplate
     - AnonymousAction
+    - IdentifiableAction
   - name: Reducers
     children:
     - Reducer
