@@ -54,14 +54,14 @@ class StoreTests: XCTestCase {
         store.dispatch(action: incrementActionTemplate.createAction(payload: 42))
         // Then
         XCTAssertEqual(store.state.todos.counter, 42)
-        
+
         // Given
         store.unregister(reducer: reducer)
         // When
         store.dispatch(action: incrementActionTemplate.createAction(payload: 42))
         // Then
         XCTAssertEqual(store.state.todos.counter, 42)
-        
+
         // Given
         store.register(reducer: reducer, for: \.todos)
         // When
