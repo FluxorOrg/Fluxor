@@ -48,8 +48,7 @@ public class TestInterceptor<State>: Interceptor {
         throw WaitingError.expectedCountNotReached(message: errorMessage)
     }
 
-    /// Errors waiting for intercepted `Action`s
-    public enum WaitingError: Error {
+    enum WaitingError: Error {
         case expectedCountNotReached(message: String)
     }
 }
