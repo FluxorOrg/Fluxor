@@ -1,5 +1,3 @@
-# Fluxor + SwiftUI
-
 Fluxor is based on Combine and is therefore ideal to use with SwiftUI. It comes with a separate package (**FluxorSwiftUI**) with extensions for `Store` and types that can be used directly in [SwiftUI Views](https://developer.apple.com/documentation/swiftui/view).
 
 ## Observing a value
