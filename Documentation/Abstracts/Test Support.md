@@ -24,13 +24,13 @@ import FluxorTestSupport
 import XCTest
 
 class GreetingView: XCTestCase {
-	func testGreeting() {
-		let mockStore = MockStore(initialState: AppState())
-		let view = GreetingView(store: mockStore)
-		XCTAssert(...)
-		mockStore.setState(AppState(greeting: "Hi Bob!"))
-		XCTAssert(...)
-	}
+    func testGreeting() {
+        let mockStore = MockStore(initialState: AppState())
+        let view = GreetingView(store: mockStore)
+        XCTAssert(...)
+        mockStore.setState(AppState(greeting: "Hi Bob!"))
+        XCTAssert(...)
+    }
 }
 ```
 
@@ -43,13 +43,13 @@ import FluxorTestSupport
 import XCTest
 
 class GreetingView: XCTestCase {
-	func testGreeting() {
-		let greeting = "Hi Bob!"
-		let mockStore = MockStore(initialState: AppState(greeting: "Hi Steve!"))
-		mockStore.overrideSelector(Selectors.getGreeting, value: greeting)
-		let view = GreetingView(store: mockStore)
-		XCTAssertEqual(view.greeting, greeting)
-	}
+    func testGreeting() {
+        let greeting = "Hi Bob!"
+        let mockStore = MockStore(initialState: AppState(greeting: "Hi Steve!"))
+        mockStore.overrideSelector(Selectors.getGreeting, value: greeting)
+        let view = GreetingView(store: mockStore)
+        XCTAssertEqual(view.greeting, greeting)
+    }
 }
 ```
 
@@ -62,15 +62,15 @@ import FluxorTestSupport
 import XCTest
 
 class GreetingView: XCTestCase {
-	func testGreeting() {
-		let testInterceptor = TestInterceptor<AppState>()
-		let store = Store(initialState: AppState())
-		store.register(interceptor: self.testInterceptor)
-		let view = GreetingView(store: store)
-		XCTAssertEqual(testInteceptor.stateChanges.count, 0)
-		view.updateGreeting()
-		XCTAssertEqual(testInteceptor.stateChanges.count, 1)
-	}
+    func testGreeting() {
+        let testInterceptor = TestInterceptor<AppState>()
+        let store = Store(initialState: AppState())
+        store.register(interceptor: self.testInterceptor)
+        let view = GreetingView(store: store)
+        XCTAssertEqual(testInteceptor.stateChanges.count, 0)
+        view.updateGreeting()
+        XCTAssertEqual(testInteceptor.stateChanges.count, 1)
+    }
 }
 ```
 
@@ -78,7 +78,7 @@ The [`MockStore`](Sources/FluxorTestSupport/MockStore.swift) uses this internall
 
 ## Running an `Effect`
 
-An [`Effect`](Sources/Fluxor/Effects.swift) is inherently asynchronous, so in order to test it in a synchronous test, without a lot of boilerplate code, FluxorTestSupport comes with a` run` function that executes the [`Effect`](Sources/Fluxor/Effects.swift) with a specific [`Action`](Sources/Fluxor/Action.swift). It is possible to run both `.dispatchingOne`,` .dispatchingMultiple` and `.nonDispatching`, but the result will be different.
+An [`Effect`](Sources/Fluxor/Effects.swift) is inherently asynchronous, so in order to test it in a synchronous test, without a lot of boilerplate code, FluxorTestSupport comes with a `run` function that executes the [`Effect`](Sources/Fluxor/Effects.swift) with a specific [`Action`](Sources/Fluxor/Action.swift). It is possible to run both `.dispatchingOne`,` .dispatchingMultiple` and `.nonDispatching`, but the result will be different.
 
 When running `.dispatchingOne` and` .dispatchingMultiple`, it is possible to specify the expected number of dispatched [`Action`s](Sources/Fluxor/Action.swift) and the dispatched [`Action`s](Sources/Fluxor/Action.swift) will also be returned.
 
@@ -92,7 +92,7 @@ class SettingsEffectsTests: XCTestCase {
     func testSetBackground() {
         let effects = SettingsEffects()
         let action = Actions.setBackgroundColor(payload: .red)
-        let result = try EffectRunner.run(EffectRunnereffects.setBackgroundColor, with: action)!
+        let result = try EffectRunner.run(effects.setBackgroundColor, with: action)!
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result[0], Actions.hideColorPicker())
     }
