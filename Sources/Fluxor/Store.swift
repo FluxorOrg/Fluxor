@@ -33,6 +33,8 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     private var effects = [String: [AnyCancellable]]()
     private var interceptors = [AnyInterceptor<State>]()
 
+    // MARK: - Initialization
+
     /**
      Initializes the `Store` with an initial `State`, an `Environment` and eventually `Reducer`s.
 
@@ -46,6 +48,8 @@ open class Store<State: Encodable, Environment>: ObservableObject {
         stateHashSink = $state.sink { _ in self.stateHash = UUID() }
         reducers.forEach(register(reducer:))
     }
+
+    // MARK: - Dispatching
 
     /**
      Dispatches an `Action` and creates a new `State` by running the current `State` and the `Action`
@@ -64,6 +68,8 @@ open class Store<State: Encodable, Environment>: ObservableObject {
         interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: newState) }
         actions.send(action)
     }
+
+    // MARK: - Reducers
 
     /**
      Registers the given `Reducer`. The `Reducer` will be run for all subsequent actions.
@@ -93,6 +99,8 @@ open class Store<State: Encodable, Environment>: ObservableObject {
         reducers.removeAll { $0.id == reducer.id }
     }
 
+    // MARK: - Effects
+
     /**
      Registers the given `Effects`. The `Effects` will receive all subsequent actions.
 
@@ -100,16 +108,6 @@ open class Store<State: Encodable, Environment>: ObservableObject {
      */
     public func register<E: Effects>(effects: E) where E.Environment == Environment {
         self.effects[type(of: effects).id] = createCancellables(for: effects.enabledEffects)
-    }
-
-    /**
-     Unregisters the given `Effects`. The `Effects` will no longer receive any actions.
-
-     - Parameter effects: The `Effects` to register
-     */
-    public func unregisterEffects<E: Effects>(ofType effects: E.Type) where E.Environment == Environment {
-        self.effects[effects.id]?.forEach { $0.cancel() }
-        self.effects.removeValue(forKey: effects.id)
     }
 
     /**
@@ -129,11 +127,82 @@ open class Store<State: Encodable, Environment>: ObservableObject {
      - Parameter effect: The `Effect` to register
      */
     public func register(effect: Effect<Environment>) {
-        var cancellables = self.effects["*"] ?? []
-        cancellables.append(createCancellable(for: effect))
-        self.effects["*"] = cancellables
+        self.effects["*"] = (self.effects["*"] ?? []) + [createCancellable(for: effect)]
     }
 
+    /**
+     Unregisters the given `Effects`. The `Effects` will no longer receive any actions.
+
+     - Parameter effects: The `Effects` to register
+     */
+    public func unregisterEffects<E: Effects>(ofType effects: E.Type) where E.Environment == Environment {
+        self.effects.removeValue(forKey: effects.id) // An AnyCancellable instance calls cancel() when deinitialized
+    }
+
+    // MARK: - Interceptors
+
+    /**
+     Registers the given `Interceptor`. The `Interceptor` will receive all subsequent `Action`s and state changes.
+
+     - Parameter interceptor: The `Interceptor` to register
+     */
+    public func register<I: Interceptor>(interceptor: I) where I.State == State {
+        interceptors.append(AnyInterceptor(interceptor))
+    }
+
+    /**
+     Unregisters all registered `Interceptor`s of the given type.
+     The `Interceptor`s will no longer receive any `Action`s or state changes.
+
+     - Parameter interceptor: The type of`Interceptor` to unregister
+     */
+
+    public func unregisterInterceptors<I: Interceptor>(ofType interceptor: I.Type) where I.State == State {
+        interceptors.removeAll { $0.originalId == interceptor.id }
+    }
+
+    // MARK: - Selecting
+
+    /**
+     Creates a `Publisher` for a `Selector`.
+
+     - Parameter selector: The `Selector` to use when getting the value in the `State`
+     - Returns: A `Publisher` for the `Value` in the `State`
+     */
+    public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
+        return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
+    }
+
+    /**
+     Gets the current value in the `State` for a `Selector`.
+
+     - Parameter selector: The `Selector` to use when getting the value in the `State`
+     - Returns: The current `Value` in the `State`
+     */
+    public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
+        return selector.map(state, stateHash: stateHash)
+    }
+}
+
+// MARK: - Void Environment
+
+public extension Store where Environment == Void {
+    /**
+     Initializes the `Store` with an initial `State` and eventually `Reducer`s.
+
+     Using this initializer will give all `Effects` a `Void` environment.
+
+     - Parameter initialState: The initial `State` for the `Store`
+     - Parameter reducers: The `Reducer`s to register
+     */
+    convenience init(initialState: State, reducers: [Reducer<State>] = []) {
+        self.init(initialState: initialState, environment: Void(), reducers: reducers)
+    }
+}
+
+// MARK: - Private
+
+extension Store {
     /**
      Creates `Cancellable`s for the given `Effect`s.
 
@@ -164,64 +233,9 @@ open class Store<State: Encodable, Environment>: ObservableObject {
             return effectCreator(actions.eraseToAnyPublisher(), environment)
         }
     }
-
-    /**
-     Registers the given `Interceptor`. The `Interceptor` will receive all subsequent `Action`s and state changes.
-
-     - Parameter interceptor: The `Interceptor` to register
-     */
-    public func register<I: Interceptor>(interceptor: I) where I.State == State {
-        interceptors.append(AnyInterceptor(interceptor))
-    }
-
-    /**
-     Unregisters all registered `Interceptor`s of the given type.
-     The `Interceptor`s will no longer receive any `Action`s or state changes.
-
-     - Parameter interceptor: The type of`Interceptor` to unregister
-     */
-
-    public func unregisterInterceptors<I: Interceptor>(ofType interceptor: I.Type) where I.State == State {
-        interceptors.removeAll {
-            $0.originalId == interceptor.id
-        }
-    }
-
-    /**
-     Creates a `Publisher` for a `Selector`.
-
-     - Parameter selector: The `Selector` to use when getting the value in the `State`
-     - Returns: A `Publisher` for the `Value` in the `State`
-     */
-    public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
-        return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
-    }
-
-    /**
-     Gets the current value in the `State` for a `Selector`.
-
-     - Parameter selector: The `Selector` to use when getting the value in the `State`
-     - Returns: The current `Value` in the `State`
-     */
-    public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
-        return selector.map(state, stateHash: stateHash)
-    }
 }
 
-public extension Store where Environment == Void {
-    /**
-     Initializes the `Store` with an initial `State` and eventually `Reducer`s.
-
-     Using this initializer will give all `Effects` a `Void` environment.
-
-     - Parameter initialState: The initial `State` for the `Store`
-     - Parameter reducers: The `Reducer`s to register
-     */
-    convenience init(initialState: State, reducers: [Reducer<State>] = []) {
-        self.init(initialState: initialState, environment: Void(), reducers: reducers)
-    }
-}
-
+/// A wrapper for a `Reducer` for a specific `KeyPath`.
 private struct KeyedReducer<State> {
     let id: UUID
     let reduce: (inout State, Action) -> Void
