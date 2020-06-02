@@ -16,13 +16,21 @@ public protocol Interceptor {
      - Parameter newState: The `State` after the `Action` was dispatched
      */
     func actionDispatched(action: Action, oldState: State, newState: State)
+    /// The identifier for the `Interceptor`
+    static var id: String { get }
+}
+
+public extension Interceptor {
+    static var id: String { .init(describing: self) }
 }
 
 /// A type-erased `Interceptor` used to store all `Interceptor`s in an array in the `Store`.
 internal struct AnyInterceptor<State>: Interceptor {
+    let originalId: String
     private let _actionDispatched: (Action, State, State) -> Void
 
     init<I: Interceptor>(_ interceptor: I) where I.State == State {
+        originalId = type(of: interceptor).id
         _actionDispatched = interceptor.actionDispatched
     }
 

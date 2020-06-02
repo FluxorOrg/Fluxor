@@ -25,6 +25,13 @@ public class TestInterceptor<State>: Interceptor {
         stateChanges.append((action, oldState, newState))
     }
 
+    /**
+     Waits for the expected number of `Action`s to be intercepted.
+     If the expected number of `Action`s are not intercepted before the timout an error is thrown.
+
+     - Parameter expectedNumberOfActions: The number of `Action`s to wait for
+     - Parameter timeout: The waiting time before failing (in seconds)
+     */
     public func waitForActions(expectedNumberOfActions: Int, timeout: TimeInterval = 1) throws {
         guard stateChanges.count < expectedNumberOfActions else { return }
 
@@ -41,6 +48,7 @@ public class TestInterceptor<State>: Interceptor {
         throw WaitingError.expectedCountNotReached(message: errorMessage)
     }
 
+    /// Errors waiting for intercepted `Action`s
     public enum WaitingError: Error {
         case expectedCountNotReached(message: String)
     }

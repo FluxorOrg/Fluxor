@@ -30,8 +30,10 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     private let actions = PassthroughSubject<Action, Never>()
     private let environment: Environment
     private var reducers = [KeyedReducer<State>]()
-    private var effectCancellables = Set<AnyCancellable>()
+    private var effects = [String: [AnyCancellable]]()
     private var interceptors = [AnyInterceptor<State>]()
+
+    // MARK: - Initialization
 
     /**
      Initializes the `Store` with an initial `State`, an `Environment` and eventually `Reducer`s.
@@ -46,6 +48,8 @@ open class Store<State: Encodable, Environment>: ObservableObject {
         stateHashSink = $state.sink { _ in self.stateHash = UUID() }
         reducers.forEach(register(reducer:))
     }
+
+    // MARK: - Dispatching
 
     /**
      Dispatches an `Action` and creates a new `State` by running the current `State` and the `Action`
@@ -64,6 +68,8 @@ open class Store<State: Encodable, Environment>: ObservableObject {
         interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: newState) }
         actions.send(action)
     }
+
+    // MARK: - Reducers
 
     /**
      Registers the given `Reducer`. The `Reducer` will be run for all subsequent actions.
@@ -85,12 +91,23 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     }
 
     /**
+     Unregisters the given `Reducer`. The `Reducer` will no longer be run when `Action`s are dispatched.
+
+     - Parameter reducer: The `Reducer` to unregister
+     */
+    public func unregister<SomeState>(reducer: Reducer<SomeState>) {
+        reducers.removeAll { $0.id == reducer.id }
+    }
+
+    // MARK: - Effects
+
+    /**
      Registers the given `Effects`. The `Effects` will receive all subsequent actions.
 
      - Parameter effects: The `Effects` to register
      */
     public func register<E: Effects>(effects: E) where E.Environment == Environment {
-        register(effects: effects.enabledEffects)
+        self.effects[type(of: effects).id] = createCancellables(for: effects.enabledEffects)
     }
 
     /**
@@ -105,35 +122,46 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     /**
      Registers the given `Effect`. The `Effect` will receive all subsequent actions.
 
+     Only `Effect`s registered from a type conforming to `Effects` can be unregistered.
+
      - Parameter effect: The `Effect` to register
      */
     public func register(effect: Effect<Environment>) {
-        let cancellable: AnyCancellable
-        switch effect {
-        case .dispatchingOne(let effectCreator):
-            cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
-                .receive(on: DispatchQueue.main)
-                .sink(receiveValue: self.dispatch(action:))
-        case .dispatchingMultiple(let effectCreator):
-            cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
-                .receive(on: DispatchQueue.main)
-                .sink { $0.forEach(self.dispatch(action:)) }
-        case .nonDispatching(let effectCreator):
-            cancellable = effectCreator(actions.eraseToAnyPublisher(), environment)
-        }
-        cancellable.store(in: &effectCancellables)
+        self.effects["*"] = (self.effects["*"] ?? []) + [createCancellable(for: effect)]
     }
 
     /**
-     Registers the given `Interceptor`. The `Interceptor` will receive all subsequent `Action`s and state changes.
+     Unregisters the given `Effects`. The `Effects` will no longer receive any actions.
 
-     The associated type `State` on the `Interceptor` must match the generic `State` on the `Store`.
+     - Parameter effects: The `Effects` to register
+     */
+    public func unregisterEffects<E: Effects>(ofType effects: E.Type) where E.Environment == Environment {
+        self.effects.removeValue(forKey: effects.id) // An AnyCancellable instance calls cancel() when deinitialized
+    }
+
+    // MARK: - Interceptors
+
+    /**
+     Registers the given `Interceptor`. The `Interceptor` will receive all subsequent `Action`s and state changes.
 
      - Parameter interceptor: The `Interceptor` to register
      */
     public func register<I: Interceptor>(interceptor: I) where I.State == State {
         interceptors.append(AnyInterceptor(interceptor))
     }
+
+    /**
+     Unregisters all registered `Interceptor`s of the given type.
+     The `Interceptor`s will no longer receive any `Action`s or state changes.
+
+     - Parameter interceptor: The type of`Interceptor` to unregister
+     */
+
+    public func unregisterInterceptors<I: Interceptor>(ofType interceptor: I.Type) where I.State == State {
+        interceptors.removeAll { $0.originalId == interceptor.id }
+    }
+
+    // MARK: - Selecting
 
     /**
      Creates a `Publisher` for a `Selector`.
@@ -156,6 +184,8 @@ open class Store<State: Encodable, Environment>: ObservableObject {
     }
 }
 
+// MARK: - Void Environment
+
 public extension Store where Environment == Void {
     /**
      Initializes the `Store` with an initial `State` and eventually `Reducer`s.
@@ -170,10 +200,48 @@ public extension Store where Environment == Void {
     }
 }
 
+// MARK: - Private
+
+extension Store {
+    /**
+     Creates `Cancellable`s for the given `Effect`s.
+
+     - Parameter effects: The `Effect`s to create `Cancellable`s for
+     - Returns: The `Cancellable`s for the given `Effect`s
+     */
+    private func createCancellables(for effects: [Effect<Environment>]) -> [AnyCancellable] {
+        return effects.map(createCancellable(for:))
+    }
+
+    /**
+     Creates `Cancellable` for the given `Effect`.
+
+     - Parameter effect: The `Effect` to create `Cancellable` for
+     - Returns: The `Cancellable` for the given `Effect`
+     */
+    private func createCancellable(for effect: Effect<Environment>) -> AnyCancellable {
+        switch effect {
+        case .dispatchingOne(let effectCreator):
+            return effectCreator(actions.eraseToAnyPublisher(), environment)
+                .receive(on: DispatchQueue.main)
+                .sink(receiveValue: self.dispatch(action:))
+        case .dispatchingMultiple(let effectCreator):
+            return effectCreator(actions.eraseToAnyPublisher(), environment)
+                .receive(on: DispatchQueue.main)
+                .sink { $0.forEach(self.dispatch(action:)) }
+        case .nonDispatching(let effectCreator):
+            return effectCreator(actions.eraseToAnyPublisher(), environment)
+        }
+    }
+}
+
+/// A wrapper for a `Reducer` for a specific `KeyPath`.
 private struct KeyedReducer<State> {
+    let id: String
     let reduce: (inout State, Action) -> Void
 
     init<Substate>(keyPath: WritableKeyPath<State, Substate>, reducer: Reducer<Substate>) {
+        self.id = reducer.id
         self.reduce = { state, action in
             var substate = state[keyPath: keyPath]
             reducer.reduce(&substate, action)
