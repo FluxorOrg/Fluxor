@@ -6,6 +6,8 @@
 
 import Foundation.NSUUID
 
+// swiftlint:disable function_parameter_count
+
 /// Something which selects a `Value` from the specified `State`.
 public protocol SelectorProtocol {
     /// The input for the `Selector`.
