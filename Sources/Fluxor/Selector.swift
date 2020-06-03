@@ -32,7 +32,9 @@ public class Selector<State, Value>: SelectorProtocol {
     /// The closue used for the mapping.
     private let map: (State) -> Value
     /// The latest value for a state hash.
-    internal private(set) var result: (stateHash: UUID?, value: Value)?
+    internal private(set) var result: (stateHash: UUID, value: Value)?
+    /// An unique identifier used when overriding the `Selector` on the `MockStore`.
+    public let id = UUID()
 
     /**
      Creates a `Selector` from a `keyPath`.
@@ -243,35 +245,19 @@ internal extension Selector {
      Selects the `Value` from the `State` based on the subclass's `map` function and saves the result.
 
      - If a value is already saved and the saved state hash matches the passed, the saved value is returned.
-     - If a value is already saved but the saved state hash is nil
-        it means that the selector is overriden and it will always return the saved value
      - If a value is already saved but the saved state hash doesn't match the passed
         a new value is selected and saved along with the passed state hash
 
      - Parameter state: The `State` to select from
-     - Parameter stateHash: The hash of the state to select from
+     - Parameter stateHash: The hash of the `State` to select from
      - Returns: The `Value` mapped with the `projector`
      */
     func map(_ state: State, stateHash: UUID) -> Value {
-        if let result = result, result.stateHash == nil || result.stateHash == stateHash {
+        if let result = result, result.stateHash == stateHash {
             return result.value
         }
         let value = map(state)
         setResult(value: value, forStateHash: stateHash)
         return value
-    }
-}
-
-/// Test support.
-extension Selector {
-    /**
-     __Test support:__ Mock the result of the `Selector`. Should only be used by `MockStore` in `FluxorTestSupport`.
-
-     If the selector is mocked the `stateHash` will be nil and `map` will always return the `value`.
-
-     - Parameter value: The value to use as result
-     */
-    public func mockResult(value: Value) {
-        result = (stateHash: nil, value: value)
     }
 }

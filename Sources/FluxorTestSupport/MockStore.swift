@@ -4,7 +4,9 @@
  *  MIT license, see LICENSE file for details
  */
 
+import Combine
 import Fluxor
+import struct Foundation.UUID
 
 // swiftlint:disable large_tuple
 
@@ -19,6 +21,7 @@ public class MockStore<State: Encodable, Environment>: Store<State, Environment>
     }
 
     private let setState = ActionTemplate(id: "Set State", payloadType: State.self)
+    private var overridenSelectorValues = [UUID: Any]()
     private let testInterceptor = TestInterceptor<State>()
 
     /**
@@ -48,12 +51,28 @@ public class MockStore<State: Encodable, Environment>: Store<State, Environment>
     /**
      Overrides the `Selector` with a 'default' value.
 
-     When a `Selector` is overriden it will always give the same value.
+     When a `Selector` is overriden it will always give the same value when used to select from this `MockStore`.
 
      - Parameter selector: The `Selector` to override
-     - Parameter value: The value the `Selector` should give
+     - Parameter value: The value the `Selector` should give when selecting
      */
     public func overrideSelector<Value>(_ selector: Selector<State, Value>, value: Value) {
-        selector.mockResult(value: value)
+        overridenSelectorValues[selector.id] = value
+    }
+
+    /**
+     Resets all overridden `Selector`s on this `MockStore`.
+     */
+    public func resetOverriddenSelectors() {
+        overridenSelectorValues.removeAll()
+    }
+
+    public override func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
+        guard let value = overridenSelectorValues[selector.id] as? Value else { return super.select(selector) }
+        return $state.map { _ in value }.eraseToAnyPublisher()
+    }
+
+    public override func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
+        return overridenSelectorValues[selector.id] as? Value ?? super.selectCurrent(selector)
     }
 }

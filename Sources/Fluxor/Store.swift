@@ -169,7 +169,7 @@ open class Store<State: Encodable, Environment>: ObservableObject {
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      - Returns: A `Publisher` for the `Value` in the `State`
      */
-    public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
+    open func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
         return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
     }
 
@@ -179,7 +179,7 @@ open class Store<State: Encodable, Environment>: ObservableObject {
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      - Returns: The current `Value` in the `State`
      */
-    public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
+    open func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return selector.map(state, stateHash: stateHash)
     }
 }

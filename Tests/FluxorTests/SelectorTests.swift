@@ -161,20 +161,6 @@ class SelectorTests: XCTestCase {
         XCTAssertEqual(selector.result?.stateHash, changedStateHash)
     }
 
-    /// Can the cache be overridden?
-    func testMemoizedSelectorMockResult() {
-        // Given
-        let initialStateHash = UUID()
-        let selector = fullNameSelector
-        XCTAssertNil(selector.result)
-        selector.mockResult(value: "Phil Schiller")
-        // When
-        XCTAssertEqual(selector.map(state, stateHash: initialStateHash), "Phil Schiller")
-        // Then
-        XCTAssertEqual(selector.result?.value, "Phil Schiller")
-        XCTAssertEqual(selector.result?.stateHash, nil)
-    }
-
     private struct TestState: Equatable {
         var name: NameState
         var birthday: BirthdayState
