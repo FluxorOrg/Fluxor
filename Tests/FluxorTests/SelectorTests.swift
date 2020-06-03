@@ -21,15 +21,15 @@ class SelectorTests: XCTestCase {
     private let scandalsSelector = Selector(keyPath: \TestState.scandals)
     private let newProductsSelector = Selector(projector: { (state: TestState) in state.newProducts })
 
-    private lazy var fullNameSelector = Selector(nameSelector) {
+    private lazy var fullNameSelector = Selector1(nameSelector) {
         "\($0.firstName) \($0.lastName)"
     }
 
-    private lazy var formattedBirthdaySelector = Selector(birthdaySelector) {
+    private lazy var formattedBirthdaySelector = Selector1(birthdaySelector) {
         "\($0.month) \($0.day), \($0.year)"
     }
 
-    private lazy var formattedAddressSelector = Selector(addressSelector) {
+    private lazy var formattedAddressSelector = Selector1(addressSelector) {
         "\($0.address), \($0.city), \($0.country)"
     }
 
@@ -74,25 +74,19 @@ class SelectorTests: XCTestCase {
 
     /// Is it possible to create a `Selector` with 2 `Selector`s and map the state?
     func testCreateSelector2() {
-        let congratulationsSelector = Selector(fullNameSelector, birthdaySelector) {
-            fullName, birthday in
-            "Congratulations \(fullName)! Today is \(birthday.month) \(birthday.day) - your birthday!"
+        let congratulationsSelector = Selector.with(fullNameSelector, birthdaySelector) {
+            fullName, birthday in "Congratulations \(fullName)! Today is \(birthday.month) \(birthday.day) - your birthday!"
         }
-        XCTAssertEqual(congratulationsSelector.map(state),
-                       "Congratulations Tim Cook! Today is November 1 - your birthday!")
+        XCTAssertEqual(congratulationsSelector.map(state), "Congratulations Tim Cook! Today is November 1 - your birthday!")
         modifyState()
-        XCTAssertEqual(congratulationsSelector.map(state),
-                       "Congratulations Steve Jobs! Today is February 24 - your birthday!")
+        XCTAssertEqual(congratulationsSelector.map(state), "Congratulations Steve Jobs! Today is February 24 - your birthday!")
     }
 
     /// Is it possible to create a `Selector` with 3 `Selector`s and map the state?
     func testCreateSelector3() {
-        let newestProductSelector = Selector(newProductsSelector) {
-            $0.products.last!
-        }
-        let productLaunchSelector = Selector(fullNameSelector, newestProductSelector, formattedAddressSelector) {
-            fullName, newestProduct, formattedAddress in
-            "Yesterday \(fullName) presented the newest \(newestProduct) at a Town Hall Meeting at Apple (\(formattedAddress))"
+        let newestProductSelector = Selector.with(newProductsSelector) { $0.products.last! }
+        let productLaunchSelector = Selector.with(fullNameSelector, newestProductSelector, formattedAddressSelector) {
+            fullName, newestProduct, formattedAddress in "Yesterday \(fullName) presented the newest \(newestProduct) at a Town Hall Meeting at Apple (\(formattedAddress))"
         }
         XCTAssertEqual(productLaunchSelector.map(state), "Yesterday Tim Cook presented the newest AirPods at a Town Hall Meeting at Apple (One Apple Park Way, Cupertino, USA)")
         modifyState()
@@ -101,12 +95,9 @@ class SelectorTests: XCTestCase {
 
     /// Is it possible to create a `Selector` with 4 `Selector`s and map the state?
     func testCreateSelector4() {
-        let iphoneScandalSelector = Selector(scandalsSelector) {
-            $0.iphone
-        }
-        let scandalMeetingSelector = Selector(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, iphoneScandalSelector) {
-            fullName, formattedBirthday, formattedAddress, iphoneScandal in
-            "Today \(fullName) (born \(formattedBirthday)) held a Town Hall Meeting at Apple (\(formattedAddress)) about \(iphoneScandal)"
+        let iphoneScandalSelector = Selector.with(scandalsSelector) { $0.iphone }
+        let scandalMeetingSelector = Selector.with(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, iphoneScandalSelector) {
+            fullName, formattedBirthday, formattedAddress, iphoneScandal in "Today \(fullName) (born \(formattedBirthday)) held a Town Hall Meeting at Apple (\(formattedAddress)) about \(iphoneScandal)"
         }
 
         XCTAssertEqual(scandalMeetingSelector.map(state), "Today Tim Cook (born November 1, 1960) held a Town Hall Meeting at Apple (One Apple Park Way, Cupertino, USA) about Bendgate")
@@ -116,7 +107,7 @@ class SelectorTests: XCTestCase {
 
     /// Is it possible to create a `Selector` with 5 `Selector`s and map the state?
     func testCreateSelector5() {
-        let bioSelector = Selector(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, scandalsSelector, newProductsSelector) {
+        let bioSelector = Selector.with(fullNameSelector, formattedBirthdaySelector, formattedAddressSelector, scandalsSelector, newProductsSelector) {
             fullName, formattedBirthday, formattedAddress, scandals, newProducts in
             """
             Full name: \(fullName)
