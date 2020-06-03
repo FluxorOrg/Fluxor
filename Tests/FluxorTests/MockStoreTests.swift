@@ -55,7 +55,7 @@ class MockStoreTests: XCTestCase {
         // Then
         wait(for: [expectation1], timeout: 1)
         XCTAssertNotNil(cancellable1)
-        
+
         // Given
         let newValue = 42
         store.resetOverriddenSelectors()

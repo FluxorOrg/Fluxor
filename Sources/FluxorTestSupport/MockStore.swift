@@ -59,7 +59,7 @@ public class MockStore<State: Encodable, Environment>: Store<State, Environment>
     public func overrideSelector<Value>(_ selector: Selector<State, Value>, value: Value) {
         overridenSelectorValues[selector.id] = value
     }
-    
+
     /**
      Resets all overridden `Selector`s on this `MockStore`.
      */
@@ -71,7 +71,7 @@ public class MockStore<State: Encodable, Environment>: Store<State, Environment>
         guard let value = overridenSelectorValues[selector.id] as? Value else { return super.select(selector) }
         return $state.map { _ in value }.eraseToAnyPublisher()
     }
-    
+
     public override func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return overridenSelectorValues[selector.id] as? Value ?? super.selectCurrent(selector)
     }
