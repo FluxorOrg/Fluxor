@@ -19,7 +19,7 @@ public protocol SelectorProtocol {
      A pure function which takes a `State` and returns a `Value` from it.
 
      - Parameter state: The `State` to map
-     - Returns: The `Value` mapped with the `projector`
+     - Returns: The `Value` mapped from the `State`
      */
     func map(_ state: State) -> Value
 }
@@ -33,7 +33,7 @@ public class Selector<State, Value>: SelectorProtocol {
     /// An unique identifier used when overriding the `Selector` on the `MockStore`.
     public let id = UUID()
     /// The closue used for the mapping.
-    private let map: (State) -> Value
+    private let _projector: (State) -> Value
     /// The latest value for a state hash.
     internal private(set) var result: (stateHash: UUID, value: Value)?
 
@@ -43,24 +43,20 @@ public class Selector<State, Value>: SelectorProtocol {
      - Parameter keyPath: The `keyPath` to create the `Selector` from
      */
     public convenience init(keyPath: KeyPath<State, Value>) {
-        self.init(map: { $0[keyPath: keyPath] })
+        self.init(projector: { $0[keyPath: keyPath] })
     }
 
     /**
-     Creates a `Selector` from a `projector`.
+     Creates a `Selector` from a `projector` closure.
 
-     - Parameter projector: The `projector` to create the `Selector` from
+     - Parameter projector: The `projector` closure to create the `Selector` from
      */
-    public convenience init(projector: @escaping (State) -> Value) {
-        self.init(map: projector)
-    }
-
-    internal init(map: @escaping (State) -> Value) {
-        self.map = map
+    public init(projector: @escaping (State) -> Value) {
+        _projector = projector
     }
 
     public func map(_ state: State) -> Value {
-        map(state)
+        _projector(state)
     }
 }
 
@@ -71,14 +67,14 @@ public class Selector1<State, S1, Value>: Selector<State, Value> where
     public let projector: (S1.Value) -> Value
 
     /**
-     Creates a `Selector` from a `Selector`and a `projector` function.
+     Creates a `Selector` from a `Selector` and a `projector` function.
 
      - Parameter selector1: The first `Selector`
      - Parameter projector: The closure to pass the value from the `Selector` to
      */
     public init(_ selector1: S1, _ projector: @escaping (S1.Value) -> Value) {
         self.projector = projector
-        super.init(map: { projector(selector1.map($0)) })
+        super.init(projector: { projector(selector1.map($0)) })
     }
 }
 
@@ -100,7 +96,7 @@ public class Selector2<State, S1, S2, Value>: Selector<State, Value> where
                 _ selector2: S2,
                 _ projector: @escaping (S1.Value, S2.Value) -> Value) {
         self.projector = projector
-        super.init(map: { projector(selector1.map($0), selector2.map($0)) })
+        super.init(projector: { projector(selector1.map($0), selector2.map($0)) })
     }
 }
 
@@ -125,7 +121,7 @@ public class Selector3<State, S1, S2, S3, Value>: Selector<State, Value> where
                 _ selector3: S3,
                 _ projector: @escaping (S1.Value, S2.Value, S3.Value) -> Value) {
         self.projector = projector
-        super.init(map: { projector(selector1.map($0),
+        super.init(projector: { projector(selector1.map($0),
                                     selector2.map($0),
                                     selector3.map($0)) })
     }
@@ -155,7 +151,7 @@ public class Selector4<State, S1, S2, S3, S4, Value>: Selector<State, Value> whe
                 _ selector4: S4,
                 _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value) -> Value) {
         self.projector = projector
-        super.init(map: { projector(selector1.map($0),
+        super.init(projector: { projector(selector1.map($0),
                                     selector2.map($0),
                                     selector3.map($0),
                                     selector4.map($0)) })
@@ -189,7 +185,7 @@ public class Selector5<State, S1, S2, S3, S4, S5, Value>: Selector<State, Value>
                 _ selector5: S5,
                 _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value) {
         self.projector = projector
-        super.init(map: { projector(selector1.map($0),
+        super.init(projector: { projector(selector1.map($0),
                                     selector2.map($0),
                                     selector3.map($0),
                                     selector4.map($0),
@@ -200,7 +196,7 @@ public class Selector5<State, S1, S2, S3, S4, S5, Value>: Selector<State, Value>
 /// Creator functions.
 public extension Selector {
     /**
-     Creates a `Selector` from a `Selector`and a `projector` function.
+     Creates a `Selector` from a `Selector` and a `projector` function.
 
      - Parameter selector1: The first `Selector`
      - Parameter projector: The closure to pass the value from the `Selector` to
