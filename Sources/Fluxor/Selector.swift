@@ -14,6 +14,7 @@ public protocol SelectorProtocol {
     associatedtype State
     /// The output of the `Selector`,
     associatedtype Value
+
     /**
      A pure function which takes a `State` and returns a `Value` from it.
 
@@ -29,12 +30,12 @@ public protocol SelectorProtocol {
  `Selector`s can be based on other `Selector`s making it possible to select a combined `Value`.
  */
 public class Selector<State, Value>: SelectorProtocol {
+    /// An unique identifier used when overriding the `Selector` on the `MockStore`.
+    public let id = UUID()
     /// The closue used for the mapping.
     private let map: (State) -> Value
     /// The latest value for a state hash.
     internal private(set) var result: (stateHash: UUID, value: Value)?
-    /// An unique identifier used when overriding the `Selector` on the `MockStore`.
-    public let id = UUID()
 
     /**
      Creates a `Selector` from a `keyPath`.
@@ -63,8 +64,10 @@ public class Selector<State, Value>: SelectorProtocol {
     }
 }
 
+/// A `Selector` created from a `Selector`s and a `projector` function.
 public class Selector1<State, S1, Value>: Selector<State, Value> where
     S1: SelectorProtocol, S1.State == State {
+    /// A pure function which takes the `Value` from the other `Selector` and returns a new `Value`.
     public let projector: (S1.Value) -> Value
 
     /**
@@ -79,10 +82,13 @@ public class Selector1<State, S1, Value>: Selector<State, Value> where
     }
 }
 
+/// A `Selector` created from two `Selector`s and a `projector` function.
 public class Selector2<State, S1, S2, Value>: Selector<State, Value> where
     S1: SelectorProtocol, S1.State == State,
     S2: SelectorProtocol, S2.State == State {
+    /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value) -> Value
+
     /**
      Creates a `Selector` from two `Selector`s and a `projector` function.
 
@@ -98,10 +104,12 @@ public class Selector2<State, S1, S2, Value>: Selector<State, Value> where
     }
 }
 
+/// A `Selector` created from three `Selector`s and a `projector` function.
 public class Selector3<State, S1, S2, S3, Value>: Selector<State, Value> where
     S1: SelectorProtocol, S1.State == State,
     S2: SelectorProtocol, S2.State == State,
     S3: SelectorProtocol, S3.State == State {
+    /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value) -> Value
 
     /**
@@ -123,11 +131,13 @@ public class Selector3<State, S1, S2, S3, Value>: Selector<State, Value> where
     }
 }
 
+/// A `Selector` created from four `Selector`s and a `projector` function.
 public class Selector4<State, S1, S2, S3, S4, Value>: Selector<State, Value> where
     S1: SelectorProtocol, S1.State == State,
     S2: SelectorProtocol, S2.State == State,
     S3: SelectorProtocol, S3.State == State,
     S4: SelectorProtocol, S4.State == State {
+    /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value, S4.Value) -> Value
 
     /**
@@ -152,12 +162,14 @@ public class Selector4<State, S1, S2, S3, S4, Value>: Selector<State, Value> whe
     }
 }
 
+/// A `Selector` created from five `Selector`s and a `projector` function.
 public class Selector5<State, S1, S2, S3, S4, S5, Value>: Selector<State, Value> where
     S1: SelectorProtocol, S1.State == State,
     S2: SelectorProtocol, S2.State == State,
     S3: SelectorProtocol, S3.State == State,
     S4: SelectorProtocol, S4.State == State,
     S5: SelectorProtocol, S5.State == State {
+    /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value
 
     /**
@@ -187,12 +199,27 @@ public class Selector5<State, S1, S2, S3, S4, S5, Value>: Selector<State, Value>
 
 /// Creator functions.
 public extension Selector {
+    /**
+     Creates a `Selector` from a `Selector`and a `projector` function.
+
+     - Parameter selector1: The first `Selector`
+     - Parameter projector: The closure to pass the value from the `Selector` to
+     - Returns: A `Selector` from the given `Selector` and the `projector` function
+     */
     static func with<S1>(_ selector1: S1,
                          projector: @escaping (S1.Value) -> Value)
         -> Selector1<State, S1, Value> {
         .init(selector1, projector)
     }
 
+    /**
+     Creates a `Selector` from two `Selector`s and a `projector` function.
+
+     - Parameter selector1: The first `Selector`
+     - Parameter selector2: The second `Selector`
+     - Parameter projector: The closure to pass the values from the `Selector`s to
+     - Returns: A `Selector` from the given `Selector`s and the `projector` function
+     */
     static func with<S1, S2>(_ selector1: S1,
                              _ selector2: S2,
                              projector: @escaping (S1.Value, S2.Value) -> Value)
@@ -200,6 +227,15 @@ public extension Selector {
         .init(selector1, selector2, projector)
     }
 
+    /**
+     Creates a `Selector` from three `Selector`s and a `projector` function.
+
+     - Parameter selector1: The first `Selector`
+     - Parameter selector2: The second `Selector`
+     - Parameter selector3: The third `Selector`
+     - Parameter projector: The closure to pass the values from the `Selectors` to
+     - Returns: A `Selector` from the given `Selector`s and the `projector` function
+     */
     static func with<S1, S2, S3>(_ selector1: S1,
                                  _ selector2: S2,
                                  _ selector3: S3,
@@ -208,6 +244,16 @@ public extension Selector {
         .init(selector1, selector2, selector3, projector)
     }
 
+    /**
+     Creates a `Selector` from four `Selector`s and a `projector` function.
+
+     - Parameter selector1: The first `Selector`
+     - Parameter selector2: The second `Selector`
+     - Parameter selector3: The third `Selector`
+     - Parameter selector4: The fourth `Selector`
+     - Parameter projector: The closure to pass the values from the `Selectors` to
+     - Returns: A `Selector` from the given `Selector`s and the `projector` function
+     */
     static func with<S1, S2, S3, S4>(_ selector1: S1,
                                      _ selector2: S2,
                                      _ selector3: S3,
@@ -217,6 +263,17 @@ public extension Selector {
         .init(selector1, selector2, selector3, selector4, projector)
     }
 
+    /**
+     Creates a `Selector` from five `Selector`s and a `projector` function.
+
+     - Parameter selector1: The first `Selector`
+     - Parameter selector2: The second `Selector`
+     - Parameter selector3: The third `Selector`
+     - Parameter selector4: The fourth `Selector`
+     - Parameter selector5: The fifth `Selector`
+     - Parameter projector: The closure to pass the values from the `Selectors` to
+     - Returns: A `Selector` from the given `Selector`s and the `projector` function
+     */
     static func with<S1, S2, S3, S4, S5>(_ selector1: S1,
                                          _ selector2: S2,
                                          _ selector3: S3,

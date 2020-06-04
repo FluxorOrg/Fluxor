@@ -25,6 +25,7 @@ public enum Effect<Environment> {
 
 /// A collection of `Effect`s.
 public protocol Effects {
+    /// The environment set up in the `Store`.
     associatedtype Environment
     /// The `Effect`s to register on the `Store`.
     var enabledEffects: [Effect<Environment>] { get }
