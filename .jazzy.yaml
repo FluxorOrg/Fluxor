@@ -8,6 +8,11 @@ documentation: "Documentation/Guides/*.md"
 abstract: "Documentation/Abstracts/*.md"
 
 custom_categories:
+  - name: Guides
+    children:
+    - Testing Reducers
+    - Testing Selectors
+    - Testing Effects
   - name: Store
     children:
     - Store
