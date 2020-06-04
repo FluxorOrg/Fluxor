@@ -14,7 +14,7 @@ import struct Foundation.UUID
  A `Mockstore` is intended to be used in unit tests where you want to set a new `State` directly
  or override the value coming out of `Selector`s.
  */
-public class MockStore<State: Encodable, Environment>: Store<State, Environment> {
+public class MockStore<State, Environment>: Store<State, Environment> {
     /// All the `Action`s and state changes that has happened.
     public var stateChanges: [(action: Action, oldState: State, newState: State)] {
         self.testInterceptor.stateChanges

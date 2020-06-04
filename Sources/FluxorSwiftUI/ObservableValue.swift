@@ -34,7 +34,7 @@ public class ObservableValue<Value>: ObservableObject {
      - Parameter store: The `Store` to select from
      - Parameter selector: The `Selector`s to use for selecting
      */
-    public init<State: Encodable, Environment>(store: Store<State, Environment>, selector: Selector<State, Value>) {
+    public init<State, Environment>(store: Store<State, Environment>, selector: Selector<State, Value>) {
         self.current = store.selectCurrent(selector)
         self.cancellable = store.select(selector).assign(to: \.current, on: self)
     }
