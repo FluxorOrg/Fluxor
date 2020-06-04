@@ -1,8 +1,8 @@
-Every part of an application using Fluxor is highly testable. The separation of the `Action` (instructions), `Selector`s (reading), `Reducer` (mutating) and `Effect` (asynchronous) make each part decoupled, testable and easier to grasp.
+Every part of an application using Fluxor is highly testable. The separation of the `Action` (instructions), `Selector` (reading), `Reducer` (mutating) and `Effect` (asynchronous) make each part decoupled, testable and easier to grasp.
 
 But to help out when testing components using Fluxor or asynchronous `Effect`s, Fluxor comes with a separate package (**FluxorTestSupport**) with a `MockStore`, `TestInterceptor` and an `EffectRunner` to make `Effect`s run syncronously.
 
-FluxorTestSupport should be linked in unit testing targets.
+FluxorTestSupport should only be linked in unit testing targets.
 
 ## Mocking out the `Store`
 
@@ -46,9 +46,9 @@ class GreetingView: XCTestCase {
 }
 ```
 
-## Intercepting `State` changes
+## Intercepting state changes
 
-The `TestInterceptor` can be registered on the `Store`. When registered it gets all `Action`s dispatched and `State` changes. Everything it intercepts gets saved in an array in the order received. This can be used to assert which `Action`s are dispatched in a test.
+The `TestInterceptor` can be registered on the `Store`. When registered it gets all `Action`s dispatched and state changes. Everything it intercepts gets saved in an array in the order received. This can be used to assert which `Action`s are dispatched in a test.
 
 ```swift
 import FluxorTestSupport
@@ -71,7 +71,7 @@ The `MockStore` uses this internally behind the `stateChanges` property.
 
 ## Running an `Effect`
 
-An `Effect` is inherently asynchronous, so in order to test it in a synchronous test, without a lot of boilerplate code, FluxorTestSupport comes with a `run` function that executes the `Effect` with a specific `Action`. It is possible to run both `.dispatchingOne`,` .dispatchingMultiple` and `.nonDispatching`, but the result will be different.
+An `Effect` is inherently asynchronous, so in order to test it in a synchronous test, without a lot of boilerplate code, FluxorTestSupport comes with an `EffectRunner` that executes the `Effect` with a specific `Action` and `Environment`. It is possible to run both `.dispatchingOne`,` .dispatchingMultiple` and `.nonDispatching`, but the result will be different.
 
 When running `.dispatchingOne` and` .dispatchingMultiple`, it is possible to specify the expected number of dispatched `Action`s and the dispatched `Action`s will also be returned.
 
@@ -85,7 +85,7 @@ class SettingsEffectsTests: XCTestCase {
     func testSetBackground() {
         let effects = SettingsEffects()
         let action = Actions.setBackgroundColor(payload: .red)
-        let result = try EffectRunner.run(effects.setBackgroundColor, with: action)!
+        let result = try EffectRunner.run(effects.setBackgroundColor, with: action, environment: AppEnvironment())!
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result[0], Actions.hideColorPicker())
     }

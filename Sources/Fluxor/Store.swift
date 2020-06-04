@@ -11,7 +11,9 @@ import struct Foundation.UUID
 /**
  The `Store` is a centralized container for a single-source-of-truth `State`.
 
- A `Store` is configured by registering all the desired `Reducer`s and  `Effects`s.
+ A `Store` is configured by registering all the desired `Reducer`s and  `Effects`.
+ 
+ An `Environment` can be set up to enable dependency injection in `Effect`s.
 
  ## Usage
  To update the `State` callers dispatch `Action`s on the `Store`.
@@ -24,6 +26,7 @@ import struct Foundation.UUID
  It is possible to intercept all `Action`s and `State` changes by registering an `Interceptor`.
  */
 open class Store<State: Encodable, Environment>: ObservableObject {
+    /// The state of the `Store`. It can only be modified by the registered `Reducer`s when `Action`s are dispatched.
     @Published public private(set) var state: State
     internal private(set) var stateHash = UUID()
     private var stateHashSink: AnyCancellable!
@@ -169,7 +172,7 @@ open class Store<State: Encodable, Environment>: ObservableObject {
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      - Returns: A `Publisher` for the `Value` in the `State`
      */
-    public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
+    open func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
         return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
     }
 
@@ -179,7 +182,7 @@ open class Store<State: Encodable, Environment>: ObservableObject {
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      - Returns: The current `Value` in the `State`
      */
-    public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
+    open func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return selector.map(state, stateHash: stateHash)
     }
 }

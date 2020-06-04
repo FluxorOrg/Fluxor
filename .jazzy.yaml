@@ -25,6 +25,11 @@ custom_categories:
     children:
     - SelectorProtocol
     - Selector
+    - Selector1
+    - Selector2
+    - Selector3
+    - Selector4
+    - Selector5
   - name: Effects
     children:
     - Effects
@@ -36,7 +41,7 @@ custom_categories:
     children:
     - Interceptor
     - PrintInterceptor
-  - name: SwiftUI
+  - name: Using Fluxor with SwiftUI
     children:
     - ObservableValue
     - ValueBinding

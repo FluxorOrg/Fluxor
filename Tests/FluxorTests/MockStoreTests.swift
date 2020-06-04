@@ -40,23 +40,38 @@ class MockStoreTests: XCTestCase {
         // When
         store.overrideSelector(selector, value: value)
         // Then
-        XCTAssertEqual(selector.result?.value, value)
-        XCTAssertNil(selector.result?.stateHash)
         XCTAssertEqual(store.selectCurrent(selector), value)
 
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
-        expectation.expectedFulfillmentCount = 2
-        let cancellable = store.select(selector).sink {
+        let expectation1 = XCTestExpectation(description: debugDescription)
+        expectation1.expectedFulfillmentCount = 2
+        let cancellable1 = store.select(selector).sink {
             if $0 == value {
-                expectation.fulfill()
+                expectation1.fulfill()
             }
         }
         // When
         store.setState(newState: TestState(counter: 123))
         // Then
-        wait(for: [expectation], timeout: 1)
-        XCTAssertNotNil(cancellable)
+        wait(for: [expectation1], timeout: 1)
+        XCTAssertNotNil(cancellable1)
+
+        // Given
+        let newValue = 42
+        store.resetOverriddenSelectors()
+        let expectation2 = XCTestExpectation(description: debugDescription)
+        expectation2.expectedFulfillmentCount = 1
+        let cancellable2 = store.select(selector).sink {
+            if $0 == newValue {
+                expectation2.fulfill()
+            }
+        }
+        // When
+        store.setState(newState: TestState(counter: newValue))
+        // Then
+        XCTAssertEqual(store.selectCurrent(selector), newValue)
+        wait(for: [expectation2], timeout: 1)
+        XCTAssertNotNil(cancellable2)
     }
 
     /// Can we get all state changes in a `MockStore`?
