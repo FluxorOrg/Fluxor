@@ -10,7 +10,7 @@ import Fluxor
 import XCTest
 
 /// The `EffectRunner` can be used to run `Effect`s with a specified `Action`.
-public struct EffectRunner {
+public struct EffectRunner<Environment> {
     /**
      Run the `Effect` with the specified `Action` and return the published `Action`s.
 
