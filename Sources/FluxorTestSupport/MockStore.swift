@@ -11,8 +11,8 @@ import struct Foundation.UUID
 // swiftlint:disable large_tuple
 
 /**
- A `Mockstore` is intended to be used in unit tests where you want to set a new `State` directly
- or override the value coming out of `Selector`s.
+ A `MockStore` is intended to be used in unit tests where you want to observe
+ which `Action`s are dispatched and manipulate the `State` and `Selector`s.
  */
 public class MockStore<State, Environment>: Store<State, Environment> {
     /// All the `Action`s and state changes that has happened.

@@ -6,7 +6,7 @@
 
 import Foundation
 
-/// A `Interceptor` to use when debugging. Every `Action`s and `State` change are printed ot the console.
+/// A `Interceptor` to use when debugging. Every `Action`s and `State` change are printed to the console.
 public class PrintInterceptor<State: Encodable>: Interceptor {
     private let print: (String) -> Void
 
