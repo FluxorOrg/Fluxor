@@ -103,7 +103,7 @@ class ValueBindingTests: XCTestCase {
     }
 }
 
-private struct TestState: Encodable {
+private struct TestState {
     var counter: Int = 42
     var locked: Bool = false
     var lightsOn: Bool = false

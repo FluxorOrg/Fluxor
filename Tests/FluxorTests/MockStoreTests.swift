@@ -91,7 +91,7 @@ class MockStoreTests: XCTestCase {
         XCTAssertEqual(mockStore.stateChanges[1].newState, modifiedState)
     }
 
-    private struct TestState: Encodable, Equatable {
+    private struct TestState: Equatable {
         var counter: Int
     }
 

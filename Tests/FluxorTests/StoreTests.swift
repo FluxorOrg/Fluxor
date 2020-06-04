@@ -256,13 +256,13 @@ class StoreTests: XCTestCase {
 
 private struct TestAction: Action, Equatable {}
 
-private struct TestState: Encodable, Equatable {
+private struct TestState: Equatable {
     var type: TestType
     var lastAction: String?
     var todos = TodosState()
 }
 
-private struct TodosState: Encodable, Equatable {
+private struct TodosState: Equatable {
     var counter: Int = 0
 }
 
@@ -293,7 +293,7 @@ private class TestEnvironment: Equatable {
     }
 }
 
-private enum TestType: String, Encodable {
+private enum TestType: String {
     case initial
     case modified
     case modifiedAgain

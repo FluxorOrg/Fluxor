@@ -27,6 +27,6 @@ class ObservableValueTests: XCTestCase {
     }
 }
 
-private struct TestState: Encodable {
+private struct TestState {
     var counter: Int = 42
 }
