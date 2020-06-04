@@ -66,7 +66,7 @@ import Fluxor
 import Foundation
 
 // 3
-struct AppState: Encodable {
+struct AppState {
     var counter: Int
 }
 

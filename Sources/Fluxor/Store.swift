@@ -25,7 +25,7 @@ import struct Foundation.UUID
  ## Interceptors
  It is possible to intercept all `Action`s and `State` changes by registering an `Interceptor`.
  */
-open class Store<State: Encodable, Environment>: ObservableObject {
+open class Store<State, Environment>: ObservableObject {
     /// The state of the `Store`. It can only be modified by the registered `Reducer`s when `Action`s are dispatched.
     @Published public private(set) var state: State
     internal private(set) var stateHash = UUID()
