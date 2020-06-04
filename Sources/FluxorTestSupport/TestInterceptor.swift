@@ -50,6 +50,7 @@ public class TestInterceptor<State>: Interceptor {
 
     /// Errors waiting for intercepted `Action`s
     public enum WaitingError: Error {
+        /// The `TestInterceptor` didn't receive the expected number of `Action`s.
         case expectedCountNotReached(message: String)
     }
 }

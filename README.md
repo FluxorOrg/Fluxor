@@ -36,12 +36,12 @@ With Fluxor, data flows in only one direction, there is only one *Single Source 
 ## How does it work?
 Fluxor is made up from the following types:
 
-* [**Store**](Sources/Fluxor/Store.swift) contains an immutable state (the **Single Source of Truth**).
-* [**Actions**](Sources/Fluxor/Action.swift) are dispatched on the **Store** to update the state.
-* [**Reducers**](Sources/Fluxor/Reducer.swift) gives the **Store** a new state based on the **Actions** dispatched.
-* [**Selectors**](Sources/Fluxor/Selector.swift) selects (and eventually transform) part(s) of the state to use (eg. in views).
-* [**Effects**](Sources/Fluxor/Effects.swift) gets triggered by **Actions**, and can perform async task which in turn can dispatch new **Actions**.
-* [**Interceptors**](Sources/Fluxor/Interceptor.swift) intercepts every dispatched **Action** and state change for easier debugging.
+* `Store` contains an immutable state (the **Single Source of Truth**).
+* `Action`s are dispatched on the **Store** to update the state.
+* `Reducer`s gives the **Store** a new state based on the **Actions** dispatched.
+* `Selector`s selects (and eventually transform) part(s) of the state to use (eg. in views).
+* `Effect`s gets triggered by **Actions**, and can perform async task which in turn can dispatch new **Actions**.
+* `Interceptor`s intercepts every dispatched **Action** and state change for easier debugging.
 
 ![](https://raw.githubusercontent.com/FluxorOrg/Fluxor/master/Assets/Diagram.png)
 
@@ -106,7 +106,9 @@ import Fluxor
 import Foundation
 
 class TodosEffects: Effects {
-    let fetchTodos = Effect.dispatchingOne { actions, environment in
+    typealias Environment = AppEnvironment
+
+    let fetchTodos = Effect<Environment>.dispatchingOne { actions, environment in
         actions.ofType(FetchTodosAction.self)
             .flatMap { _ in
                 environment.todoService.fetchTodos()
@@ -123,18 +125,19 @@ If read-only access to all `Action`s dispatched and state changes is needed, an 
 
 Fluxor comes with two implementations of `Interceptor`:
 
-* [**PrintInterceptor**](Sources/Fluxor/Interceptors/PrintInterceptor.swift) for printing `Action`s and state changes to the log.
-* [**TestInterceptor**](Sources/FluxorTestSupport/TestInterceptor.swift) to help assert that specific `Action`s was dispatched in unit tests.
+* `PrintInterceptor` for printing `Action`s and state changes to the log.
+* `TestInterceptor` to help assert that specific `Action`s was dispatched in unit tests.
 
 ## Packages for using it with SwiftUI and testing
 Fluxor comes with packages, to make it easier to use it with SwiftUI and for testing apps using Fluxor.
 
-* [More info on how to use it with SwiftUI](FluxorSwiftUI.md)
-* [More info on how to test apps using Fluxor](FluxorTestSupport.md)
+* [More info on how to use it with SwiftUI](https://fluxor.dev/Using%20Fluxor%20With%20SwiftUI.html)
+* [More info on how to test apps using Fluxor](https://fluxor.dev/Test%20Support.html)
 
 ## Debugging with FluxorExplorer
 Fluxor has a companion app, [**FluxorExplorer**](https://github.com/FluxorOrg/FluxorExplorer), which helps when debugging apps using Fluxor. FluxorExplorer lets you look through the dispatched `Action`s and state changes, to debug the data flow of the app.
 
+FluxorExplorer is available on the App Store but also available as open source.
 To learn more about how to use FluxorExplorer, [go to the repository for the app](https://github.com/FluxorOrg/FluxorExplorer).
 
 ![](https://raw.githubusercontent.com/FluxorOrg/Fluxor/master/Assets/FluxorExplorer.png)

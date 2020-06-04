@@ -9,6 +9,7 @@ import Dispatch
 import Fluxor
 import XCTest
 
+/// A helper for running `Effect`s in tests.
 public struct EffectRunner {
     /**
      Run the `Effect` with the specified `Action` and return the published `Action`s.
