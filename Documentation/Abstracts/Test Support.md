@@ -1,6 +1,6 @@
-Every part of an application using Fluxor is highly testable. The separation of the `Action` (instructions), `Selectors` (reading), `Reducer` (mutating) and `Effect` (asynchronous) make each part decoupled, testable and easier to grasp.
+Every part of an application using Fluxor is highly testable. The separation of the `Action` (instructions), `Selector` (reading), `Reducer` (mutating) and `Effect` (asynchronous) make each part decoupled, testable and easier to grasp.
 
-But to help out when testing components using Fluxor or asynchronous `Effects`, Fluxor comes with a separate package (**FluxorTestSupport**) with a `MockStore` and a runner for running `Effect` syncronously.
+But to help out when testing components using Fluxor or asynchronous `Effect`s, Fluxor comes with a separate package (**FluxorTestSupport**) with a `MockStore`, `TestInterceptor` and an `EffectRunner` to make `Effect`s run syncronously.
 
 FluxorTestSupport should only be linked in unit testing targets.
 
@@ -17,32 +17,32 @@ import FluxorTestSupport
 import XCTest
 
 class GreetingView: XCTestCase {
-	func testGreeting() {
-		let mockStore = MockStore(initialState: AppState())
-		let view = GreetingView(store: mockStore)
-		XCTAssert(...)
-		mockStore.setState(AppState(greeting: "Hi Bob!"))
-		XCTAssert(...)
-	}
+    func testGreeting() {
+        let mockStore = MockStore(initialState: AppState())
+        let view = GreetingView(store: mockStore)
+        XCTAssert(...)
+        mockStore.setState(AppState(greeting: "Hi Bob!"))
+        XCTAssert(...)
+    }
 }
 ```
 
 ### Overriding `Selectors`
 
-The `MockStore` can be used to override `Selectors` so that they always return a specific value.
+The `MockStore` can be used to override `Selector`s so that they always return a specific value.
 
 ```swift
 import FluxorTestSupport
 import XCTest
 
 class GreetingView: XCTestCase {
-	func testGreeting() {
-		let greeting = "Hi Bob!"
-		let mockStore = MockStore(initialState: AppState(greeting: "Hi Steve!"))
-		mockStore.overrideSelector(Selectors.getGreeting, value: greeting)
-		let view = GreetingView(store: mockStore)
-		XCTAssertEqual(view.greeting, greeting)
-	}
+    func testGreeting() {
+        let greeting = "Hi Bob!"
+        let mockStore = MockStore(initialState: AppState(greeting: "Hi Steve!"))
+        mockStore.overrideSelector(Selectors.getGreeting, value: greeting)
+        let view = GreetingView(store: mockStore)
+        XCTAssertEqual(view.greeting, greeting)
+    }
 }
 ```
 
@@ -55,15 +55,15 @@ import FluxorTestSupport
 import XCTest
 
 class GreetingView: XCTestCase {
-	func testGreeting() {
-		let testInterceptor = TestInterceptor<AppState>()
-		let store = Store(initialState: AppState())
-		store.register(interceptor: self.testInterceptor)
-		let view = GreetingView(store: store)
-		XCTAssertEqual(testInteceptor.stateChanges.count, 0)
-		view.updateGreeting()
-		XCTAssertEqual(testInteceptor.stateChanges.count, 1)
-	}
+    func testGreeting() {
+        let testInterceptor = TestInterceptor<AppState>()
+        let store = Store(initialState: AppState())
+        store.register(interceptor: self.testInterceptor)
+        let view = GreetingView(store: store)
+        XCTAssertEqual(testInteceptor.stateChanges.count, 0)
+        view.updateGreeting()
+        XCTAssertEqual(testInteceptor.stateChanges.count, 1)
+    }
 }
 ```
 
@@ -85,7 +85,7 @@ class SettingsEffectsTests: XCTestCase {
     func testSetBackground() {
         let effects = SettingsEffects()
         let action = Actions.setBackgroundColor(payload: .red)
-        let result = try EffectRunner.run(effects.setBackgroundColor, with: action, environment: AppEnvironment())!
+        let result = try EffectRunner.run(effects.setBackgroundColor, with: action)!
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result[0], Actions.hideColorPicker())
     }

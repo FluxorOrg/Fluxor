@@ -9,8 +9,8 @@ import Dispatch
 import Fluxor
 import XCTest
 
-/// A helper for running `Effect`s in tests.
-public struct EffectRunner {
+/// The `EffectRunner` can be used to run `Effect`s with a specified `Action`.
+public struct EffectRunner<Environment> {
     /**
      Run the `Effect` with the specified `Action` and return the published `Action`s.
 
@@ -24,10 +24,10 @@ public struct EffectRunner {
      - Returns: The `Action`s published by the `Effect` if it is dispatching
      */
     @discardableResult
-    public static func run<Environment>(_ effect: Effect<Environment>,
-                                        with action: Action,
-                                        environment: Environment,
-                                        expectedCount: Int = 1) throws -> [Action]? {
+    public static func run(_ effect: Effect<Environment>,
+                           with action: Action,
+                           environment: Environment,
+                           expectedCount: Int = 1) throws -> [Action]? {
         let actions = PassthroughSubject<Action, Never>()
         let runDispatchingEffect = { (publisher: AnyPublisher<[Action], Never>) throws -> [Action] in
             let recorder = ActionRecorder(expectedNumberOfActions: expectedCount)
@@ -47,6 +47,26 @@ public struct EffectRunner {
             actions.send(action)
             return nil
         }
+    }
+}
+
+public extension EffectRunner where Environment == Void {
+    /**
+     Run the `Effect` with the specified `Action` and return the published `Action`s.
+
+     The `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned.
+     If the `Effect` is `.nonDispatching`, the `expectedCount` is ignored.
+
+     - Parameter effect: The `Effect` to run
+     - Parameter action: The `Action` to send to the `Effect`
+     - Parameter expectedCount: The count of `Action`s to wait for
+     - Returns: The `Action`s published by the `Effect` if it is dispatching
+     */
+    @discardableResult
+    static func run(_ effect: Effect<Environment>,
+                    with action: Action,
+                    expectedCount: Int = 1) throws -> [Action]? {
+        return try run(effect, with: action, environment: Void(), expectedCount: expectedCount)
     }
 }
 
