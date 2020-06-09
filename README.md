@@ -138,6 +138,11 @@ Fluxor comes with packages, to make it easier to use it with SwiftUI and for tes
 Fluxor has a companion app, [**FluxorExplorer**](https://github.com/FluxorOrg/FluxorExplorer), which helps when debugging apps using Fluxor. FluxorExplorer lets you look through the dispatched `Action`s and state changes, to debug the data flow of the app.
 
 FluxorExplorer is available on the App Store but also available as open source.
+
+<a href="https://apps.apple.com/us/app/fluxorexplorer/id1515805273?mt=8">
+	<img src="https://linkmaker.itunes.apple.com/en-us/badge-lrg.svg?releaseDate=2020-06-08&kind=iossoftware&bubble=ios_apps" style="width: 135px; height: 40px" alt="Download on the App Store" />
+</a>
+
 To learn more about how to use FluxorExplorer, [go to the repository for the app](https://github.com/FluxorOrg/FluxorExplorer).
 
 ![](https://raw.githubusercontent.com/FluxorOrg/Fluxor/master/Assets/FluxorExplorer.png)
