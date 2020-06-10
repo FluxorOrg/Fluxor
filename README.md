@@ -18,7 +18,7 @@
     <br />
     <img src="https://github.com/FluxorOrg/Fluxor/workflows/CI/badge.svg" alt="CI" />
     <a href="https://fluxor.dev">
-        <img src="https://img.shields.io/badge/Docs-fluxor.dev-brightgreen" alt="Documentation" />
+        <img src="https://raw.githubusercontent.com/FluxorOrg/Fluxor/gh-pages/badge.svg" alt="Documentation" />
     </a>
     <a href="https://codeclimate.com/github/FluxorOrg/Fluxor/maintainability">
         <img src="https://api.codeclimate.com/v1/badges/f2ea66abc81e4a578a31/maintainability" alt="Maintainability" />
