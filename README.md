@@ -131,7 +131,7 @@ Fluxor comes with two implementations of `Interceptor`:
 ## Packages for using it with SwiftUI and testing
 Fluxor comes with packages, to make it easier to use it with SwiftUI and for testing apps using Fluxor.
 
-* [More info on how to use it with SwiftUI](https://fluxor.dev/Using%20Fluxor%20With%20SwiftUI.html)
+* [More info on how to use it with SwiftUI](https://fluxor.dev/Using%20Fluxor%20with%20SwiftUI.html)
 * [More info on how to test apps using Fluxor](https://fluxor.dev/Test%20Support.html)
 
 ## Debugging with FluxorExplorer
