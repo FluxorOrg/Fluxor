@@ -12,7 +12,7 @@ import struct Foundation.UUID
  The `Store` is a centralized container for a single-source-of-truth `State`.
 
  A `Store` is configured by registering all the desired `Reducer`s and  `Effects`.
- 
+
  An `Environment` can be set up to enable dependency injection in `Effect`s.
 
  ## Usage
@@ -177,6 +177,18 @@ open class Store<State, Environment>: ObservableObject {
     }
 
     /**
+     Creates a `Publisher` for a `Selector` with input.
+
+     - Parameter selector: The `Selector` to use when getting the value in the `State`
+     - Parameter input: The `Input` to the `Selector`
+     - Returns: A `Publisher` for the `Value` in the `State`
+     */
+    open func select<Value, Input>(_ selector: SelectorWithInput<State, Value, Input>,
+                                   input: Input) -> AnyPublisher<Value, Never> where Input: Hashable {
+        return $state.map { selector.map($0, stateHash: self.stateHash, input: input) }.eraseToAnyPublisher()
+    }
+
+    /**
      Gets the current value in the `State` for a `Selector`.
 
      - Parameter selector: The `Selector` to use when getting the value in the `State`
@@ -184,6 +196,18 @@ open class Store<State, Environment>: ObservableObject {
      */
     open func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return selector.map(state, stateHash: stateHash)
+    }
+
+    /**
+     Gets the current value in the `State` for a `Selector` with input.
+
+     - Parameter selector: The `Selector` to use when getting the value in the `State`
+     - Parameter input: The `Input` to the `Selector`
+     - Returns: The current `Value` in the `State`
+     */
+    open func selectCurrent<Value, Input>(_ selector: SelectorWithInput<State, Value, Input>,
+                                          input: Input) -> Value where Input: Hashable {
+        return selector.map(state, stateHash: stateHash, input: input)
     }
 }
 
