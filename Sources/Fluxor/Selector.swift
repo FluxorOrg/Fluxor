@@ -8,13 +8,17 @@ import Foundation.NSUUID
 
 // swiftlint:disable function_parameter_count
 
-/// Something which selects a `Value` from the specified `State`.
 public protocol SelectorProtocol {
     /// The input for the `Selector`.
     associatedtype State
     /// The output of the `Selector`,
     associatedtype Value
+    /// An unique identifier used for the `Selector`.
+    var id: UUID { get }
+}
 
+/// Something which selects a `Value` from the specified `State`.
+public protocol SelectorWihtoutInputProtocol: SelectorProtocol {
     /**
      A pure function which takes a `State` and returns a `Value` from it.
 
@@ -24,11 +28,7 @@ public protocol SelectorProtocol {
     func map(_ state: State) -> Value
 }
 
-public protocol SelectorWithInputProtocol {
-    /// The input for the `Selector`.
-    associatedtype State
-    /// The output of the `Selector`.
-    associatedtype Value
+public protocol SelectorWithInputProtocol: SelectorProtocol {
     /// The input to the `Selector`.
     associatedtype Input: Hashable
 
@@ -47,8 +47,8 @@ public protocol SelectorWithInputProtocol {
 
  `Selector`s can be based on other `Selector`s making it possible to select a combined `Value`.
  */
-public class Selector<State, Value>: SelectorProtocol {
-    /// An unique identifier used when overriding the `Selector` on the `MockStore`.
+public class Selector<State, Value>: SelectorWihtoutInputProtocol {
+    /// An unique identifier used for the `Selector`.
     public let id = UUID()
     /// The closue used for the mapping.
     private let _projector: (State) -> Value
@@ -80,7 +80,7 @@ public class Selector<State, Value>: SelectorProtocol {
 
 public class SelectorWithInput<State, Value, Input>: SelectorWithInputProtocol
     where Input: Hashable {
-    /// An unique identifier used when overriding the `Selector` on the `MockStore`.
+    /// An unique identifier used for the `Selector`.
     public let id = UUID()
     /// The closue used for the mapping.
     private let _projector: (State, Input) -> Value
@@ -109,7 +109,7 @@ public class SelectorWithInput<State, Value, Input>: SelectorWithInputProtocol
 
 /// A `Selector` created from a `Selector`s and a `projector` function.
 public class Selector1<State, S1, Value>: Selector<State, Value> where
-    S1: SelectorProtocol, S1.State == State {
+    S1: SelectorWihtoutInputProtocol, S1.State == State {
     /// A pure function which takes the `Value` from the other `Selector` and returns a new `Value`.
     public let projector: (S1.Value) -> Value
 
@@ -127,7 +127,7 @@ public class Selector1<State, S1, Value>: Selector<State, Value> where
 
 /// A `Selector` created from a `Selector`s and a `projector` function.
 public class Selector1WithInput<State, S1, Value, Input>: SelectorWithInput<State, Value, Input>
-    where S1: SelectorProtocol, S1.State == State, Input: Hashable {
+    where S1: SelectorWihtoutInputProtocol, S1.State == State, Input: Hashable {
     /// A pure function which takes the `Value` from the other `Selector` and returns a new `Value`.
     public let projector: (S1.Value, Input) -> Value
 
@@ -145,8 +145,8 @@ public class Selector1WithInput<State, S1, Value, Input>: SelectorWithInput<Stat
 
 /// A `Selector` created from two `Selector`s and a `projector` function.
 public class Selector2<State, S1, S2, Value>: Selector<State, Value>
-    where S1: SelectorProtocol, S1.State == State,
-    S2: SelectorProtocol, S2.State == State {
+    where S1: SelectorWihtoutInputProtocol, S1.State == State,
+    S2: SelectorWihtoutInputProtocol, S2.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value) -> Value
 
@@ -168,8 +168,8 @@ public class Selector2<State, S1, S2, Value>: Selector<State, Value>
 /// A `Selector` created from two `Selector`s and a `projector` function.
 public class SelectorWithInput2<State, S1, S2, Value, Input>: SelectorWithInput<State, Value, Input>
     where Input: Hashable,
-    S1: SelectorProtocol, S1.State == State,
-    S2: SelectorProtocol, S2.State == State {
+    S1: SelectorWihtoutInputProtocol, S1.State == State,
+    S2: SelectorWihtoutInputProtocol, S2.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, Input) -> Value
 
@@ -190,9 +190,9 @@ public class SelectorWithInput2<State, S1, S2, Value, Input>: SelectorWithInput<
 
 /// A `Selector` created from three `Selector`s and a `projector` function.
 public class Selector3<State, S1, S2, S3, Value>: Selector<State, Value>
-    where S1: SelectorProtocol, S1.State == State,
-    S2: SelectorProtocol, S2.State == State,
-    S3: SelectorProtocol, S3.State == State {
+    where S1: SelectorWihtoutInputProtocol, S1.State == State,
+    S2: SelectorWihtoutInputProtocol, S2.State == State,
+    S3: SelectorWihtoutInputProtocol, S3.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value) -> Value
 
@@ -218,9 +218,9 @@ public class Selector3<State, S1, S2, S3, Value>: Selector<State, Value>
 /// A `Selector` created from three `Selector`s and a `projector` function.
 public class SelectorWithInput3<State, S1, S2, S3, Value, Input>: SelectorWithInput<State, Value, Input>
     where Input: Hashable,
-    S1: SelectorProtocol, S1.State == State,
-    S2: SelectorProtocol, S2.State == State,
-    S3: SelectorProtocol, S3.State == State {
+    S1: SelectorWihtoutInputProtocol, S1.State == State,
+    S2: SelectorWihtoutInputProtocol, S2.State == State,
+    S3: SelectorWihtoutInputProtocol, S3.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value, Input) -> Value
 
@@ -246,10 +246,10 @@ public class SelectorWithInput3<State, S1, S2, S3, Value, Input>: SelectorWithIn
 //
 /// A `Selector` created from four `Selector`s and a `projector` function.
 public class Selector4<State, S1, S2, S3, S4, Value>: Selector<State, Value>
-    where S1: SelectorProtocol, S1.State == State,
-    S2: SelectorProtocol, S2.State == State,
-    S3: SelectorProtocol, S3.State == State,
-    S4: SelectorProtocol, S4.State == State {
+    where S1: SelectorWihtoutInputProtocol, S1.State == State,
+    S2: SelectorWihtoutInputProtocol, S2.State == State,
+    S3: SelectorWihtoutInputProtocol, S3.State == State,
+    S4: SelectorWihtoutInputProtocol, S4.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value, S4.Value) -> Value
 
@@ -278,10 +278,10 @@ public class Selector4<State, S1, S2, S3, S4, Value>: Selector<State, Value>
 /// A `Selector` created from four `Selector`s and a `projector` function.
 public class SelectorWithInput4<State, S1, S2, S3, S4, Value, Input>: SelectorWithInput<State, Value, Input>
     where Input: Hashable,
-    S1: SelectorProtocol, S1.State == State,
-    S2: SelectorProtocol, S2.State == State,
-    S3: SelectorProtocol, S3.State == State,
-    S4: SelectorProtocol, S4.State == State {
+    S1: SelectorWihtoutInputProtocol, S1.State == State,
+    S2: SelectorWihtoutInputProtocol, S2.State == State,
+    S3: SelectorWihtoutInputProtocol, S3.State == State,
+    S4: SelectorWihtoutInputProtocol, S4.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value, S4.Value, Input) -> Value
 
@@ -309,11 +309,11 @@ public class SelectorWithInput4<State, S1, S2, S3, S4, Value, Input>: SelectorWi
 
 /// A `Selector` created from five `Selector`s and a `projector` function.
 public class Selector5<State, S1, S2, S3, S4, S5, Value>: Selector<State, Value>
-    where S1: SelectorProtocol, S1.State == State,
-    S2: SelectorProtocol, S2.State == State,
-    S3: SelectorProtocol, S3.State == State,
-    S4: SelectorProtocol, S4.State == State,
-    S5: SelectorProtocol, S5.State == State {
+    where S1: SelectorWihtoutInputProtocol, S1.State == State,
+    S2: SelectorWihtoutInputProtocol, S2.State == State,
+    S3: SelectorWihtoutInputProtocol, S3.State == State,
+    S4: SelectorWihtoutInputProtocol, S4.State == State,
+    S5: SelectorWihtoutInputProtocol, S5.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value
 
@@ -345,11 +345,11 @@ public class Selector5<State, S1, S2, S3, S4, S5, Value>: Selector<State, Value>
 /// A `Selector` created from five `Selector`s and a `projector` function.
 public class SelectorWithInput5<State, S1, S2, S3, S4, S5, Value, Input>: SelectorWithInput<State, Value, Input>
     where Input: Hashable,
-    S1: SelectorProtocol, S1.State == State,
-    S2: SelectorProtocol, S2.State == State,
-    S3: SelectorProtocol, S3.State == State,
-    S4: SelectorProtocol, S4.State == State,
-    S5: SelectorProtocol, S5.State == State {
+    S1: SelectorWihtoutInputProtocol, S1.State == State,
+    S2: SelectorWihtoutInputProtocol, S2.State == State,
+    S3: SelectorWihtoutInputProtocol, S3.State == State,
+    S4: SelectorWihtoutInputProtocol, S4.State == State,
+    S5: SelectorWihtoutInputProtocol, S5.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value, Input) -> Value
 

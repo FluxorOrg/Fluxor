@@ -60,6 +60,10 @@ public class MockStore<State, Environment>: Store<State, Environment> {
         overridenSelectorValues[selector.id] = value
     }
 
+    public func overrideSelector<S, Value>(_ selector: S, value: Value) where S: SelectorWithInputProtocol, S.State == State {
+        overridenSelectorValues[selector.id] = value
+    }
+
     /**
      Resets all overridden `Selector`s on this `MockStore`.
      */
