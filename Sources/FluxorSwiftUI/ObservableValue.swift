@@ -14,7 +14,7 @@ public extension Store {
      - Parameter selector: The `Selector`s to use for observing
      - Returns: An `ObservableValue` based on the given `Selector`
      */
-    func observe<Value>(_ selector: Selector<State, Value>) -> ObservableValue<Value> {
+    func observe<Value>(_ selector: Selector<State, Value, Void>) -> ObservableValue<Value> {
         return .init(store: self, selector: selector)
     }
 
@@ -25,7 +25,8 @@ public extension Store {
      - Parameter input: The `Input` to the `Selector`
      - Returns: An `ObservableValue` based on the given `Selector`
      */
-    func observe<Value, Input>(_ selector: SelectorWithInput<State, Value, Input>, input: Input) -> ObservableValue<Value> {
+    func observe<Value, Input>(_ selector: Selector<State, Value, Input>, input: Input) -> ObservableValue<Value>
+        where Input: Hashable {
         return .init(store: self, selector: selector, input: input)
     }
 }
@@ -45,7 +46,7 @@ public class ObservableValue<Value>: ObservableObject {
      - Parameter store: The `Store` to select from
      - Parameter selector: The `Selector`s to use for selecting
      */
-    public init<State, Environment>(store: Store<State, Environment>, selector: Selector<State, Value>) {
+    public init<State, Environment>(store: Store<State, Environment>, selector: Selector<State, Value, Void>) {
         self.current = store.selectCurrent(selector)
         self.cancellable = store.select(selector).assign(to: \.current, on: self)
     }
@@ -58,8 +59,8 @@ public class ObservableValue<Value>: ObservableObject {
      - Parameter input: The `Input` to the `Selector`
      */
     public init<State, Environment, Input>(store: Store<State, Environment>,
-                                           selector: SelectorWithInput<State, Value, Input>,
-                                           input: Input) {
+                                           selector: Selector<State, Value, Input>,
+                                           input: Input) where Input: Hashable {
         self.current = store.selectCurrent(selector, input: input)
         self.cancellable = store.select(selector, input: input).assign(to: \.current, on: self)
     }

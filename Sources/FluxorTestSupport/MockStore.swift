@@ -21,7 +21,7 @@ public class MockStore<State, Environment>: Store<State, Environment> {
     }
 
     private let setState = ActionTemplate(id: "Set State", payloadType: State.self)
-    private var overridenSelectorValues = [UUID: Any]()
+    private var overridenSelectorValues = [String: Any]()
     private let testInterceptor = TestInterceptor<State>()
 
     /**
@@ -56,11 +56,12 @@ public class MockStore<State, Environment>: Store<State, Environment> {
      - Parameter selector: The `Selector` to override
      - Parameter value: The value the `Selector` should give when selecting
      */
-    public func overrideSelector<Value>(_ selector: Selector<State, Value>, value: Value) {
+    public func overrideSelector<Value>(_ selector: Selector<State, Value, Void>, value: Value) {
         overridenSelectorValues[selector.id] = value
     }
 
-    public func overrideSelector<S, Value>(_ selector: S, value: Value) where S: SelectorWithInputProtocol, S.State == State {
+    public func overrideSelector<Input, Value>(_ selector: Selector<State, Value, Input>, value: @escaping (Input) -> Value)
+        where Input: Hashable {
         overridenSelectorValues[selector.id] = value
     }
 
@@ -71,12 +72,28 @@ public class MockStore<State, Environment>: Store<State, Environment> {
         overridenSelectorValues.removeAll()
     }
 
-    public override func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
+    public override func select<Value>(_ selector: Selector<State, Value, Void>) -> AnyPublisher<Value, Never> {
         guard let value = overridenSelectorValues[selector.id] as? Value else { return super.select(selector) }
         return $state.map { _ in value }.eraseToAnyPublisher()
     }
 
-    public override func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
+    public override func select<Value, Input>(_ selector: Selector<State, Value, Input>, input: Input)
+        -> AnyPublisher<Value, Never> where Input: Hashable {
+        guard let value = overridenSelectorValues[selector.id] as? (Input) -> Value else {
+            return super.select(selector, input: input)
+        }
+        return $state.map { _ in value(input) }.eraseToAnyPublisher()
+    }
+
+    public override func selectCurrent<Value>(_ selector: Selector<State, Value, Void>) -> Value {
         return overridenSelectorValues[selector.id] as? Value ?? super.selectCurrent(selector)
+    }
+
+    public override func selectCurrent<Value, Input>(_ selector: Selector<State, Value, Input>, input: Input)
+        -> Value where Input: Hashable {
+        guard let value = overridenSelectorValues[selector.id] as? (Input) -> Value else {
+            return super.selectCurrent(selector, input: input)
+        }
+        return value(input)
     }
 }

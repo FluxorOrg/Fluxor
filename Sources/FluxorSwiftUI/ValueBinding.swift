@@ -18,7 +18,7 @@ public extension Store {
      - Parameter actionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value changes
      - Returns: An `ValueBinding` based on the given `Selector` and `ActionTemplate`
      */
-    func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
+    func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value, Void>,
                                      send actionTemplate: ActionTemplate<UpdateValue>)
         -> ValueBinding<Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
@@ -37,7 +37,7 @@ public extension Store {
                                         when the value should be disabled
      - Returns: An `ValueBinding` based on the given `Selector` and `ActionTemplate`s
      */
-    func binding(get selector: Fluxor.Selector<State, Bool>,
+    func binding(get selector: Fluxor.Selector<State, Bool, Void>,
                  enable enableActionTemplate: ActionTemplate<Void>,
                  disable disableActionTemplate: ActionTemplate<Void>)
         -> ValueBinding<Bool, Void> {
@@ -57,7 +57,7 @@ public extension Store {
                         This can either be the current value or the one used for the update
      - Returns: An `ValueBinding` based on the given `Selector` and `ActionTemplate`
      */
-    func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value>,
+    func binding<Value, UpdateValue>(get selector: Fluxor.Selector<State, Value, Void>,
                                      send actionTemplate: @escaping (_ value: Value) -> ActionTemplate<UpdateValue>)
         -> ValueBinding<Value, UpdateValue> {
         return .init(store: self, selector: selector, actionTemplate: actionTemplate)
@@ -86,8 +86,8 @@ public class ValueBinding<Value, UpdateValue> {
                                          for dispatching an `Action` when the value changes
      */
     public init<State, Environment>(store: Store<State, Environment>,
-                                               selector: Fluxor.Selector<State, Value>,
-                                               actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>) {
+                                    selector: Fluxor.Selector<State, Value, Void>,
+                                    actionTemplate: @escaping (Value) -> ActionTemplate<UpdateValue>) {
         self.storeSelectCurrent = { store.selectCurrent(selector) }
         self.storeDispatch = store.dispatch(action:)
         self.actionTemplateForValue = actionTemplate
@@ -102,8 +102,8 @@ public class ValueBinding<Value, UpdateValue> {
      - Parameter actionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value changes
      */
     public convenience init<State, Environment>(store: Store<State, Environment>,
-                                                           selector: Fluxor.Selector<State, Value>,
-                                                           actionTemplate: ActionTemplate<UpdateValue>) {
+                                                selector: Fluxor.Selector<State, Value, Void>,
+                                                actionTemplate: ActionTemplate<UpdateValue>) {
         self.init(store: store, selector: selector, actionTemplate: { _ in actionTemplate })
     }
 

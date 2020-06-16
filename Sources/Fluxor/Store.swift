@@ -172,7 +172,7 @@ open class Store<State, Environment>: ObservableObject {
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      - Returns: A `Publisher` for the `Value` in the `State`
      */
-    open func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
+    open func select<Value>(_ selector: Selector<State, Value, Void>) -> AnyPublisher<Value, Never> {
         return $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
     }
 
@@ -183,7 +183,7 @@ open class Store<State, Environment>: ObservableObject {
      - Parameter input: The `Input` to the `Selector`
      - Returns: A `Publisher` for the `Value` in the `State`
      */
-    open func select<Value, Input>(_ selector: SelectorWithInput<State, Value, Input>,
+    open func select<Value, Input>(_ selector: Selector<State, Value, Input>,
                                    input: Input) -> AnyPublisher<Value, Never> where Input: Hashable {
         return $state.map { selector.map($0, stateHash: self.stateHash, input: input) }.eraseToAnyPublisher()
     }
@@ -194,7 +194,7 @@ open class Store<State, Environment>: ObservableObject {
      - Parameter selector: The `Selector` to use when getting the value in the `State`
      - Returns: The current `Value` in the `State`
      */
-    open func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
+    open func selectCurrent<Value>(_ selector: Selector<State, Value, Void>) -> Value {
         return selector.map(state, stateHash: stateHash)
     }
 
@@ -205,7 +205,7 @@ open class Store<State, Environment>: ObservableObject {
      - Parameter input: The `Input` to the `Selector`
      - Returns: The current `Value` in the `State`
      */
-    open func selectCurrent<Value, Input>(_ selector: SelectorWithInput<State, Value, Input>,
+    open func selectCurrent<Value, Input>(_ selector: Selector<State, Value, Input>,
                                           input: Input) -> Value where Input: Hashable {
         return selector.map(state, stateHash: stateHash, input: input)
     }
