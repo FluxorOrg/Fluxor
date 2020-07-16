@@ -40,6 +40,6 @@ let package = Package(
             dependencies: ["Fluxor"]),
         .testTarget(
             name: "FluxorSwiftUITests",
-            dependencies: ["FluxorSwiftUI"]),
+            dependencies: ["FluxorSwiftUI", "FluxorTestSupport"]),
     ]
 )

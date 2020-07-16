@@ -20,10 +20,17 @@ class ObservableValueTests: XCTestCase {
     ])
 
     func testBindingWithOneActionTemplate() {
+        // Given
+        let expectation = XCTestExpectation(description: debugDescription)
         let observableValue = store.observe(counterSelector)
+        let cancellable = observableValue.objectWillChange.sink { expectation.fulfill() }
         XCTAssertEqual(observableValue.current, 42)
+        // When
         store.dispatch(action: increment(payload: 1))
+        // Then
         XCTAssertEqual(observableValue.current, 43)
+        wait(for: [expectation], timeout: 1)
+        XCTAssertNotNil(cancellable)
     }
 }
 
