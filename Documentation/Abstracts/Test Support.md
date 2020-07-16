@@ -35,7 +35,7 @@ The `MockStore` can be used to override `Selector`s so that they always return a
 import FluxorTestSupport
 import XCTest
 
-class GreetingView: XCTestCase {
+class GreetingViewTests: XCTestCase {
     func testGreeting() {
         let greeting = "Hi Bob!"
         let mockStore = MockStore(initialState: AppState(greeting: "Hi Steve!"))
@@ -48,13 +48,15 @@ class GreetingView: XCTestCase {
 
 ## Intercepting state changes
 
+**NOTE:** This is built into the `MockStore`.
+
 The `TestInterceptor` can be registered on the `Store`. When registered it gets all `Action`s dispatched and state changes. Everything it intercepts gets saved in an array in the order received. This can be used to assert which `Action`s are dispatched in a test.
 
 ```swift
 import FluxorTestSupport
 import XCTest
 
-class GreetingView: XCTestCase {
+class GreetingViewTests: XCTestCase {
     func testGreeting() {
         let testInterceptor = TestInterceptor<AppState>()
         let store = Store(initialState: AppState())

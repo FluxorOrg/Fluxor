@@ -20,24 +20,24 @@ struct DrawView: View {
 
 ## Binding a value which can be changed
 
-The `ValueBinding` can be used to create a [`Binding`](https://developer.apple.com/documentation/swiftui/binding) to a value in the `State` and use an `ActionTemplate` to update the value through the `Store`. The `binding` property on `ValueBinding` will create a [`Binding`](https://developer.apple.com/documentation/swiftui/binding) which can be used like any other bindings. The value can also manually be updated using the `update` function. This will dispatch an `Action` on the `Store` based on the specified `ActionTemplate`.
+The `Store` is extended with functions to create [`Bindings`](https://developer.apple.com/documentation/swiftui/binding) to a value in the `State` and use an `ActionTemplate` to update the value through the `Store`. The [`Binding`](https://developer.apple.com/documentation/swiftui/binding) can be used like any other bindings. When the value in the [`Binding`](https://developer.apple.com/documentation/swiftui/binding) is changed an `Action` will be dispatched on the `Store` based on the specified `ActionTemplate`.
 
 ```swift
 import FluxorSwiftUI
 import SwiftUI
 
 struct GreetingView: View {
-    var greeting = Current.store.binding(get: Selectors.getGreeting, send: Actions.setGreeting)
+    var greeting: Binding<String> = Current.store.binding(get: Selectors.getGreeting, send: Actions.setGreeting)
     
     var body: some View {
-        TextField("Greeting", text: greeting.binding)
+        TextField("Greeting", text: greeting)
     }
 }
 ```
 
 ## Binding a value which can be enabled and disabled
 
-When the `ValueBinding` has a `Bool` value, it can be created with a `ActionTemplate` for enabling the value (making it `true`) and another one for disabling the value (making it `false`). When the value is `Bool` and the payload for the `ActionTemplate` is either `Void` or `Bool`, the `ValueBinding` gains more functions beside the `update` function to `toggle`, `enable` and `disable` the value.
+When the `Binding` has a `Bool` value, it can be created with a `ActionTemplate` for enabling the value (making it `true`) and another one for disabling the value (making it `false`). When the value is `Bool` and the payload for the `ActionTemplate` is either `Void` or `Bool`, the `ValueBinding` gains more functions beside the `update` function to `toggle`, `enable` and `disable` the value.
 
 ```swift
 import FluxorSwiftUI
@@ -49,8 +49,8 @@ struct DrawView: View {
                                                      disable: Actions.cancelClear)
 
     var body: some View {
-        Button(action: { self.showClearActionSheet.enable() }, label: { Text("Clear") })
-            .actionSheet(isPresented: showClearActionSheet.binding) { clearActionSheet }
+        Button(action: { Current.store.dispatch(action: Actions.askToClear() }, label: { Text("Clear") })
+            .actionSheet(isPresented: showClearActionSheet) { clearActionSheet }
     }
 
     private var clearActionSheet: ActionSheet {

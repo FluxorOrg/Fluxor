@@ -125,17 +125,17 @@ class StoreBindingTests: XCTestCase {
 }
 
 private struct CounterView: View {
-    @Binding public var counter: Int
+    @Binding var counter: Int
     var body: some View { Text("Counter: \(counter)") }
 }
 
 private struct LockView: View {
-    @Binding public var locked: Bool
+    @Binding var locked: Bool
     var body: some View { Text(locked ? "Locked" : "Unlocked") }
 }
 
 private struct LightsView: View {
-    @Binding public var lightsOn: Bool
+    @Binding var lightsOn: Bool
     var body: some View { Text(lightsOn ? "On" : "Off") }
 }
 

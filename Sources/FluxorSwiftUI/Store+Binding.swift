@@ -50,7 +50,7 @@ public extension Store {
       When the value is updated an `Action` (returned by the closure), is dispatched on the `Store`.
 
      - Parameter selector: The `Selector`s to use for getting the current value
-     - Parameter action: A closure used to decide which`ActionTemplate` to use
+     - Parameter action: A closure used to decide which `ActionTemplate` to use
                                  for dispatching an `Action` when the value changes
      - Parameter value: The value used to decide which `ActionTemplate` to use for the update.
                         This can either be the current value or the one used for the update
