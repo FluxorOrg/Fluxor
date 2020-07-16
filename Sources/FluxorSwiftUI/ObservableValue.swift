@@ -25,7 +25,7 @@ public extension Store {
  */
 public class ObservableValue<Value>: ObservableObject {
     /// The current value. This will change everytime the `State` in the `Store` changes
-    public private(set) var current: Value { willSet { objectWillChange.send() } }
+    @Published public private(set) var current: Value
     private var cancellable: AnyCancellable!
 
     /**
