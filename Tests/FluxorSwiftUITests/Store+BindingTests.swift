@@ -72,7 +72,7 @@ class StoreBindingTests: XCTestCase {
         counterView.counter = 1
         // Then
         XCTAssertEqual(counterView.counter, 84)
-        
+
         // When
         counterView.counter = 44
         // Then
@@ -91,7 +91,7 @@ class StoreBindingTests: XCTestCase {
         lockView.locked = true
         // Then
         XCTAssertEqual(lockView.locked, true)
-        
+
         // When
         lockView.locked = false
         // Then
@@ -110,7 +110,7 @@ class StoreBindingTests: XCTestCase {
         lightsView.lightsOn = true
         // Then
         XCTAssertEqual(lightsView.lightsOn, true)
-        
+
         // When
         lightsView.lightsOn = false
         // Then
