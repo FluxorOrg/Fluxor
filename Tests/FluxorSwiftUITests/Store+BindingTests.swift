@@ -10,6 +10,8 @@ import FluxorTestSupport
 import SwiftUI
 import XCTest
 
+// swiftlint:disable force_cast
+
 class StoreBindingTests: XCTestCase {
     private let counterSelector = Selector(keyPath: \TestState.counter)
     private let lockedSelector = Selector(keyPath: \TestState.locked)
