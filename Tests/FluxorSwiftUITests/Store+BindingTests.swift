@@ -44,10 +44,13 @@ class StoreBindingTests: XCTestCase {
     ])
 
     func testBindingWithOneActionTemplate() {
+        // Given
         let newCounter = 1337
         let counterView = CounterView(counter: store.binding(get: counterSelector, send: setCounter))
         XCTAssertEqual(counterView.counter, 42)
+        // When
         counterView.counter = newCounter
+        // Then
         XCTAssertEqual(counterView.counter, newCounter)
         let action = store.stateChanges[0].action as! AnonymousAction<Int>
         XCTAssertTrue(action.wasCreated(from: setCounter))
@@ -55,6 +58,7 @@ class StoreBindingTests: XCTestCase {
     }
 
     func testBindingWithActionTemplateClosure() {
+        // Given
         let counterView = CounterView(counter: store.binding(
             get: counterSelector, send: { $0 >= 43
                 ? self.clearCounter()
@@ -62,9 +66,14 @@ class StoreBindingTests: XCTestCase {
             }
         ))
         XCTAssertEqual(counterView.counter, 42)
+        // When
         counterView.counter = 1
+        // Then
         XCTAssertEqual(counterView.counter, 84)
+        
+        // When
         counterView.counter = 44
+        // Then
         XCTAssertEqual(counterView.counter, 0)
         let action1 = store.stateChanges[0].action as! AnonymousAction<Void>
         XCTAssertTrue(action1.wasCreated(from: doubleUpCounter))
@@ -73,11 +82,17 @@ class StoreBindingTests: XCTestCase {
     }
 
     func testBindingWithEnableDisable() {
+        // Given
         let lockView = LockView(locked: store.binding(get: lockedSelector, enable: lock, disable: unlock))
         XCTAssertEqual(lockView.locked, false)
+        // When
         lockView.locked = true
+        // Then
         XCTAssertEqual(lockView.locked, true)
+        
+        // When
         lockView.locked = false
+        // Then
         XCTAssertEqual(lockView.locked, false)
         let action1 = store.stateChanges[0].action as! AnonymousAction<Void>
         XCTAssertTrue(action1.wasCreated(from: lock))
@@ -86,11 +101,17 @@ class StoreBindingTests: XCTestCase {
     }
 
     func testBindingWithBoolUpdateValue() {
+        // Given
         let lightsView = LightsView(lightsOn: store.binding(get: lightsOnSelector, send: changeLights))
         XCTAssertEqual(lightsView.lightsOn, false)
+        // When
         lightsView.lightsOn = true
+        // Then
         XCTAssertEqual(lightsView.lightsOn, true)
+        
+        // When
         lightsView.lightsOn = false
+        // Then
         XCTAssertEqual(lightsView.lightsOn, false)
         let action1 = store.stateChanges[0].action as! AnonymousAction<Bool>
         XCTAssertTrue(action1.wasCreated(from: changeLights))
