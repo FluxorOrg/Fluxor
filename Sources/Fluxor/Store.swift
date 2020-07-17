@@ -12,7 +12,7 @@ import struct Foundation.UUID
  The `Store` is a centralized container for a single-source-of-truth `State`.
 
  A `Store` is configured by registering all the desired `Reducer`s and  `Effects`.
- 
+
  An `Environment` can be set up to enable dependency injection in `Effect`s.
 
  ## Usage
@@ -28,10 +28,11 @@ import struct Foundation.UUID
 open class Store<State, Environment>: ObservableObject {
     /// The state of the `Store`. It can only be modified by the registered `Reducer`s when `Action`s are dispatched.
     @Published public private(set) var state: State
+    /// The environment passed to the `Effects`. The `Environment` can contain services and other dependencies.
+    public let environment: Environment
     internal private(set) var stateHash = UUID()
     private var stateHashSink: AnyCancellable!
     private let actions = PassthroughSubject<Action, Never>()
-    private let environment: Environment
     private var reducers = [KeyedReducer<State>]()
     private var effects = [String: [AnyCancellable]]()
     private var interceptors = [AnyInterceptor<State>]()
