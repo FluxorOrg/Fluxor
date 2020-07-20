@@ -41,7 +41,7 @@ public class PrintInterceptor<State: Encodable>: Interceptor {
                 actionLog += ", data: \(actionJSON)"
             } else {
                 actionLog += "\n⚠️ The payload of the Action has properties but aren't Encodable."
-                actionLog += "Make it Encodable to get them printed."
+                actionLog += " Make it Encodable to get them printed."
             }
         }
         self.print(actionLog)
