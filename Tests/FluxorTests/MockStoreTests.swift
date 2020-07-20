@@ -53,7 +53,7 @@ class MockStoreTests: XCTestCase {
         // When
         store.setState(newState: TestState(counter: 123))
         // Then
-        wait(for: [expectation1], timeout: 1)
+        wait(for: [expectation1], timeout: 5)
         XCTAssertNotNil(cancellable1)
 
         // Given
@@ -70,7 +70,7 @@ class MockStoreTests: XCTestCase {
         store.setState(newState: TestState(counter: newValue))
         // Then
         XCTAssertEqual(store.selectCurrent(selector), newValue)
-        wait(for: [expectation2], timeout: 1)
+        wait(for: [expectation2], timeout: 5)
         XCTAssertNotNil(cancellable2)
     }
 

@@ -33,7 +33,7 @@ class ReducerTests: XCTestCase {
         reducer.reduce(&state, incrementAction)
         reducer.reduce(&state, decrementAction)
         // Then
-        wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(state, TestState(counter: 1378))
     }
 
@@ -62,7 +62,7 @@ class ReducerTests: XCTestCase {
         reducer.reduce(&state, incrementAction)
         reducer.reduce(&state, decrementAction)
         // Then
-        wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(state, TestState(counter: 1378))
     }
 
@@ -91,7 +91,7 @@ class ReducerTests: XCTestCase {
         reducer.reduce(&state, decrementActionTemplate(payload: 1))
         reducer.reduce(&state, otherDecrementActionTemplate(payload: 2))
         // Then
-        wait(for: [incrementExpectation, decrementExpectation], timeout: 1)
+        wait(for: [incrementExpectation, decrementExpectation], timeout: 5)
         XCTAssertEqual(state, TestState(counter: 1334))
     }
 

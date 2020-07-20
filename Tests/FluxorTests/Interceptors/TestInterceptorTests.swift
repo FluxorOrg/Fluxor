@@ -53,7 +53,7 @@ class TestInterceptorTests: XCTestCase {
         interceptor.actionDispatched(action: action1, oldState: oldState1, newState: newState1)
         interceptor.actionDispatched(action: action2, oldState: oldState2, newState: newState2)
         // Then
-        XCTAssertThrowsError(try interceptor.waitForActions(expectedNumberOfActions: 3, timeout: 1))
+        XCTAssertThrowsError(try interceptor.waitForActions(expectedNumberOfActions: 3, timeout: 5))
     }
 }
 
