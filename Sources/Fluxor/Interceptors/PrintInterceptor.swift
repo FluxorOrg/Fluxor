@@ -33,10 +33,15 @@ public class PrintInterceptor<State: Encodable>: Interceptor {
 
         let actionName = String(describing: type(of: action))
         var actionLog = "\(name) - action dispatched: \(actionName)"
-        if let actionData = action.encode(with: encoder),
-            let actionJSON = String(data: actionData, encoding: .utf8),
-            actionJSON.replacingOccurrences(of: "\n", with: "") != "{}" {
-            actionLog += ", data: \(actionJSON)"
+        if Mirror(reflecting: action).children.count > 0 {
+            if let encodableAction = action as? EncodableAction,
+                let actionData = encodableAction.encode(with: encoder),
+                let actionJSON = String(data: actionData, encoding: .utf8),
+                actionJSON.replacingOccurrences(of: "\n", with: "") != "{}" {
+                actionLog += ", data: \(actionJSON)"
+            } else {
+                actionLog += "\n⚠️ The payload of the Action has properties but aren't Encodable. Make it Encodable to get them printed."
+            }
         }
         self.print(actionLog)
 
