@@ -12,7 +12,9 @@ import Foundation
 
  `Action`s are dispatched on the `Store`.
  */
-public protocol Action: Encodable {
+public protocol Action {}
+
+public protocol EncodableAction: Action, Encodable {
     /**
      To enable encoding of the `Action` this helper function is needed.
 
@@ -22,7 +24,7 @@ public protocol Action: Encodable {
     func encode(with encoder: JSONEncoder) -> Data?
 }
 
-public extension Action {
+public extension EncodableAction {
     func encode(with encoder: JSONEncoder) -> Data? {
         return try? encoder.encode(self)
     }
@@ -103,7 +105,7 @@ public struct AnonymousAction<Payload>: IdentifiableAction {
     /// The identifier for the `AnonymousAction`
     public let id: String
     /// The `Payload` for the `AnonymousAction`
-    public private(set) var payload: Payload
+    public let payload: Payload
 
     /**
      Check if the `AnonymousAction` was created from a given `ActionTemplate`.
@@ -115,7 +117,7 @@ public struct AnonymousAction<Payload>: IdentifiableAction {
     }
 }
 
-extension AnonymousAction: Encodable {
+extension AnonymousAction: EncodableAction {
     private var encodablePayload: [String: AnyCodable]? {
         guard type(of: payload) != Void.self else { return nil }
         let mirror = Mirror(reflecting: payload)
@@ -127,7 +129,7 @@ extension AnonymousAction: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        if let payload = payload as? Encodable {
+        if payload is Encodable {
             try container.encode(AnyCodable(payload), forKey: .payload)
         } else {
             try container.encodeIfPresent(encodablePayload, forKey: .payload)

@@ -8,7 +8,7 @@ import Fluxor
 import XCTest
 
 class ActionTests: XCTestCase {
-    /// Is it possible to encode an `Action`?
+    /// Is it possible to encode an `EncodableAction`?
     func testEncoding() {
         // Given
         let action = TestAction(increment: 42)
@@ -88,7 +88,7 @@ class ActionTests: XCTestCase {
         let age: Int
     }
 
-    private struct TestAction: Action {
+    private struct TestAction: EncodableAction {
         let increment: Int
     }
 
