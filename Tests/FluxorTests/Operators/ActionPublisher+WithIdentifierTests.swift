@@ -31,7 +31,7 @@ class ActionPublisherWithIdentifierTests: XCTestCase {
         // When
         actions.send(action1)
         // Then
-        wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 5)
         XCTAssertNotNil(cancellable)
     }
 
@@ -46,7 +46,7 @@ class ActionPublisherWithIdentifierTests: XCTestCase {
         // When
         actions.send(action1)
         // Then
-        wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 5)
         XCTAssertNotNil(cancellable)
     }
 }

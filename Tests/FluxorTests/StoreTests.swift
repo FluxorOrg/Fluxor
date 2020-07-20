@@ -80,7 +80,7 @@ class StoreTests: XCTestCase {
         // When
         store.dispatch(action: firstAction)
         // Then
-        wait(for: [environment.expectation], timeout: 1)
+        wait(for: [environment.expectation], timeout: 5)
         var dispatchedActions = interceptor.stateChanges.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
@@ -108,7 +108,7 @@ class StoreTests: XCTestCase {
         // When
         store.dispatch(action: firstAction)
         // Then
-        wait(for: [environment.expectation], timeout: 1)
+        wait(for: [environment.expectation], timeout: 5)
         dispatchedActions = interceptor.stateChanges.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 5)
         XCTAssertEqual(dispatchedActions[1] as! TestAction, firstAction)
@@ -128,7 +128,7 @@ class StoreTests: XCTestCase {
         // When
         store.dispatch(action: firstAction)
         // Then
-        wait(for: [environment.expectation], timeout: 1)
+        wait(for: [environment.expectation], timeout: 5)
         let dispatchedActions = interceptor.stateChanges.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
@@ -149,7 +149,7 @@ class StoreTests: XCTestCase {
         store.dispatch(action: environment.responseAction)
         // Then
         try interceptor.waitForActions(expectedNumberOfActions: 3)
-        wait(for: [environment.expectation], timeout: 1)
+        wait(for: [environment.expectation], timeout: 5)
         let dispatchedActions = interceptor.stateChanges.map(\.action)
         XCTAssertEqual(dispatchedActions[0] as! AnonymousAction<Void>, environment.responseAction)
         XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Int>, environment.generateAction)
@@ -204,7 +204,7 @@ class StoreTests: XCTestCase {
         // When
         store.dispatch(action: TestAction())
         // Then
-        wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 5)
         XCTAssertNotNil(cancellable)
     }
 
@@ -233,7 +233,7 @@ class StoreTests: XCTestCase {
         // When
         store.dispatch(action: TestAction())
         // Then
-        wait(for: [VoidTestEffects.expectation], timeout: 1)
+        wait(for: [VoidTestEffects.expectation], timeout: 5)
     }
 
     /// Can we get all state changes in a `MockStore`?

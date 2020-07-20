@@ -29,7 +29,7 @@ class ObservableValueTests: XCTestCase {
         store.dispatch(action: increment(payload: 1))
         // Then
         XCTAssertEqual(observableValue.current, 43)
-        wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 5)
         XCTAssertNotNil(cancellable)
     }
 }

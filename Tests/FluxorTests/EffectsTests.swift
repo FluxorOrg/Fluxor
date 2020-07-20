@@ -49,7 +49,7 @@ class EffectsTests: XCTestCase {
         // When
         let actions = try EffectRunner.run(effect, with: action1, environment: environment)!
         // Then
-        wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(actions.count, 1)
         XCTAssertEqual(actions[0] as! Test2Action, action2)
         XCTAssertThrowsError(try EffectRunner.run(effect, with: action1,
@@ -79,7 +79,7 @@ class EffectsTests: XCTestCase {
         // When
         let actions = try EffectRunner.run(effect, with: action1, environment: environment, expectedCount: 2)!
         // Then
-        wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(actions.count, 2)
         XCTAssertEqual(actions[0] as! Test2Action, action2)
         XCTAssertEqual(actions[1] as! Test3Action, action3)
@@ -104,7 +104,7 @@ class EffectsTests: XCTestCase {
         XCTAssertNil(try EffectRunner.run(effect, with: action, environment: environment))
         XCTAssertNil(try EffectRunner.run(effect, with: action, environment: environment, expectedCount: 9))
         // Then
-        wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 5)
     }
 
     /// Only here for test coverage of ActionRecorder's empty completion function.
