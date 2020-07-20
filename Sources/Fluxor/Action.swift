@@ -14,6 +14,7 @@ import Foundation
  */
 public protocol Action {}
 
+/// An `Action` which can be encoded.
 public protocol EncodableAction: Action, Encodable {
     /**
      To enable encoding of the `Action` this helper function is needed.
