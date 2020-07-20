@@ -40,7 +40,8 @@ public class PrintInterceptor<State: Encodable>: Interceptor {
                 actionJSON.replacingOccurrences(of: "\n", with: "") != "{}" {
                 actionLog += ", data: \(actionJSON)"
             } else {
-                actionLog += "\n⚠️ The payload of the Action has properties but aren't Encodable. Make it Encodable to get them printed."
+                actionLog += "\n⚠️ The payload of the Action has properties but aren't Encodable."
+                actionLog += "Make it Encodable to get them printed."
             }
         }
         self.print(actionLog)

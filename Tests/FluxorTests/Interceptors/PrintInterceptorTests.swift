@@ -7,6 +7,8 @@
 @testable import Fluxor
 import XCTest
 
+// swiftlint:disable force_try function_body_length
+
 class PrintInterceptorTests: XCTestCase {
     /// Is the dispatched `Action`, the `oldState` and the `newState` printed correctly?
     func testActionDispatchedWithoutEncodablePayload() {
@@ -23,7 +25,6 @@ class PrintInterceptorTests: XCTestCase {
         let action3 = ActionWithUnencodablePayload(increment: 22)
         let oldState3 = newState2
         let newState3 = TestState(counter: 33)
-
         // When
         interceptor.actionDispatched(action: action1, oldState: oldState1, newState: newState1)
         interceptor.actionDispatched(action: action2, oldState: oldState2, newState: newState2)
@@ -67,7 +68,8 @@ class PrintInterceptorTests: XCTestCase {
         let action1 = ActionWithEncodablePayload(increment: 2)
         let oldState1 = TestState(counter: 1)
         let newState1 = TestState(counter: 11)
-        let action2 = ActionTemplate(id: "Action2", payloadType: EncodablePayload.self).createAction(payload: .init(increment: 3))
+        let action2 = ActionTemplate(id: "Action2", payloadType: EncodablePayload.self)
+            .createAction(payload: .init(increment: 3))
         let oldState2 = newState1
         let newState2 = TestState(counter: 22)
         _ = try! JSONEncoder().encode(AnonymousAction(id: "Bla", payload: EncodablePayload(increment: 1)))
