@@ -3,24 +3,40 @@ name: Docs
 on:
   push:
     branches:
-    - master
+    - swift-doc
 
 jobs:
   pages:
     name: Documentation for Pages
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Generate Documentation for Pages
-        uses: sersoft-gmbh/swifty-docs-action@v1
-      - name: Add CNAME
-        run: echo -n fluxor.dev > docs/CNAME
-      - name: Upload to GitHub Pages
-        uses: crazy-max/ghaction-github-pages@v1.4.1
+        uses: SwiftDocOrg/swift-doc@master
         with:
-          build_dir: "docs"
-        env:
-          GITHUB_PAT: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          inputs: "Sources"
+          format: "html"
+          module-name: Fluxor
+          output: "Documentation-Wiki"
+#      - name: Upload to GitHub Pages
+#        uses: crazy-max/ghaction-github-pages@v1.4.1
+#        with:
+#          build_dir: "Documentation-Pages":
+#  pages:
+#    name: Documentation for Pages
+#    runs-on: macos-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Generate Documentation for Pages
+#        uses: sersoft-gmbh/swifty-docs-action@v1
+#      - name: Add CNAME
+#        run: echo -n fluxor.dev > docs/CNAME
+#      - name: Upload to GitHub Pages
+#        uses: crazy-max/ghaction-github-pages@v1.4.1
+#        with:
+#          build_dir: "docs"
+#        env:
+#          GITHUB_PAT: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
   wiki:
     name: Documentation for Wiki
     runs-on: ubuntu-latest
