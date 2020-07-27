@@ -28,7 +28,8 @@ class AnyCodableEncodableTests: XCTestCase {
                 "a": "alpha",
                 "b": "bravo",
                 "c": "charlie"
-            ]
+            ],
+            "custom": AnyCodable(CustomEncodable(value: 42))
         ]
         // When
         let encoder = JSONEncoder()
@@ -53,6 +54,9 @@ class AnyCodableEncodableTests: XCTestCase {
             4
           ],
           "boolean" : true,
+          "custom" : {
+            "value" : 42
+          },
           "date" : 1585778827,
           "double" : 3.1415926535897931,
           "float" : 3.1415927410125732,
@@ -91,4 +95,8 @@ class AnyCodableEncodableTests: XCTestCase {
 
 private struct Something: Equatable {
     let isNothing: Bool
+}
+
+private struct CustomEncodable: Encodable {
+    let value: Int
 }
