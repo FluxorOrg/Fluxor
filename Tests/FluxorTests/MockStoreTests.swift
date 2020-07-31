@@ -53,8 +53,9 @@ class MockStoreTests: XCTestCase {
         // When
         store.setState(newState: TestState(counter: 123))
         // Then
+        XCTAssertEqual(store.selectCurrent(selector), value)
         wait(for: [expectation1], timeout: 5)
-        XCTAssertNotNil(cancellable1)
+        cancellable1.cancel()
 
         // Given
         let newValue = 42

@@ -31,7 +31,6 @@ open class Store<State, Environment>: ObservableObject {
     /// The environment passed to the `Effects`. The `Environment` can contain services and other dependencies.
     public let environment: Environment
     internal private(set) var stateHash = UUID()
-    private var stateHashSink: AnyCancellable!
     private let actions = PassthroughSubject<Action, Never>()
     private var reducers = [KeyedReducer<State>]()
     private var effects = [String: [AnyCancellable]]()
@@ -49,7 +48,6 @@ open class Store<State, Environment>: ObservableObject {
     public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
         state = initialState
         self.environment = environment
-        stateHashSink = $state.sink { _ in self.stateHash = UUID() }
         reducers.forEach(register(reducer:))
     }
 
@@ -68,6 +66,7 @@ open class Store<State, Environment>: ObservableObject {
         let oldState = state
         var newState = oldState
         reducers.forEach { $0.reduce(&newState, action) }
+        stateHash = UUID()
         state = newState
         interceptors.forEach { $0.actionDispatched(action: action, oldState: oldState, newState: newState) }
         actions.send(action)
