@@ -11,13 +11,18 @@ import XCTest
 class ObservableValueTests: XCTestCase {
     private let counterSelector = Selector(keyPath: \TestState.counter)
     private let increment = ActionTemplate(id: "Increment", payloadType: Int.self)
-    private lazy var store = Store(initialState: TestState(), reducers: [
-        Reducer<TestState>(
-            ReduceOn(increment) { state, action in
-                state.counter += action.payload
-            }
-        )
-    ])
+    private var store: Store<TestState, Void>!
+
+    override func setUp() {
+        super.setUp()
+        store = Store(initialState: .init(), reducers: [
+            Reducer<TestState>(
+                ReduceOn(increment) { state, action in
+                    state.counter += action.payload
+                }
+            )
+        ])
+    }
 
     func testBindingWithOneActionTemplate() {
         // Given

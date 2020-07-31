@@ -32,9 +32,7 @@ public class MockStore<State, Environment>: Store<State, Environment> {
      - Parameter effects: The `Effect`s to register
      */
     public override init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
-        let reducers = reducers + [Reducer(ReduceOn(setState) { state, action in
-            state = action.payload
-        })]
+        let reducers = reducers + [Reducer(ReduceOn(setState) { state, action in state = action.payload })]
         super.init(initialState: initialState, environment: environment, reducers: reducers)
         super.register(interceptor: self.testInterceptor)
     }
