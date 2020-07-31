@@ -236,21 +236,22 @@ class StoreTests: XCTestCase {
         wait(for: [VoidTestEffects.expectation], timeout: 5)
     }
 
-    /// Can we get all state changes in a `MockStore`?
-    func testMockStoreStateChanges() {
+    /// Does the `Store` dispatch actions when it subscribes to a `Publisher`?
+    func testSubscribing() {
         // Given
-        let mockStore = MockStore(initialState: TestState(type: .initial, lastAction: nil))
+        let subject = PassthroughSubject<Action, Never>()
+        let interceptor = TestInterceptor<TestState>()
+        let store = Store(initialState: TestState(type: .initial))
+        store.register(interceptor: interceptor)
+        subject.subscribe(store)
+        XCTAssertEqual(interceptor.stateChanges.count, 0)
         let action = TestAction()
-        let modifiedState = TestState(type: .modified, lastAction: "Set State")
         // When
-        mockStore.dispatch(action: action)
-        mockStore.setState(newState: modifiedState)
+        subject.send(action)
+        subject.send(completion: .finished)
         // Then
-        XCTAssertEqual(mockStore.stateChanges.count, 2)
-        XCTAssertEqual(mockStore.stateChanges[0].action as! TestAction, action)
-        let setStateAction = mockStore.stateChanges[1].action as! AnonymousAction<TestState>
-        XCTAssertEqual(setStateAction.id, "Set State")
-        XCTAssertEqual(mockStore.stateChanges[1].newState, modifiedState)
+        XCTAssertEqual(interceptor.stateChanges.count, 1)
+        XCTAssertEqual(interceptor.stateChanges[0].action as! TestAction, action)
     }
 }
 

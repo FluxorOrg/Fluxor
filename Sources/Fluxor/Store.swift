@@ -204,16 +204,34 @@ public extension Store where Environment == Void {
     }
 }
 
+// MARK: - Subscriptions
+
+extension Store: Subscriber {
+    public typealias Input = Action
+    public typealias Failure = Never
+
+    public func receive(subscription: Subscription) {
+        subscription.request(.unlimited)
+    }
+
+    public func receive(_ input: Action) -> Subscribers.Demand {
+        dispatch(action: input)
+        return .unlimited
+    }
+
+    public func receive(completion: Subscribers.Completion<Never>) {}
+}
+
 // MARK: - Private
 
-extension Store {
+private extension Store {
     /**
      Creates `Cancellable`s for the given `Effect`s.
 
      - Parameter effects: The `Effect`s to create `Cancellable`s for
      - Returns: The `Cancellable`s for the given `Effect`s
      */
-    private func createCancellables(for effects: [Effect<Environment>]) -> [AnyCancellable] {
+    func createCancellables(for effects: [Effect<Environment>]) -> [AnyCancellable] {
         return effects.map(createCancellable(for:))
     }
 
@@ -223,7 +241,7 @@ extension Store {
      - Parameter effect: The `Effect` to create `Cancellable` for
      - Returns: The `Cancellable` for the given `Effect`
      */
-    private func createCancellable(for effect: Effect<Environment>) -> AnyCancellable {
+    func createCancellable(for effect: Effect<Environment>) -> AnyCancellable {
         switch effect {
         case .dispatchingOne(let effectCreator):
             return effectCreator(actions.eraseToAnyPublisher(), environment)
