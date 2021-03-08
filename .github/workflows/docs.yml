@@ -3,7 +3,7 @@ name: Docs
 on:
   push:
     branches:
-    - master
+    - update-docs-workflow-steps
 
 jobs:
   pages:
@@ -32,10 +32,10 @@ jobs:
           inputs: "Sources"
           format: "commonmark"
           module-name: Fluxor
-          output: "Documentation-Wiki"
+          output: "wiki-output"
       - name: Upload to Wiki
         uses: SwiftDocOrg/github-wiki-publish-action@v1
         with:
-          path: "Documentation-Wiki"
+          path: "wiki-output"
         env:
           GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
