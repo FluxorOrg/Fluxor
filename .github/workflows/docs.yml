@@ -16,7 +16,7 @@ jobs:
       - name: Add CNAME
         run: echo -n fluxor.dev > docs/CNAME
       - name: Upload to GitHub Pages
-        uses: crazy-max/ghaction-github-pages@v1.4.1
+        uses: crazy-max/ghaction-github-pages@v2
         with:
           build_dir: "docs"
         env:
