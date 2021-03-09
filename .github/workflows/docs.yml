@@ -16,11 +16,11 @@ jobs:
       - name: Add CNAME
         run: echo -n fluxor.dev > docs/CNAME
       - name: Upload to GitHub Pages
-        uses: crazy-max/ghaction-github-pages@v1.4.1
+        uses: crazy-max/ghaction-github-pages@v2
         with:
           build_dir: "docs"
         env:
-          GITHUB_PAT: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   wiki:
     name: Documentation for Wiki
     runs-on: ubuntu-latest
@@ -32,10 +32,10 @@ jobs:
           inputs: "Sources"
           format: "commonmark"
           module-name: Fluxor
-          output: "Documentation-Wiki"
+          output: "wiki-output"
       - name: Upload to Wiki
         uses: SwiftDocOrg/github-wiki-publish-action@v1
         with:
-          path: "Documentation-Wiki"
+          path: "wiki-output"
         env:
           GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
