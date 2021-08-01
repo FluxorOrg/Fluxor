@@ -4,7 +4,7 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Combine
+import OpenCombineShim
 
 /**
  A side effect that happens as a response to a dispatched `Action`.

@@ -4,7 +4,7 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Combine
+import OpenCombineShim
 @testable import Fluxor
 import FluxorTestSupport
 import XCTest

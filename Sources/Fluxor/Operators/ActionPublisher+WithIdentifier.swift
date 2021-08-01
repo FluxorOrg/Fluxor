@@ -4,7 +4,7 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Combine
+import OpenCombineShim
 
 /// Operators for narrowing down `Action`s in Publisher streams.
 extension Publisher where Output == Action {

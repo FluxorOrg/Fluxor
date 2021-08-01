@@ -5,7 +5,7 @@
 //  Created by Morten Bjerg Gregersen on 04/01/2020.
 //
 
-import Combine
+import OpenCombineShim
 import Fluxor
 import XCTest
 

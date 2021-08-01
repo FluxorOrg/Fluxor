@@ -4,7 +4,7 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Combine
+import OpenCombineShim
 import Fluxor
 import struct Foundation.UUID
 
