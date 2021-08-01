@@ -4,7 +4,7 @@
  *  MIT license, see LICENSE file for details
  */
 
-import struct Foundation.UUID
+import Foundation
 
 /// A type which takes a `State` and `Action` returns a new `State`.
 public struct Reducer<State> {

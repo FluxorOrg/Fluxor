@@ -7,7 +7,7 @@
 import OpenCombineShim
 
 /// Operators for narrowing down `Action`s in Publisher streams.
-extension Publisher where Output == Action {
+public extension Publisher where Output == Action {
     /**
      Only lets `AnonymousAction`s with a certain identifier get through the stream.
 
@@ -19,7 +19,7 @@ extension Publisher where Output == Action {
 
      - Parameter identifierToMatch: A identifier to match
      */
-    public func withIdentifier(_ identifierToMatch: String) -> AnyPublisher<Action, Self.Failure> {
+    func withIdentifier(_ identifierToMatch: String) -> AnyPublisher<Action, Self.Failure> {
         filter { ($0 as? IdentifiableAction)?.id == identifierToMatch }
             .eraseToAnyPublisher()
     }

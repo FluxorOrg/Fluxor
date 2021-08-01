@@ -4,9 +4,9 @@
  *  MIT license, see LICENSE file for details
  */
 
-import OpenCombineShim
 import Dispatch
 import Fluxor
+import OpenCombineShim
 import XCTest
 
 /// The `EffectRunner` can be used to run `Effect`s with a specified `Action`.
@@ -66,7 +66,7 @@ public extension EffectRunner where Environment == Void {
     static func run(_ effect: Effect<Environment>,
                     with action: Action,
                     expectedCount: Int = 1) throws -> [Action]? {
-        return try run(effect, with: action, environment: Void(), expectedCount: expectedCount)
+        return try run(effect, with: action, environment: (), expectedCount: expectedCount)
     }
 }
 

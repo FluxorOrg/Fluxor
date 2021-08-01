@@ -4,9 +4,9 @@
  *  MIT license, see LICENSE file for details
  */
 
-import OpenCombineShim
 @testable import Fluxor
 import FluxorTestSupport
+import OpenCombineShim
 import XCTest
 
 // swiftlint:disable nesting force_cast

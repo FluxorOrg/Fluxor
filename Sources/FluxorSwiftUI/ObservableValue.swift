@@ -4,8 +4,8 @@
  *  MIT license, see LICENSE file for details
  */
 
-import OpenCombineShim
 import Fluxor
+import OpenCombineShim
 
 public extension Store {
     /**

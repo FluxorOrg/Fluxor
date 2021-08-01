@@ -4,9 +4,9 @@
  *  MIT license, see LICENSE file for details
  */
 
-import OpenCombineShim
 @testable import Fluxor
 import FluxorTestSupport
+import OpenCombineShim
 import XCTest
 
 // swiftlint:disable force_cast
@@ -47,7 +47,7 @@ class StoreTests: XCTestCase {
             id: "Todos Reducer",
             ReduceOn(incrementActionTemplate) { todosState, action in
                 todosState.counter += action.payload
-        })
+            })
         XCTAssertEqual(store.state.todos.counter, 0)
         store.register(reducer: reducer, for: \.todos)
         // When

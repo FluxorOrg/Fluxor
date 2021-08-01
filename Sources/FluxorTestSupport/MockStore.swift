@@ -4,9 +4,9 @@
  *  MIT license, see LICENSE file for details
  */
 
-import OpenCombineShim
 import Fluxor
-import struct Foundation.UUID
+import Foundation
+import OpenCombineShim
 
 // swiftlint:disable large_tuple
 
@@ -31,7 +31,7 @@ public class MockStore<State, Environment>: Store<State, Environment> {
      - Parameter reducers: The `Reducer`s to register
      - Parameter effects: The `Effect`s to register
      */
-    public override init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
+    override public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
         let reducers = reducers + [Reducer(ReduceOn(setState) { state, action in state = action.payload })]
         super.init(initialState: initialState, environment: environment, reducers: reducers)
         super.register(interceptor: self.testInterceptor)
@@ -55,22 +55,22 @@ public class MockStore<State, Environment>: Store<State, Environment> {
      - Parameter value: The value the `Selector` should give when selecting
      */
     public func overrideSelector<Value>(_ selector: Selector<State, Value>, value: Value) {
-        overridenSelectorValues[selector.id] = value
+        self.overridenSelectorValues[selector.id] = value
     }
 
     /**
      Resets all overridden `Selector`s on this `MockStore`.
      */
     public func resetOverriddenSelectors() {
-        overridenSelectorValues.removeAll()
+        self.overridenSelectorValues.removeAll()
     }
 
-    public override func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
+    override public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
         guard let value = overridenSelectorValues[selector.id] as? Value else { return super.select(selector) }
         return $state.map { _ in value }.eraseToAnyPublisher()
     }
 
-    public override func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
-        return overridenSelectorValues[selector.id] as? Value ?? super.selectCurrent(selector)
+    override public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
+        return self.overridenSelectorValues[selector.id] as? Value ?? super.selectCurrent(selector)
     }
 }

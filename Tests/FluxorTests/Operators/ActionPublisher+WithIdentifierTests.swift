@@ -5,8 +5,8 @@
 //  Created by Morten Bjerg Gregersen on 04/01/2020.
 //
 
-import OpenCombineShim
 import Fluxor
+import OpenCombineShim
 import XCTest
 
 class ActionPublisherWithIdentifierTests: XCTestCase {
