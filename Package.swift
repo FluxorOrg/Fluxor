@@ -20,6 +20,9 @@ let package = Package(
             name: "FluxorSwiftUI",
             targets: ["FluxorSwiftUI"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.12.0"),
+    ],
     targets: [
         .target(
             name: "AnyCodable"),
@@ -28,7 +31,7 @@ let package = Package(
             dependencies: ["AnyCodable"]),
         .target(
             name: "Fluxor",
-            dependencies: ["AnyCodable"]),
+            dependencies: ["AnyCodable", "OpenCombineShim"]),
         .testTarget(
             name: "FluxorTests",
             dependencies: ["Fluxor", "FluxorTestSupport"]),
