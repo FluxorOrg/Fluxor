@@ -9,8 +9,8 @@ on:
     - master
 
 jobs:
-  build:
-    name: Build and Test
+  build-apple:
+    name: Build and Test (Apple platforms)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
@@ -28,3 +28,12 @@ jobs:
         coverageCommand: ls
         coverageLocations: coverage.lcov:lcov
         debug: true
+  build-linux:
+    name: Build and Test (Linux)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: swift build -v
+    - name: Test
+      run: swift test -v --enable-code-coverage
