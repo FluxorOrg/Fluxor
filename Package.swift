@@ -31,7 +31,7 @@ let package = Package(
             dependencies: ["AnyCodable"]),
         .target(
             name: "Fluxor",
-            dependencies: ["AnyCodable", "OpenCombineShim"]),
+            dependencies: ["AnyCodable", .product(name: "OpenCombineShim", package: "OpenCombine")]),
         .testTarget(
             name: "FluxorTests",
             dependencies: ["Fluxor", "FluxorTestSupport"]),
@@ -44,5 +44,4 @@ let package = Package(
         .testTarget(
             name: "FluxorSwiftUITests",
             dependencies: ["FluxorSwiftUI", "FluxorTestSupport"]),
-    ]
-)
+    ])
