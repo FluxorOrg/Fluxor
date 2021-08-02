@@ -16,7 +16,7 @@ class ReducerTests: XCTestCase {
         let incrementAction = IncrementAction(increment: 42)
         let decrementActionTemplate = ActionTemplate(id: "Decrement", payloadType: Int.self)
         let decrementAction = decrementActionTemplate.createAction(payload: 1)
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         expectation.expectedFulfillmentCount = 2
         let reducer = Reducer<TestState> { state, action in
             if let action = action as? IncrementAction {
@@ -44,7 +44,7 @@ class ReducerTests: XCTestCase {
         let incrementAction = IncrementAction(increment: 42)
         let decrementActionTemplate = ActionTemplate(id: "Decrement", payloadType: Int.self)
         let decrementAction = decrementActionTemplate.createAction(payload: 1)
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         expectation.expectedFulfillmentCount = 2
         let reducer = Reducer<TestState>(
             ReduceOn(IncrementAction.self) { state, action in

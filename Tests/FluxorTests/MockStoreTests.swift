@@ -43,7 +43,7 @@ class MockStoreTests: XCTestCase {
         XCTAssertEqual(store.selectCurrent(selector), value)
 
         // Given
-        let expectation1 = XCTestExpectation(description: debugDescription)
+        let expectation1 = XCTestExpectation(description: #function)
         expectation1.expectedFulfillmentCount = 2
         let cancellable1 = store.select(selector).sink {
             if $0 == value {
@@ -60,7 +60,7 @@ class MockStoreTests: XCTestCase {
         // Given
         let newValue = 42
         store.resetOverriddenSelectors()
-        let expectation2 = XCTestExpectation(description: debugDescription)
+        let expectation2 = XCTestExpectation(description: #function)
         expectation2.expectedFulfillmentCount = 1
         let cancellable2 = store.select(selector).sink {
             if $0 == newValue {

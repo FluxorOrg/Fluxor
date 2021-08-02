@@ -199,7 +199,7 @@ class StoreTests: XCTestCase {
         let store = Store(initialState: TestState(type: .initial, lastAction: nil),
                           environment: TestEnvironment(),
                           reducers: [testReducer])
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         let cancellable = store.select(selector).sink {
             if $0 == .modified {
                 expectation.fulfill()

@@ -25,7 +25,7 @@ class ActionPublisherWasCreatedByTests: XCTestCase {
     /// Does the operator let the `Action` pass if it matches?
     func testMatchingTemplate() {
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         let cancellable = actions
             .wasCreated(from: template1)
             .sink { _ in expectation.fulfill() }
@@ -39,7 +39,7 @@ class ActionPublisherWasCreatedByTests: XCTestCase {
     /// Does the operator block the `Action` if it doesn't match?
     func testNonMatchingTemplate() {
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         expectation.isInverted = true
         let cancellable = actions
             .wasCreated(from: template2)
