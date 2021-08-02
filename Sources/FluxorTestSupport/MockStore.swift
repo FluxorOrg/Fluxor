@@ -58,7 +58,7 @@ public class MockStore<State, Environment>: Store<State, Environment> {
      - Parameter selector: The `Selector` to override
      - Parameter value: The value the `Selector` should give when selecting
      */
-    public func overrideSelector<Value>(_ selector: Selector<State, Value>, value: Value) {
+    public func overrideSelector<Value>(_ selector: Fluxor.Selector<State, Value>, value: Value) {
         self.overridenSelectorValues[selector.id] = value
     }
 
@@ -69,12 +69,12 @@ public class MockStore<State, Environment>: Store<State, Environment> {
         self.overridenSelectorValues.removeAll()
     }
 
-    override public func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
+    override public func select<Value>(_ selector: Fluxor.Selector<State, Value>) -> AnyPublisher<Value, Never> {
         guard let value = overridenSelectorValues[selector.id] as? Value else { return super.select(selector) }
         return $state.map { _ in value }.eraseToAnyPublisher()
     }
 
-    override public func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
+    override public func selectCurrent<Value>(_ selector: Fluxor.Selector<State, Value>) -> Value {
         return self.overridenSelectorValues[selector.id] as? Value ?? super.selectCurrent(selector)
     }
 }
