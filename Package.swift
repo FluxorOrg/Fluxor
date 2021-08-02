@@ -20,7 +20,11 @@ var dependencies: [Package.Dependency] = []
 var fluxorTargetDependencies: [Target.Dependency] = ["AnyCodable"]
 #if !canImport(Combine)
 dependencies.append(.package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.12.0"))
-fluxorTargetDependencies.append(.product(name: "OpenCombine", package: "OpenCombine"))
+fluxorTargetDependencies.append(contentsOf: [
+    "OpenCombine",
+    .product(name: "OpenCombineFoundation", package: "OpenCombine"),
+    .product(name: "OpenCombineDispatch", package: "OpenCombine"),
+])
 #endif
 
 let package = Package(
