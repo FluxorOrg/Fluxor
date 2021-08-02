@@ -281,7 +281,7 @@ private class TestEnvironment: Equatable {
     var unrelatedActionTemplate: ActionTemplate<Void> { ActionTemplate(id: "UnrelatedAction") }
     var unrelatedAction: AnonymousAction<Void> { unrelatedActionTemplate.createAction() }
     var lastAction: AnonymousAction<Int>?
-    var mainThreadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
+    var mainThreadCheck = { XCTAssertTrue(Thread.current.isMainThread) }
     var expectation: XCTestExpectation!
 
     init() {
