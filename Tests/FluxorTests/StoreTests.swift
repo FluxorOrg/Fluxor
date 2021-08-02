@@ -6,7 +6,11 @@
 
 @testable import Fluxor
 import FluxorTestSupport
-import OpenCombineShim
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 import XCTest
 
 // swiftlint:disable force_cast

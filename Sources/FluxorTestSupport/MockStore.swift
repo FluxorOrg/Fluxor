@@ -6,7 +6,11 @@
 
 import Fluxor
 import Foundation
-import OpenCombineShim
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 
 // swiftlint:disable large_tuple
 

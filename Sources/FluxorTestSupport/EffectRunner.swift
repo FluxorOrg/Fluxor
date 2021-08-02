@@ -6,7 +6,11 @@
 
 import Dispatch
 import Fluxor
-import OpenCombineShim
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 import XCTest
 
 /// The `EffectRunner` can be used to run `Effect`s with a specified `Action`.

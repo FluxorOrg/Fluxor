@@ -4,7 +4,11 @@
  *  MIT license, see LICENSE file for details
  */
 
-import OpenCombineShim
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 
 /**
  A side effect that happens as a response to a dispatched `Action`.

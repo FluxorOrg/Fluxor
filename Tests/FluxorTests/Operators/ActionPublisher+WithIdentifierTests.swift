@@ -6,7 +6,11 @@
 //
 
 import Fluxor
-import OpenCombineShim
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 import XCTest
 
 class ActionPublisherWithIdentifierTests: XCTestCase {

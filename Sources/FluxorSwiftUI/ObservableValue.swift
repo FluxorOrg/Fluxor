@@ -5,7 +5,11 @@
  */
 
 import Fluxor
-import OpenCombineShim
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 
 public extension Store {
     /**

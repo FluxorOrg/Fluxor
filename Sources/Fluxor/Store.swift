@@ -6,7 +6,11 @@
 
 import Dispatch
 import Foundation
-import OpenCombineShim
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 
 /**
  The `Store` is a centralized container for a single-source-of-truth `State`.
