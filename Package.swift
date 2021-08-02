@@ -22,7 +22,6 @@ var fluxorTargetDependencies: [Target.Dependency] = ["AnyCodable"]
 dependencies.append(.package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.12.0"))
 fluxorTargetDependencies.append(contentsOf: [
     "OpenCombine",
-    .product(name: "OpenCombineFoundation", package: "OpenCombine"),
     .product(name: "OpenCombineDispatch", package: "OpenCombine"),
 ])
 #endif

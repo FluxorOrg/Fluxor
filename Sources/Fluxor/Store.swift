@@ -10,6 +10,7 @@ import Foundation
 import Combine
 #else
 import OpenCombine
+import OpenCombineDispatch
 #endif
 
 /**
