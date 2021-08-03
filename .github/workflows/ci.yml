@@ -42,6 +42,6 @@ jobs:
       with:
           swift-version: ${{ matrix.swift }}
     - name: Build
-      run: swift build -v
+      run: swift build -v --enable-test-discovery
     - name: Test
       run: swift test -v --enable-test-discovery
