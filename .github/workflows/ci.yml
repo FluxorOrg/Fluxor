@@ -9,8 +9,8 @@ on:
     - master
 
 jobs:
-  build-apple:
-    name: Build and Test (Apple platforms)
+  coverage:
+    name: Generate test coverage
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
@@ -28,12 +28,20 @@ jobs:
         coverageCommand: ls
         coverageLocations: coverage.lcov:lcov
         debug: true
-  build-linux:
-    name: Build and Test (Linux)
-    runs-on: ubuntu-latest
+  build-and-test:
+    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        swift: ["5.2", "5.3", "5.4"]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
+    - name: Setup Swift
+      uses: fwal/setup-swift@v1.7.0
+      with:
+          swift-version: ${{ matrix.swift }}
     - name: Build
-      run: swift build -v
+      run: swift build -v --enable-test-discovery
     - name: Test
-      run: swift test -v
+      run: swift test -v --enable-test-discovery
