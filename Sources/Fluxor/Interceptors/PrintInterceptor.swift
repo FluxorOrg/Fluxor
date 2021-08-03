@@ -28,16 +28,16 @@ public class PrintInterceptor<State: Encodable>: Interceptor {
      */
     public func actionDispatched(action: Action, oldState: State, newState: State) {
         let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         let name = String(describing: type(of: self))
 
         let actionName = String(describing: type(of: action))
         var actionLog = "\(name) - action dispatched: \(actionName)"
         if Mirror(reflecting: action).children.count > 0 {
             if let encodableAction = action as? EncodableAction,
-                let actionData = encodableAction.encode(with: encoder),
-                let actionJSON = String(data: actionData, encoding: .utf8),
-                actionJSON.replacingOccurrences(of: "\n", with: "") != "{}" {
+               let actionData = encodableAction.encode(with: encoder),
+               let actionJSON = String(data: actionData, encoding: .utf8),
+               actionJSON.replacingOccurrences(of: "\n", with: "") != "{}" {
                 actionLog += ", data: \(actionJSON)"
             } else {
                 actionLog += "\n⚠️ The payload of the Action has properties but aren't Encodable."
@@ -47,7 +47,7 @@ public class PrintInterceptor<State: Encodable>: Interceptor {
         self.print(actionLog)
 
         if let stateData = try? encoder.encode(newState),
-            let newStateJSON = String(data: stateData, encoding: .utf8) {
+           let newStateJSON = String(data: stateData, encoding: .utf8) {
             self.print("\(name) - state changed to: \(newStateJSON)")
         }
     }
