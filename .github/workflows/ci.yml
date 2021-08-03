@@ -33,7 +33,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        swift: ["5.1", "5.2", "5.3", "5.4"]
+        swift: ["5.2", "5.3", "5.4"]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
