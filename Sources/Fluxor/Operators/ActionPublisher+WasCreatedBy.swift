@@ -4,10 +4,14 @@
  *  MIT license, see LICENSE file for details
  */
 
+#if canImport(Combine)
 import Combine
+#else
+import OpenCombine
+#endif
 
 /// Operators for narrowing down `Action`s in Publisher streams.
-extension Publisher where Output == Action {
+public extension Publisher where Output == Action {
     /**
      Only lets `Action`s created from the given `ActionTemplate`s get through the stream.
 
@@ -19,7 +23,7 @@ extension Publisher where Output == Action {
 
      - Parameter actionTemplate: An `ActionTemplate` to check
      */
-    public func wasCreated<Payload>(from actionTemplate: ActionTemplate<Payload>)
+    func wasCreated<Payload>(from actionTemplate: ActionTemplate<Payload>)
         -> AnyPublisher<AnonymousAction<Payload>, Self.Failure> {
         ofType(AnonymousAction<Payload>.self)
             .filter { $0.wasCreated(from: actionTemplate) }

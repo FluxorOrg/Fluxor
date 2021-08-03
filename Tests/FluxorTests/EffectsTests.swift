@@ -4,9 +4,13 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Combine
 @testable import Fluxor
 import FluxorTestSupport
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 import XCTest
 
 // swiftlint:disable nesting force_cast
@@ -34,7 +38,7 @@ class EffectsTests: XCTestCase {
         let action1 = Test1Action()
         let action2 = Test2Action()
         let environment = TestEnvironment()
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         expectation.expectedFulfillmentCount = 1
         let effect = Effect<TestEnvironment>.dispatchingOne { actions, env in
             actions.ofType(Test1Action.self)
@@ -64,7 +68,7 @@ class EffectsTests: XCTestCase {
         let action2 = Test2Action()
         let action3 = Test3Action()
         let environment = TestEnvironment()
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         expectation.expectedFulfillmentCount = 1
         let effect = Effect<TestEnvironment>.dispatchingMultiple { actions, env in
             actions.ofType(Test1Action.self)
@@ -89,7 +93,7 @@ class EffectsTests: XCTestCase {
     /// Can we run a non dispatching `Effect`?
     func testEffectRunNonDispatching() throws {
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         expectation.expectedFulfillmentCount = 2
         let action = Test1Action()
         let environment = TestEnvironment()

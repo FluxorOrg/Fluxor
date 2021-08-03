@@ -4,9 +4,14 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Combine
 import Dispatch
-import struct Foundation.UUID
+import Foundation
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+import OpenCombineDispatch
+#endif
 
 /**
  The `Store` is a centralized container for a single-source-of-truth `State`.
@@ -46,7 +51,7 @@ open class Store<State, Environment>: ObservableObject {
      - Parameter reducers: The `Reducer`s to register
      */
     public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
-        state = initialState
+        self.state = initialState
         self.environment = environment
         reducers.forEach(register(reducer:))
     }
@@ -130,7 +135,7 @@ open class Store<State, Environment>: ObservableObject {
      - Parameter effect: The `Effect` to register
      */
     public func register(effect: Effect<Environment>) {
-        self.effects["*"] = (self.effects["*"] ?? []) + [createCancellable(for: effect)]
+        effects["*"] = (effects["*"] ?? []) + [createCancellable(for: effect)]
     }
 
     /**
@@ -199,7 +204,7 @@ public extension Store where Environment == Void {
      - Parameter reducers: The `Reducer`s to register
      */
     convenience init(initialState: State, reducers: [Reducer<State>] = []) {
-        self.init(initialState: initialState, environment: Void(), reducers: reducers)
+        self.init(initialState: initialState, environment: (), reducers: reducers)
     }
 }
 
@@ -245,7 +250,7 @@ private extension Store {
         case .dispatchingOne(let effectCreator):
             return effectCreator(actions.eraseToAnyPublisher(), environment)
                 .receive(on: DispatchQueue.main)
-                .sink(receiveValue: self.dispatch(action:))
+                .sink(receiveValue: dispatch(action:))
         case .dispatchingMultiple(let effectCreator):
             return effectCreator(actions.eraseToAnyPublisher(), environment)
                 .receive(on: DispatchQueue.main)

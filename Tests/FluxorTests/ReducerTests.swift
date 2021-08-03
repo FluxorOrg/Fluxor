@@ -16,7 +16,7 @@ class ReducerTests: XCTestCase {
         let incrementAction = IncrementAction(increment: 42)
         let decrementActionTemplate = ActionTemplate(id: "Decrement", payloadType: Int.self)
         let decrementAction = decrementActionTemplate.createAction(payload: 1)
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         expectation.expectedFulfillmentCount = 2
         let reducer = Reducer<TestState> { state, action in
             if let action = action as? IncrementAction {
@@ -44,7 +44,7 @@ class ReducerTests: XCTestCase {
         let incrementAction = IncrementAction(increment: 42)
         let decrementActionTemplate = ActionTemplate(id: "Decrement", payloadType: Int.self)
         let decrementAction = decrementActionTemplate.createAction(payload: 1)
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         expectation.expectedFulfillmentCount = 2
         let reducer = Reducer<TestState>(
             ReduceOn(IncrementAction.self) { state, action in
@@ -73,9 +73,9 @@ class ReducerTests: XCTestCase {
         let incrementActionTemplate = ActionTemplate(id: "Increment", payloadType: Int.self)
         let decrementActionTemplate = ActionTemplate(id: "Decrement", payloadType: Int.self)
         let otherDecrementActionTemplate = ActionTemplate(id: "Other Decrement", payloadType: Int.self)
-        let incrementExpectation = XCTestExpectation(description: debugDescription + "-incrementExpectation")
+        let incrementExpectation = XCTestExpectation(description: #function + "-incrementExpectation")
         incrementExpectation.expectedFulfillmentCount = 1
-        let decrementExpectation = XCTestExpectation(description: debugDescription + "-decrementExpectation")
+        let decrementExpectation = XCTestExpectation(description: #function + "-decrementExpectation")
         decrementExpectation.expectedFulfillmentCount = 2
         let reducer = Reducer<TestState>(
             ReduceOn(incrementActionTemplate) { _, _ in

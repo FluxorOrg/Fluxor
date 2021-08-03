@@ -4,9 +4,13 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Combine
 import Dispatch
 import Fluxor
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 import XCTest
 
 /// The `EffectRunner` can be used to run `Effect`s with a specified `Action`.
@@ -66,7 +70,7 @@ public extension EffectRunner where Environment == Void {
     static func run(_ effect: Effect<Environment>,
                     with action: Action,
                     expectedCount: Int = 1) throws -> [Action]? {
-        return try run(effect, with: action, environment: Void(), expectedCount: expectedCount)
+        return try run(effect, with: action, environment: (), expectedCount: expectedCount)
     }
 }
 

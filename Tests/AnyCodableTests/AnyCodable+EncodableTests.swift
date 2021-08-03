@@ -38,7 +38,8 @@ class AnyCodableEncodableTests: XCTestCase {
         let data = try encoder.encode(dictionary)
         let json = String(data: data, encoding: .utf8)
         // Then
-        XCTAssertEqual(json, """
+        #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) // On Linux float and double are encoded different
+        let expected = """
         {
           "arraySigned" : [
             1,
@@ -70,7 +71,43 @@ class AnyCodableEncodableTests: XCTestCase {
           "url" : "https://apple.com",
           "void" : null
         }
-        """)
+        """
+        #else
+        let expected = """
+        {
+          "arraySigned" : [
+            1,
+            2,
+            3,
+            4
+          ],
+          "arrayUnsigned" : [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "boolean" : true,
+          "custom" : {
+            "value" : 42
+          },
+          "date" : 1585778827,
+          "double" : 3.141592653589793,
+          "float" : 3.1415927,
+          "integer" : 1,
+          "nested" : {
+            "a" : "alpha",
+            "b" : "bravo",
+            "c" : "charlie"
+          },
+          "string" : "string",
+          "url" : "https://apple.com",
+          "void" : null
+        }
+        """
+        #endif
+        XCTAssertEqual(json, expected)
     }
 
     /// Does an error get thrown when the value can't be encoded?

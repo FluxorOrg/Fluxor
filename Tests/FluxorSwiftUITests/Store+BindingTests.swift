@@ -4,6 +4,8 @@
  *  MIT license, see LICENSE file for details
  */
 
+#if canImport(SwiftUI)
+
 import Fluxor
 import FluxorSwiftUI
 import FluxorTestSupport
@@ -144,3 +146,5 @@ private struct TestState {
     var locked: Bool = false
     var lightsOn: Bool = false
 }
+
+#endif

@@ -4,8 +4,12 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Combine
 import Fluxor
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 import XCTest
 
 class ActionPublisherOfTypeTests: XCTestCase {
@@ -19,7 +23,7 @@ class ActionPublisherOfTypeTests: XCTestCase {
     /// Does the operator let the `Action` pass if it matches?
     func testMatchingType() {
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         let cancellable = actions
             .ofType(Action1.self)
             .sink { _ in expectation.fulfill() }
@@ -33,7 +37,7 @@ class ActionPublisherOfTypeTests: XCTestCase {
     /// Does the operator block the `Action` if it doesn't match?
     func testNonMatchingType() {
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         expectation.isInverted = true
         let cancellable = actions
             .ofType(Action2.self)

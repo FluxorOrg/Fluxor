@@ -4,8 +4,12 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Combine
 import Fluxor
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 
 public extension Store {
     /**

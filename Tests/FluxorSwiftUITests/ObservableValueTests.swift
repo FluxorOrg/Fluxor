@@ -26,7 +26,7 @@ class ObservableValueTests: XCTestCase {
 
     func testBindingWithOneActionTemplate() {
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         let observableValue = store.observe(counterSelector)
         let cancellable = observableValue.objectWillChange.sink { expectation.fulfill() }
         XCTAssertEqual(observableValue.current, 42)

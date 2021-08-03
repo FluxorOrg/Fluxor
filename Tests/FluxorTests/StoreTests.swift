@@ -4,9 +4,13 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Combine
 @testable import Fluxor
 import FluxorTestSupport
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 import XCTest
 
 // swiftlint:disable force_cast
@@ -47,7 +51,7 @@ class StoreTests: XCTestCase {
             id: "Todos Reducer",
             ReduceOn(incrementActionTemplate) { todosState, action in
                 todosState.counter += action.payload
-        })
+            })
         XCTAssertEqual(store.state.todos.counter, 0)
         store.register(reducer: reducer, for: \.todos)
         // When
@@ -195,7 +199,7 @@ class StoreTests: XCTestCase {
         let store = Store(initialState: TestState(type: .initial, lastAction: nil),
                           environment: TestEnvironment(),
                           reducers: [testReducer])
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         let cancellable = store.select(selector).sink {
             if $0 == .modified {
                 expectation.fulfill()
@@ -277,7 +281,7 @@ private class TestEnvironment: Equatable {
     var unrelatedActionTemplate: ActionTemplate<Void> { ActionTemplate(id: "UnrelatedAction") }
     var unrelatedAction: AnonymousAction<Void> { unrelatedActionTemplate.createAction() }
     var lastAction: AnonymousAction<Int>?
-    var mainThreadCheck = { XCTAssertEqual(Thread.current, Thread.main) }
+    var mainThreadCheck = { XCTAssertTrue(Thread.current.isMainThread) }
     var expectation: XCTestExpectation!
 
     init() {

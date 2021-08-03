@@ -4,6 +4,8 @@
  *  MIT license, see LICENSE file for details
  */
 
+#if canImport(SwiftUI)
+
 import Fluxor
 import SwiftUI
 
@@ -63,3 +65,5 @@ public extension Store {
                      set: { self.dispatch(action: action($0)) })
     }
 }
+
+#endif

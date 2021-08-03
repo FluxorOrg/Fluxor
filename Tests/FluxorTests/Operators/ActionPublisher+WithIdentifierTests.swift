@@ -5,8 +5,12 @@
 //  Created by Morten Bjerg Gregersen on 04/01/2020.
 //
 
-import Combine
 import Fluxor
+#if canImport(Combine)
+import Combine
+#else
+import OpenCombine
+#endif
 import XCTest
 
 class ActionPublisherWithIdentifierTests: XCTestCase {
@@ -24,7 +28,7 @@ class ActionPublisherWithIdentifierTests: XCTestCase {
     /// Does the operator let the `Action` pass if the identifier matches?
     func testMatchingIdentifier() {
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         let cancellable = actions
             .withIdentifier(action1Identifier)
             .sink { _ in expectation.fulfill() }
@@ -38,7 +42,7 @@ class ActionPublisherWithIdentifierTests: XCTestCase {
     /// Does the operator block the `Action` if the identifier doesn't match?
     func testNonMatchingIdentifier() {
         // Given
-        let expectation = XCTestExpectation(description: debugDescription)
+        let expectation = XCTestExpectation(description: #function)
         expectation.isInverted = true
         let cancellable = actions
             .withIdentifier(action2Identifier)
