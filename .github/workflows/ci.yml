@@ -32,7 +32,7 @@ jobs:
     name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [macos-latest]
         swift: ["5.2", "5.3", "5.4"]
     runs-on: ${{ matrix.os }}
     steps:
