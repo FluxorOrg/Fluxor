@@ -33,7 +33,11 @@ class AnyCodableEncodableTests: XCTestCase {
         ]
         // When
         let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        var outputFormatting: JSONEncoder.OutputFormatting = [.prettyPrinted, .sortedKeys]
+        #if swift(>=5.3)
+        outputFormatting = outputFormatting.union(.withoutEscapingSlashes)
+        #endif
+        encoder.outputFormatting = outputFormatting
         encoder.dateEncodingStrategy = .secondsSince1970
         let data = try encoder.encode(dictionary)
         let json = String(data: data, encoding: .utf8)
