@@ -36,4 +36,4 @@ jobs:
     - name: Build
       run: swift build -v
     - name: Test
-      run: swift test -v --enable-code-coverage
+      run: swift test -v
