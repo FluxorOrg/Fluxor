@@ -7,11 +7,12 @@
     <b>Unidirectional Data Flow in Swift - inspired by <a href="https://redux.js.org">Redux</a> and <a href="https://ngrx.io">NgRx</a>.</b><br />
     Based on <a href="https://developer.apple.com/documentation/combine">Combine</a> - ideal for use with <a href="https://developer.apple.com/documentation/swiftui">SwiftUI</a>.<br />
     <br />
-    <img src="https://img.shields.io/badge/Swift-5.2-brightgreen.svg" alt="Swift version" />
-    <a href="https://swift.org/package-manager">
-        <img src="https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg?style=flat" alt="Swift PM" />
+    <a href="https://swiftpackageindex.com/FluxorOrg/Fluxor">
+        <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FFluxorOrg%2FFluxor%2Fbadge%3Ftype%3Dswift-versions" alt="Swift version" />
     </a>
-    <img src="https://img.shields.io/badge/platforms-Mac+iOS-brightgreen.svg?style=flat" alt="Platforms" />
+    <a href="https://swiftpackageindex.com/FluxorOrg/Fluxor">
+        <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FFluxorOrg%2FFluxor%2Fbadge%3Ftype%3Dplatforms" alt="Platforms" />
+    </a>
     <a href="https://twitter.com/mortengregersen">
         <img src="https://img.shields.io/badge/twitter-@mortengregersen-blue.svg?style=flat" alt="Twitter" />
     </a>
