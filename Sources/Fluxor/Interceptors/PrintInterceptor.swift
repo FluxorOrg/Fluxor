@@ -28,7 +28,7 @@ public class PrintInterceptor<State: Encodable>: Interceptor {
      */
     public func actionDispatched(action: Action, oldState: State, newState: State) {
         let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.outputFormatting = .prettyPrinted
         let name = String(describing: type(of: self))
 
         let actionName = String(describing: type(of: action))
