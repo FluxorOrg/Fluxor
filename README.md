@@ -13,9 +13,6 @@
     <a href="https://swiftpackageindex.com/FluxorOrg/Fluxor">
         <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FFluxorOrg%2FFluxor%2Fbadge%3Ftype%3Dplatforms" alt="Platforms" />
     </a>
-    <a href="https://twitter.com/mortengregersen">
-        <img src="https://img.shields.io/badge/twitter-@mortengregersen-blue.svg?style=flat" alt="Twitter" />
-    </a>
     <br />
     <img src="https://github.com/FluxorOrg/Fluxor/workflows/CI/badge.svg" alt="CI" />
     <a href="https://fluxor.dev">
@@ -26,6 +23,9 @@
     </a>
     <a href="https://codeclimate.com/github/FluxorOrg/Fluxor/test_coverage">
         <img src="https://api.codeclimate.com/v1/badges/f2ea66abc81e4a578a31/test_coverage" alt="Test Coverage" />
+    </a>
+    <a href="https://twitter.com/mortengregersen">
+        <img src="https://img.shields.io/badge/twitter-@mortengregersen-blue.svg?style=flat" alt="Twitter" />
     </a>
 </p>
 
