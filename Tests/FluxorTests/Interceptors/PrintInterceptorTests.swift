@@ -72,7 +72,6 @@ class PrintInterceptorTests: XCTestCase {
             .createAction(payload: .init(increment: 3))
         let oldState2 = newState1
         let newState2 = TestState(counter: 22)
-        _ = try! JSONEncoder().encode(AnonymousAction(id: "Bla", payload: EncodablePayload(increment: 1)))
         // When
         interceptor.actionDispatched(action: action1, oldState: oldState1, newState: newState1)
         interceptor.actionDispatched(action: action2, oldState: oldState2, newState: newState2)
