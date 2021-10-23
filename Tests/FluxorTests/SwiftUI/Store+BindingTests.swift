@@ -1,5 +1,5 @@
 /*
- * FluxorSwiftUITests
+ * FluxorTests
  *  Copyright (c) Morten Bjerg Gregersen 2020
  *  MIT license, see LICENSE file for details
  */
@@ -7,7 +7,6 @@
 #if canImport(SwiftUI)
 
 import Fluxor
-import FluxorSwiftUI
 import FluxorTestSupport
 import SwiftUI
 import XCTest
