@@ -27,12 +27,12 @@ class StoreValueTests: XCTestCase {
 
     func testStoreValue() {
         // Given
-        @StoreValue(counterSelector) var storeValue: Int
-        XCTAssertEqual(storeValue, 42)
+        let storeValue = StoreValue(counterSelector)
+        XCTAssertEqual(storeValue.wrappedValue, 42)
         // When
         store.dispatch(action: increment(payload: 1))
         // Then
-        XCTAssertEqual(storeValue, 43)
+        XCTAssertEqual(storeValue.wrappedValue, 43)
     }
 }
 
