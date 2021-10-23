@@ -185,7 +185,7 @@ open class Store<State, Environment>: ObservableObject {
                                               statePublisher: Published<State>.Publisher,
                                               getStateHash: @escaping () -> UUID) -> AnyPublisher<Value, Never>
     {
-        return statePublisher.map { selector.map($0, stateHash: getStateHash()) }.eraseToAnyPublisher()
+        statePublisher.map { selector.map($0, stateHash: getStateHash()) }.eraseToAnyPublisher()
     }
 
     /**
@@ -195,14 +195,14 @@ open class Store<State, Environment>: ObservableObject {
      - Returns: The current `Value` in the `State`
      */
     open func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
-        return Store.selectCurrent(selector, state: state, stateHash: stateHash)
+        Store.selectCurrent(selector, state: state, stateHash: stateHash)
     }
 
     internal static func selectCurrent<State, Value>(_ selector: Selector<State, Value>,
                                                      state: State,
                                                      stateHash: UUID) -> Value
     {
-        return selector.map(state, stateHash: stateHash)
+        selector.map(state, stateHash: stateHash)
     }
 }
 
@@ -250,7 +250,7 @@ private extension Store {
      - Returns: The `Cancellable`s for the given `Effect`s
      */
     func createCancellables(for effects: [Effect<Environment>]) -> [AnyCancellable] {
-        return effects.map(createCancellable(for:))
+        effects.map(createCancellable(for:))
     }
 
     /**
