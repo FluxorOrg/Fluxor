@@ -15,7 +15,7 @@ public enum StorePropertyWrapper {
     public static func addStore<State, Environment>(_ store: Store<State, Environment>) {
         stores[String(describing: type(of: store.state))] = AnyEnvironmentStore(store: store)
     }
-    
+
     internal static func removeAllStores() {
         stores = [:]
     }
@@ -31,7 +31,7 @@ public enum StorePropertyWrapper {
 
 public enum StorePropertyWrapperError: Error {
     case storeNotFound(stateName: String)
-    
+
     var localizedDescription: String {
         switch self {
         case .storeNotFound(let stateName):
@@ -44,7 +44,7 @@ internal struct AnyEnvironmentStore<State> {
     let getState: () -> State
     let getStateHash: () -> UUID
     let getStatePublisher: () -> Published<State>.Publisher
-    
+
     init<Environment>(store: Store<State, Environment>) {
         self.getState = { store.state }
         self.getStateHash = { store.stateHash }
