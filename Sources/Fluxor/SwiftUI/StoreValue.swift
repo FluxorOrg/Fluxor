@@ -20,6 +20,7 @@ public struct StoreValue<State, Value> {
     }
 }
 
+// TODO: This should be renamed to ObservableValue when the old one is removed
 internal class InternalObservableValue<Value>: ObservableObject {
     /// The current value. This will change everytime the `State` in the `Store` changes
     @Published internal private(set) var current: Value
