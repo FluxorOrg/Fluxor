@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1140"
+   LastUpgradeVersion = "1310"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -115,16 +115,6 @@
                BlueprintIdentifier = "AnyCodableTests"
                BuildableName = "AnyCodableTests"
                BlueprintName = "AnyCodableTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FluxorSwiftUITests"
-               BuildableName = "FluxorSwiftUITests"
-               BlueprintName = "FluxorSwiftUITests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
