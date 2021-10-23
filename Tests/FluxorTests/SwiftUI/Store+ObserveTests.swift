@@ -1,14 +1,13 @@
-/*
- * FluxorSwiftUITests
+/**
+ * FluxorTests
  *  Copyright (c) Morten Bjerg Gregersen 2020
  *  MIT license, see LICENSE file for details
  */
 
 import Fluxor
-import FluxorSwiftUI
 import XCTest
 
-class ObservableValueTests: XCTestCase {
+class StoreObserveTests: XCTestCase {
     private let counterSelector = Selector(keyPath: \TestState.counter)
     private let increment = ActionTemplate(id: "Increment", payloadType: Int.self)
     private var store: Store<TestState, Void>!
@@ -16,7 +15,7 @@ class ObservableValueTests: XCTestCase {
     override func setUp() {
         super.setUp()
         store = Store(initialState: .init(), reducers: [
-            Reducer<TestState>(
+            Reducer(
                 ReduceOn(increment) { state, action in
                     state.counter += action.payload
                 }
@@ -24,7 +23,7 @@ class ObservableValueTests: XCTestCase {
         ])
     }
 
-    func testBindingWithOneActionTemplate() {
+    func testObserverWithOneActionTemplate() {
         // Given
         let expectation = XCTestExpectation(description: #function)
         let observableValue = store.observe(counterSelector)
