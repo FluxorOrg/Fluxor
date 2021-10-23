@@ -15,12 +15,14 @@ public struct StoreValue<State, Value> {
     private let observableValue: InternalObservableValue<Value>
 
     public init(_ selector: Selector<State, Value>) {
+        // swiftlint:disable:next force_try
         let store: AnyEnvironmentStore<State> = try! StorePropertyWrapper.getStore()
-        observableValue = InternalObservableValue(current: store.selectCurrent(selector), publisher: store.select(selector))
+        observableValue = InternalObservableValue(current: store.selectCurrent(selector),
+                                                  publisher: store.select(selector))
     }
 }
 
-// TODO: This should be renamed to ObservableValue when the old one is removed
+// This should be renamed to ObservableValue when the old one is removed
 internal class InternalObservableValue<Value>: ObservableObject {
     /// The current value. This will change everytime the `State` in the `Store` changes
     @Published internal private(set) var current: Value

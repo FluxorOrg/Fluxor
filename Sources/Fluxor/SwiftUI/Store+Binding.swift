@@ -31,8 +31,10 @@ public extension Store {
      is dispatched on the `Store`.
 
      - Parameter selector: The `Selector`s to use for getting the current value
-     - Parameter enableActionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value should be enabled
-     - Parameter disableActionTemplate: The `ActionTemplate` to use for dispatching an `Action` when the value should be disabled
+     - Parameter enableActionTemplate: The `ActionTemplate` to use for dispatching an `Action`
+                                       when the value should be enabled
+     - Parameter disableActionTemplate: The `ActionTemplate` to use for dispatching an `Action`
+                                        when the value should be disabled
      - Returns: A `Binding` based on the given `Selector` and `ActionTemplate`s
      */
     func binding(get selector: Selector<State, Bool>,

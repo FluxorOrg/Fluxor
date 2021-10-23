@@ -19,6 +19,7 @@ final class StorePropertyWrapperTests: XCTestCase {
         let store = Store(initialState: 42)
         StorePropertyWrapper.addStore(store)
         XCTAssertThrowsError(try StorePropertyWrapper.getStore() as AnyEnvironmentStore<String>) { error in
+            // swiftlint:disable:next force_cast
             XCTAssertEqual(error as! StorePropertyWrapperError, .storeNotFound(stateName: "String"))
         }
     }
