@@ -15,28 +15,40 @@ public enum StorePropertyWrapper {
     public static func addStore<State, Environment>(_ store: Store<State, Environment>) {
         stores[String(describing: type(of: store.state))] = AnyEnvironmentStore(store: store)
     }
+    
+    internal static func removeAllStores() {
+        stores = [:]
+    }
 
-    static func getStore<State, Value>(for: Selector<State, Value>) -> AnyEnvironmentStore<State> {
+    internal static func getStore<State>() throws -> AnyEnvironmentStore<State> {
         let key = String(describing: State.self)
-        return stores[key] as! AnyEnvironmentStore<State>
+        guard let store = stores[key] as? AnyEnvironmentStore<State> else {
+            throw StorePropertyWrapperError.storeNotFound(stateName: key)
+        }
+        return store
     }
 }
 
-internal struct AnyEnvironmentStore<State>: ObservableStore {
+public enum StorePropertyWrapperError: Error {
+    case storeNotFound(stateName: String)
+    
+    var localizedDescription: String {
+        switch self {
+        case .storeNotFound(let stateName):
+            return "A Store for '\(stateName)' is not added to \(String(describing: StorePropertyWrapper.self))"
+        }
+    }
+}
+
+internal struct AnyEnvironmentStore<State> {
     let getState: () -> State
     let getStateHash: () -> UUID
     let getStatePublisher: () -> Published<State>.Publisher
-    let dispatchAction: (Action) -> Void
-
+    
     init<Environment>(store: Store<State, Environment>) {
         self.getState = { store.state }
         self.getStateHash = { store.stateHash }
         self.getStatePublisher = { store.$state }
-        self.dispatchAction = store.dispatch(action:)
-    }
-
-    func dispatch(action: Action) {
-        dispatchAction(action)
     }
 
     func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
@@ -45,10 +57,6 @@ internal struct AnyEnvironmentStore<State>: ObservableStore {
 
     func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
         return Store<State, Any>.selectCurrent(selector, state: getState(), stateHash: getStateHash())
-    }
-
-    func observe<Value>(_ selector: Selector<State, Value>) -> ObservableValue<Value> {
-        return ObservableValue(current: selectCurrent(selector), publisher: select(selector))
     }
 }
 
