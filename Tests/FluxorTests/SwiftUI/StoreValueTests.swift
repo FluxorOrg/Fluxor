@@ -4,6 +4,8 @@
  *  MIT license, see LICENSE file for details
  */
 
+#if canImport(SwiftUI)
+
 @testable import Fluxor
 import XCTest
 
@@ -39,3 +41,5 @@ class StoreValueTests: XCTestCase {
 private struct TestState {
     var counter: Int = 42
 }
+
+#endif
