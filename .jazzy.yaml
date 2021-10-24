@@ -48,8 +48,10 @@ custom_categories:
     - PrintInterceptor
   - name: Using Fluxor with SwiftUI
     children:
+    - StoreValue
     - ObservableValue
-    - ValueBinding
+    - StorePropertyWrapper
+    - StorePropertyWrapperError
   - name: Test Support
     children:
     - MockStore
