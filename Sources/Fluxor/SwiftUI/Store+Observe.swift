@@ -10,24 +10,30 @@ import Combine
 import OpenCombine
 #endif
 
+// MARK: - SwiftUI observation
+
 public extension Store {
     /**
-     ***Deprecated***: Creates an `ObservableValue` from the given `Selector`.
+     Creates an `ObservableValue` from the given `Selector`.
+
+     > **_NOTE:_** This method is deprecated. Use the `StoreValue` property wrapper instead.
 
      - Parameter selector: The `Selector`s to use for observing
      - Returns: An `ObservableValue` based on the given `Selector`
      */
-    @available(*, deprecated, message: "observe will be removed in future version")
+    @available(*, deprecated, message: "observe will be removed in future version. Use the @StoreValue property wrapper instead.")
     func observe<Value>(_ selector: Selector<State, Value>) -> ObservableValue<Value> {
         return .init(store: self, selector: selector)
     }
 }
 
 /**
- ***Deprecated***: An `ObservableValue` can be wrapped in an `ObservedObject` property wrapper.
+ An `ObservableValue` can be wrapped in an `ObservedObject` property wrapper.
  With the given `Selector` it selects a slice of the `State` for SwiftUI to automatically observe.
+
+ > **_NOTE:_** This extension is deprecated. Use the `StoreValue` property wrapper instead.
  */
-@available(*, deprecated, message: "ObservableValue will be removed in future version")
+@available(*, deprecated, message: "ObservableValue will be removed in future version. Use the @StoreValue property wrapper instead.")
 public class ObservableValue<Value>: ObservableObject {
     /// The current value. This will change everytime the `State` in the `Store` changes
     @Published public private(set) var current: Value

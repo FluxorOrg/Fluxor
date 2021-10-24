@@ -12,6 +12,18 @@ import SwiftUI
 /**
  A property wrapper for observing a value in the `Store`.
  
+     import Fluxor
+     import SwiftUI
+
+     struct DrawView: View {
+         @StoreValue(Selectors.canClear) private var canClear: Bool
+         
+         var body: some View {
+             Button(action: { ... }, label: { Text("Clear") })
+                 .disabled(!canClear)
+         }
+     }
+ 
  > **_NOTE:_** Be sure to add your `Store` to `StorePropertyWrapper` before using this property wrapper. Check the "Using Fluxor with SwiftUI" abstract for more information about how to use it.
  */
 @propertyWrapper public struct StoreValue<State, Value> {

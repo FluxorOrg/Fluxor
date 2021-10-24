@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// MARK: - SwiftUI bindings
+
 public extension Store {
     /**
      Creates a `Binding` from the given `Selector` and `ActionTemplate`.
