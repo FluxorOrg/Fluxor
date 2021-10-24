@@ -21,7 +21,8 @@ public extension Store {
      - Parameter selector: The `Selector`s to use for observing
      - Returns: An `ObservableValue` based on the given `Selector`
      */
-    @available(*, deprecated, message: "observe will be removed in future version. Use the @StoreValue property wrapper instead.")
+    @available(*, deprecated,
+               message: "observe will be removed in future version. Use the @StoreValue property wrapper instead.")
     func observe<Value>(_ selector: Selector<State, Value>) -> ObservableValue<Value> {
         return .init(store: self, selector: selector)
     }
@@ -33,7 +34,8 @@ public extension Store {
 
  > **_NOTE:_** This extension is deprecated. Use the `StoreValue` property wrapper instead.
  */
-@available(*, deprecated, message: "ObservableValue will be removed in future version. Use the @StoreValue property wrapper instead.")
+@available(*, deprecated,
+           message: "ObservableValue will be removed in future version. Use the @StoreValue property wrapper instead.")
 public class ObservableValue<Value>: ObservableObject {
     /// The current value. This will change everytime the `State` in the `Store` changes
     @Published public private(set) var current: Value

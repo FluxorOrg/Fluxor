@@ -93,6 +93,7 @@ class ActionTests: XCTestCase {
     }
 
     private func json<Payload>(from action: AnonymousAction<Payload>) -> String {
+        // swiftlint:disable:next force_try
         let data = try! encoder.encode(action)
         return String(data: data, encoding: .utf8)!
     }

@@ -24,7 +24,8 @@ import SwiftUI
          }
      }
  
- > **_NOTE:_** Be sure to add your `Store` to `StorePropertyWrapper` before using this property wrapper. Check the "Using Fluxor with SwiftUI" abstract for more information about how to use it.
+ > **_NOTE:_** Be sure to add your `Store` to `StorePropertyWrapper` before using this property wrapper.
+ > Check the "Using Fluxor with SwiftUI" abstract for more information about how to use it.
  */
 @propertyWrapper public struct StoreValue<State, Value> {
     /// The current value in the `Store`
