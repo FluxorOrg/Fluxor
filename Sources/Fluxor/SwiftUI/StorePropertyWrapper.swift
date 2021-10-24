@@ -9,9 +9,15 @@
 import Combine
 import Foundation
 
+/// A type containing all the `Store`s to be used in property wrappers
 public enum StorePropertyWrapper {
     private static var stores = [String: Any]()
 
+    /**
+     Add a `Store` instance to be used in property wrappers.
+     
+     - Parameter store: The `Store` to add, to be used by property wrappers
+     */
     public static func addStore<State, Environment>(_ store: Store<State, Environment>) {
         stores[String(describing: type(of: store.state))] = AnyEnvironmentStore(store: store)
     }
@@ -29,7 +35,9 @@ public enum StorePropertyWrapper {
     }
 }
 
+/// The types of errors that can occur in `StorePropertyWrapper`.
 public enum StorePropertyWrapperError: Error {
+    /// A `Store` with the given `State` type couldn't be found.
     case storeNotFound(stateName: String)
 
     var localizedDescription: String {

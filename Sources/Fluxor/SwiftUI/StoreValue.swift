@@ -9,11 +9,21 @@
 import Combine
 import SwiftUI
 
-@propertyWrapper
-public struct StoreValue<State, Value> {
+/**
+ A property wrapper for observing a value in the `Store`.
+ 
+ > **_NOTE:_** Be sure to add your `Store` to `StorePropertyWrapper` before using this property wrapper. Check the "Using Fluxor with SwiftUI" abstract for more information about how to use it.
+ */
+@propertyWrapper public struct StoreValue<State, Value> {
+    /// The current value in the `Store`
     public var wrappedValue: Value { observableValue.current }
     private let observableValue: InternalObservableValue<Value>
 
+    /**
+     Initializes the `StoreValue` property wrapper with a `Selector`.
+
+     - Parameter selector: The `Selector` to use for selecting
+     */
     public init(_ selector: Selector<State, Value>) {
         // swiftlint:disable:next force_try
         let store: AnyEnvironmentStore<State> = try! StorePropertyWrapper.getStore()

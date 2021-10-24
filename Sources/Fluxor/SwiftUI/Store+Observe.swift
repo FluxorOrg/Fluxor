@@ -12,7 +12,7 @@ import OpenCombine
 
 public extension Store {
     /**
-     Creates an `ObservableValue` from the given `Selector`.
+     ***Deprecated***: Creates an `ObservableValue` from the given `Selector`.
 
      - Parameter selector: The `Selector`s to use for observing
      - Returns: An `ObservableValue` based on the given `Selector`
@@ -24,7 +24,7 @@ public extension Store {
 }
 
 /**
- An `ObservableValue` can be wrapped in an `ObservedObject`property wrapper.
+ ***Deprecated***: An `ObservableValue` can be wrapped in an `ObservedObject` property wrapper.
  With the given `Selector` it selects a slice of the `State` for SwiftUI to automatically observe.
  */
 @available(*, deprecated, message: "ObservableValue will be removed in future version")
@@ -37,7 +37,7 @@ public class ObservableValue<Value>: ObservableObject {
      Initializes the `ObservableValue` with a `Selector` and the `Store` from where to select.
 
      - Parameter store: The `Store` to select from
-     - Parameter selector: The `Selector`s to use for selecting
+     - Parameter selector: The `Selector` to use for selecting
      */
     public init<State, Environment>(store: Store<State, Environment>, selector: Selector<State, Value>) {
         self.current = store.selectCurrent(selector)
