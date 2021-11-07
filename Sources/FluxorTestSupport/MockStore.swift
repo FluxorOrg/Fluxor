@@ -14,21 +14,15 @@ import Foundation
     import XCTest
 #endif
 
-public func XCTAssertEqual(_ expression1: @autoclosure () -> Action,
-                           _ expression2: @autoclosure () -> Action,
+public func XCTAssertEqual(_ expression1: @autoclosure () -> EncodableAction,
+                           _ expression2: @autoclosure () -> EncodableAction,
                            _: @autoclosure () -> String = "", file: StaticString = #filePath, line: UInt = #line)
 {
-    guard let action1 = expression1() as? EncodableAction else {
-        return XCTFail("The first Action is not Encodable and can't be compared", file: file, line: line)
-    }
-    guard let action2 = expression2() as? EncodableAction else {
-        return XCTFail("The second Action is not Encodable and can't be compared", file: file, line: line)
-    }
     let jsonEncoder = JSONEncoder()
-    guard let action1JsonData = action1.encode(with: jsonEncoder),
-          let action1Json = String(data: action1Json, encoding: .utf8),
-          let action2JsonData = action2.encode(with: jsonEncoder),
-          let action2Json = String(data: action2Json, encoding: .utf8)
+    guard let action1JsonData = expression1().encode(with: jsonEncoder),
+          let action1Json = String(data: action1JsonData, encoding: .utf8),
+          let action2JsonData = expression2().encode(with: jsonEncoder),
+          let action2Json = String(data: action2JsonData, encoding: .utf8)
     else {
         return XCTFail("An error occurred while encoding the action.", file: file, line: line)
     }
