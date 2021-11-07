@@ -37,8 +37,10 @@ public extension EncodableAction {
  The template can have a `Payload`type which is used when creating an actual `Action` from the template.
  */
 public struct ActionTemplate<Payload> {
-    fileprivate let id: String
-    private let payloadType: Payload.Type
+    /// The identifier for the `ActionTemplate`
+    public let id: String
+    /// The type of the `Payload`
+    public let payloadType: Payload.Type
 
     /**
      Initializes an `ActionTemplate` with the given `payloadType`.
