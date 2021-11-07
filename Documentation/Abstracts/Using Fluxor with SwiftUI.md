@@ -2,16 +2,14 @@ Fluxor is based on Combine and is therefore ideal to use with SwiftUI. When Swif
 
 ## Observing a value in the `Store`
 
-When you want to observe a value in the `Store`, the `StoreValue` property wrapper can be used. To use it, first you need to make the `Store` available for the property wrapper by adding it to the `StorePropertyWrapper` helper. This only needs to be done once, so it is recommended that you do it the same place as you instantiate your `Store`. When this is set up just wrap the property in the `@StoreValue` property wrapper by specifying the `Selector` used to select the value. 
-
-> **_NOTE:_** Be aware, that the app will crash if there is no `Store` instance added matching the `State` of the `Selector`. 
+When you want to observe a value in the `Store`, the `StoreValue` property wrapper can be used. Just wrap the property in the `@StoreValue` property wrapper by specifying the `Store` and `Selector` used to select the value. 
 
 ```swift
 import Fluxor
 import SwiftUI
 
 struct DrawView: View {
-    @StoreValue(Selectors.canClear) private var canClear: Bool
+    @StoreValue(Current.store, Selectors.canClear) private var canClear: Bool
     
     var body: some View {
         Button(action: { ... }, label: { Text("Clear") })

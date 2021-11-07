@@ -11,49 +11,39 @@ import SwiftUI
 
 /**
  A property wrapper for observing a value in the `Store`.
- 
+
      import Fluxor
      import SwiftUI
 
      struct DrawView: View {
-         @StoreValue(Selectors.canClear) private var canClear: Bool
-         
+         @StoreValue(Current.store, Selectors.canClear) private var canClear: Bool
+
          var body: some View {
              Button(action: { ... }, label: { Text("Clear") })
                  .disabled(!canClear)
          }
      }
- 
- > **_NOTE:_** Be sure to add your `Store` to `StorePropertyWrapper` before using this property wrapper.
- > Check the "Using Fluxor with SwiftUI" abstract for more information about how to use it.
+
  */
-@propertyWrapper public struct StoreValue<State, Value> {
+@propertyWrapper public struct StoreValue<State, Value> where Value: Equatable {
     /// The current value in the `Store`
-    public var wrappedValue: Value { observableValue.current }
-    private let observableValue: InternalObservableValue<Value>
+    public var wrappedValue: Value { selectCurrent() }
+    /// A `Publisher` for the selecterd value in the `Store`
+    public var projectedValue: AnyPublisher<Value, Never>
+    /// A closure for selecting the current value in the `Store`
+    private let selectCurrent: () -> Value
 
     /**
-     Initializes the `StoreValue` property wrapper with a `Selector`.
+     Initializes the `StoreValue` property wrapper with a `Store` and a `Selector`.
 
-     - Parameter selector: The `Selector` to use for selecting
+     - Parameter store: The `Store` to select the value from
+     - Parameter selector: The `Selector` to use for selecting the value
      */
-    public init(_ selector: Selector<State, Value>) {
-        // swiftlint:disable:next force_try
-        let store: AnyEnvironmentStore<State> = try! StorePropertyWrapper.getStore()
-        observableValue = InternalObservableValue(current: store.selectCurrent(selector),
-                                                  publisher: store.select(selector))
-    }
-}
-
-// This should be renamed to ObservableValue when the old one is removed
-internal class InternalObservableValue<Value>: ObservableObject {
-    /// The current value. This will change everytime the `State` in the `Store` changes
-    @Published internal private(set) var current: Value
-    private var cancellable: AnyCancellable!
-
-    internal init(current: Value, publisher: AnyPublisher<Value, Never>) {
-        self.current = current
-        cancellable = publisher.assign(to: \.current, on: self)
+    public init<Environment>(_ store: Store<State, Environment>, _ selector: Selector<State, Value>) {
+        projectedValue = store.select(selector)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+        selectCurrent = { store.selectCurrent(selector) }
     }
 }
 

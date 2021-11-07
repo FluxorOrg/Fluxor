@@ -23,13 +23,11 @@ class StoreValueTests: XCTestCase {
                 }
             )
         ])
-        StorePropertyWrapper.removeAllStores()
-        StorePropertyWrapper.addStore(store)
     }
 
     func testStoreValue() {
         // Given
-        let storeValue = StoreValue(counterSelector)
+        let storeValue = StoreValue(store, counterSelector)
         XCTAssertEqual(storeValue.wrappedValue, 42)
         // When
         store.dispatch(action: increment(payload: 1))
