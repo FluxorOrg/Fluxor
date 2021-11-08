@@ -48,7 +48,7 @@ class SelectorTests: XCTestCase {
                           scandals: ScandalsState(iphone: "Bendgate",
                                                   other: "Apple Maps launch"),
                           newProducts: NewProductState(products: [
-                              "Watch", "HomePod", "AirPods",
+                              "Watch", "HomePod", "AirPods"
                           ]))
     }
 
