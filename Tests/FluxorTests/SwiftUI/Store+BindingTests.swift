@@ -1,5 +1,5 @@
 /*
- * FluxorSwiftUITests
+ * FluxorTests
  *  Copyright (c) Morten Bjerg Gregersen 2020
  *  MIT license, see LICENSE file for details
  */
@@ -7,7 +7,6 @@
 #if canImport(SwiftUI)
 
 import Fluxor
-import FluxorSwiftUI
 import FluxorTestSupport
 import SwiftUI
 import XCTest
@@ -56,7 +55,7 @@ class StoreBindingTests: XCTestCase {
         counterView.counter = newCounter
         // Then
         XCTAssertEqual(counterView.counter, newCounter)
-        let action = store.stateChanges[0].action as! AnonymousAction<Int>
+        let action = store.dispatchedActions[0] as! AnonymousAction<Int>
         XCTAssertTrue(action.wasCreated(from: setCounter))
         XCTAssertEqual(action.payload, newCounter)
     }
@@ -79,9 +78,9 @@ class StoreBindingTests: XCTestCase {
         counterView.counter = 44
         // Then
         XCTAssertEqual(counterView.counter, 0)
-        let action1 = store.stateChanges[0].action as! AnonymousAction<Void>
+        let action1 = store.dispatchedActions[0] as! AnonymousAction<Void>
         XCTAssertTrue(action1.wasCreated(from: doubleUpCounter))
-        let action2 = store.stateChanges[1].action as! AnonymousAction<Void>
+        let action2 = store.dispatchedActions[1] as! AnonymousAction<Void>
         XCTAssertTrue(action2.wasCreated(from: clearCounter))
     }
 
@@ -98,9 +97,9 @@ class StoreBindingTests: XCTestCase {
         lockView.locked = false
         // Then
         XCTAssertEqual(lockView.locked, false)
-        let action1 = store.stateChanges[0].action as! AnonymousAction<Void>
+        let action1 = store.dispatchedActions[0] as! AnonymousAction<Void>
         XCTAssertTrue(action1.wasCreated(from: lock))
-        let action2 = store.stateChanges[1].action as! AnonymousAction<Void>
+        let action2 = store.dispatchedActions[1] as! AnonymousAction<Void>
         XCTAssertTrue(action2.wasCreated(from: unlock))
     }
 
@@ -117,10 +116,10 @@ class StoreBindingTests: XCTestCase {
         lightsView.lightsOn = false
         // Then
         XCTAssertEqual(lightsView.lightsOn, false)
-        let action1 = store.stateChanges[0].action as! AnonymousAction<Bool>
+        let action1 = store.dispatchedActions[0] as! AnonymousAction<Bool>
         XCTAssertTrue(action1.wasCreated(from: changeLights))
         XCTAssertEqual(action1.payload, true)
-        let action2 = store.stateChanges[1].action as! AnonymousAction<Bool>
+        let action2 = store.dispatchedActions[1] as! AnonymousAction<Bool>
         XCTAssertTrue(action2.wasCreated(from: changeLights))
         XCTAssertEqual(action2.payload, false)
     }

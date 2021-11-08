@@ -1,7 +1,7 @@
 module: Fluxor
 author: Morten Bjerg Gregersen
 github_url: https://github.com/FluxorOrg/Fluxor
-copyright: '© 2020 under [open source license](https://github.com/FluxorOrg/Fluxor/blob/master/LICENSE).'
+copyright: '© 2021 under [open source license](https://github.com/FluxorOrg/Fluxor/blob/master/LICENSE).'
 swift_version: 5.2
 
 documentation: "Documentation/Guides/*.md"
@@ -21,6 +21,7 @@ custom_categories:
     - Action
     - ActionTemplate
     - AnonymousAction
+    - EncodableAction
     - IdentifiableAction
   - name: Reducers
     children:
@@ -48,8 +49,10 @@ custom_categories:
     - PrintInterceptor
   - name: Using Fluxor with SwiftUI
     children:
+    - StoreValue
     - ObservableValue
-    - ValueBinding
+    - StorePropertyWrapper
+    - StorePropertyWrapperError
   - name: Test Support
     children:
     - MockStore

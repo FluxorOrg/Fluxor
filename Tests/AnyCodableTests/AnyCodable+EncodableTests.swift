@@ -14,21 +14,21 @@ class AnyCodableEncodableTests: XCTestCase {
     func testSimpleTypes() throws {
         // Given
         let dictionary: [String: AnyCodable] = [
-            "void": nil,
-            "boolean": true,
-            "integer": 1,
+            "void": AnyCodable(nil as Int?),
+            "boolean": AnyCodable(true),
+            "integer": AnyCodable(1),
             "float": AnyCodable(3.14159265358979323846 as Float),
-            "double": 3.14159265358979323846,
-            "string": "string",
+            "double": AnyCodable(3.14159265358979323846),
+            "string": AnyCodable("string"),
             "date": AnyCodable(Date(timeIntervalSince1970: 1585778827)),
             "url": AnyCodable(URL(string: "https://apple.com")!),
-            "arraySigned": [1 as Int8, 2 as Int16, 3 as Int32, 4 as Int64],
-            "arrayUnsigned": [0 as UInt, 1 as UInt8, 2 as UInt16, 3 as UInt32, 4 as UInt64],
-            "nested": [
+            "arraySigned": AnyCodable([1 as Int8, 2 as Int16, 3 as Int32, 4 as Int64]),
+            "arrayUnsigned": AnyCodable([0 as UInt, 1 as UInt8, 2 as UInt16, 3 as UInt32, 4 as UInt64]),
+            "nested": AnyCodable([
                 "a": "alpha",
                 "b": "bravo",
                 "c": "charlie"
-            ],
+            ]),
             "custom": AnyCodable(CustomEncodable(value: 42))
         ]
         // When
@@ -92,7 +92,7 @@ class AnyCodableEncodableTests: XCTestCase {
           "custom" : {
             "value" : 42
           },
-          "date" : 1585778827,
+          "date" : 1585778827.0,
           "double" : 3.141592653589793,
           "float" : 3.1415927,
           "integer" : 1,

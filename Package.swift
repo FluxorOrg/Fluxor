@@ -10,11 +10,6 @@ var products: [Product] = [
         name: "FluxorTestSupport",
         targets: ["FluxorTestSupport"]),
 ]
-#if canImport(SwiftUI)
-products.append(.library(
-    name: "FluxorSwiftUI",
-    targets: ["FluxorSwiftUI"]))
-#endif
 
 var dependencies: [Package.Dependency] = []
 var fluxorTargetDependencies: [Target.Dependency] = ["AnyCodable"]
@@ -51,10 +46,4 @@ let package = Package(
         .target(
             name: "FluxorTestSupport",
             dependencies: ["Fluxor"]),
-        .target(
-            name: "FluxorSwiftUI",
-            dependencies: ["Fluxor"]),
-        .testTarget(
-            name: "FluxorSwiftUITests",
-            dependencies: ["FluxorSwiftUI", "FluxorTestSupport"]),
     ])

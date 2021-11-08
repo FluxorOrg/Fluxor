@@ -27,13 +27,19 @@ public enum Effect<Environment> {
     case nonDispatching(_ cancellable: (AnyPublisher<Action, Never>, Environment) -> AnyCancellable)
 }
 
-/// A collection of `Effect`s.
+/**
+ A collection of `Effect`s.
+
+ The only requirement for the protocol is to specify the type of the `Environment`
+ which should be used in the `Effect`s. The properties have default implementations.
+ */
 public protocol Effects {
     /// The environment set up in the `Store` passed to every `Effect`.
     associatedtype Environment
-    /// The `Effect`s to register on the `Store`.
+    /// The `Effect`s to register on the `Store`. The default implementation takes all the `Effect`s in the type.
+    /// It is possible to implement the property manually to only enable a set of `Effect`s to enable.
     var enabledEffects: [Effect<Environment>] { get }
-    /// The identifier for the `Effects`
+    /// The identifier for the `Effects`. The default implementation is just the name of the type.
     static var id: String { get }
 }
 

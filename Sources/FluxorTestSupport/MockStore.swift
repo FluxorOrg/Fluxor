@@ -7,10 +7,29 @@
 import Fluxor
 import Foundation
 #if canImport(Combine)
-import Combine
+    import Combine
+    import XCTest
 #else
-import OpenCombine
+    import OpenCombine
+    import XCTest
 #endif
+
+public func XCTAssertEqual(_ expression1: @autoclosure () -> EncodableAction,
+                           _ expression2: @autoclosure () -> EncodableAction,
+                           _: @autoclosure () -> String = "", file: StaticString = #filePath, line: UInt = #line)
+{
+    let jsonEncoder = JSONEncoder()
+    guard let action1JsonData = expression1().encode(with: jsonEncoder),
+          let action1Json = String(data: action1JsonData, encoding: .utf8),
+          let action2JsonData = expression2().encode(with: jsonEncoder),
+          let action2Json = String(data: action2JsonData, encoding: .utf8)
+    else {
+        return XCTFail("An error occurred while encoding the action.", file: file, line: line)
+    }
+    guard action1Json == action2Json else {
+        return XCTFail("\"\(action1Json)\" is not equal to \"\(action2Json)\"", file: file, line: line)
+    }
+}
 
 // swiftlint:disable large_tuple
 
@@ -21,7 +40,12 @@ import OpenCombine
 public class MockStore<State, Environment>: Store<State, Environment> {
     /// All the `Action`s and state changes that has happened.
     public var stateChanges: [(action: Action, oldState: State, newState: State)] {
-        self.testInterceptor.stateChanges
+        testInterceptor.stateChanges
+    }
+
+    /// All the `Action`s that has been dispatched.
+    public var dispatchedActions: [Action] {
+        stateChanges.map(\.action)
     }
 
     private let setState = ActionTemplate(id: "Set State", payloadType: State.self)
@@ -38,7 +62,7 @@ public class MockStore<State, Environment>: Store<State, Environment> {
     override public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
         let reducers = reducers + [Reducer(ReduceOn(setState) { state, action in state = action.payload })]
         super.init(initialState: initialState, environment: environment, reducers: reducers)
-        super.register(interceptor: self.testInterceptor)
+        super.register(interceptor: testInterceptor)
     }
 
     /**
@@ -47,7 +71,7 @@ public class MockStore<State, Environment>: Store<State, Environment> {
      - Parameter newState: The new `State` to set on the `Store`
      */
     public func setState(newState: State) {
-        self.dispatch(action: self.setState(payload: newState))
+        dispatch(action: setState(payload: newState))
     }
 
     /**
@@ -59,14 +83,14 @@ public class MockStore<State, Environment>: Store<State, Environment> {
      - Parameter value: The value the `Selector` should give when selecting
      */
     public func overrideSelector<Value>(_ selector: Fluxor.Selector<State, Value>, value: Value) {
-        self.overridenSelectorValues[selector.id] = value
+        overridenSelectorValues[selector.id] = value
     }
 
     /**
      Resets all overridden `Selector`s on this `MockStore`.
      */
     public func resetOverriddenSelectors() {
-        self.overridenSelectorValues.removeAll()
+        overridenSelectorValues.removeAll()
     }
 
     override public func select<Value>(_ selector: Fluxor.Selector<State, Value>) -> AnyPublisher<Value, Never> {
@@ -75,6 +99,6 @@ public class MockStore<State, Environment>: Store<State, Environment> {
     }
 
     override public func selectCurrent<Value>(_ selector: Fluxor.Selector<State, Value>) -> Value {
-        return self.overridenSelectorValues[selector.id] as? Value ?? super.selectCurrent(selector)
+        overridenSelectorValues[selector.id] as? Value ?? super.selectCurrent(selector)
     }
 }

@@ -29,11 +29,11 @@ class AnyCodableDecodableTests: XCTestCase {
         }
         """
         let dictionary: [String: AnyCodable] = [
-            "void": nil,
-            "boolean": true,
-            "integer": -1,
-            "double": 3.14159265358979323846,
-            "string": "string"
+            "void": AnyCodable(nil as Int?),
+            "boolean": AnyCodable(true),
+            "integer": AnyCodable(-1),
+            "double": AnyCodable(3.14159265358979323846),
+            "string": AnyCodable("string")
         ]
         // When
         let decoder = JSONDecoder()
