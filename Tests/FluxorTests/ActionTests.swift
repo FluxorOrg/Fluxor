@@ -36,15 +36,15 @@ class ActionTests: XCTestCase {
     /// Is it possible to create an `ActionTemplate` with an encodable payload type?
     func testCreateActionTemplateWithEncodablePayload() {
         // Given
-        let actionTemplate = ActionTemplate(id: "something", payloadType: Int.self)
-        let payload = 42
+        let actionTemplate = ActionTemplate(id: "something", payloadType: [String: Int].self)
+        let payload = ["answer": 42]
         // When
         let action = actionTemplate.createAction(payload: payload)
         let actionFromFunction = actionTemplate(payload: payload)
         // Then
         XCTAssertTrue(action.wasCreated(from: actionTemplate))
         XCTAssertEqual(action.payload, payload)
-        XCTAssertEqual(json(from: action), #"{"id":"something","payload":42}"#)
+        XCTAssertEqual(json(from: action), #"{"id":"something","payload":{"answer":42}}"#)
         XCTAssertEqual(action, actionFromFunction)
     }
 
