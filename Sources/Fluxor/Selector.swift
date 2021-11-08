@@ -62,8 +62,7 @@ public class Selector<State, Value>: SelectorProtocol {
 
 /// A `Selector` created from a `Selector`s and a `projector` function.
 public class Selector1<State, S1, Value>: Selector<State, Value> where
-    S1: SelectorProtocol, S1.State == State
-{
+    S1: SelectorProtocol, S1.State == State {
     /// A pure function which takes the `Value` from the other `Selector` and returns a new `Value`.
     public let projector: (S1.Value) -> Value
 
@@ -92,8 +91,7 @@ public class Selector1<State, S1, Value>: Selector<State, Value> where
 /// A `Selector` created from two `Selector`s and a `projector` function.
 public class Selector2<State, S1, S2, Value>: Selector<State, Value> where
     S1: SelectorProtocol, S1.State == State,
-    S2: SelectorProtocol, S2.State == State
-{
+    S2: SelectorProtocol, S2.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value) -> Value
 
@@ -106,8 +104,7 @@ public class Selector2<State, S1, S2, Value>: Selector<State, Value> where
      */
     public init(_ selector1: S1,
                 _ selector2: S2,
-                _ projector: @escaping (S1.Value, S2.Value) -> Value)
-    {
+                _ projector: @escaping (S1.Value, S2.Value) -> Value) {
         self.projector = projector
         super.init(projector: { projector(selector1.map($0), selector2.map($0)) })
     }
@@ -117,8 +114,7 @@ public class Selector2<State, S1, S2, Value>: Selector<State, Value> where
 public class Selector3<State, S1, S2, S3, Value>: Selector<State, Value> where
     S1: SelectorProtocol, S1.State == State,
     S2: SelectorProtocol, S2.State == State,
-    S3: SelectorProtocol, S3.State == State
-{
+    S3: SelectorProtocol, S3.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value) -> Value
 
@@ -133,8 +129,7 @@ public class Selector3<State, S1, S2, S3, Value>: Selector<State, Value> where
     public init(_ selector1: S1,
                 _ selector2: S2,
                 _ selector3: S3,
-                _ projector: @escaping (S1.Value, S2.Value, S3.Value) -> Value)
-    {
+                _ projector: @escaping (S1.Value, S2.Value, S3.Value) -> Value) {
         self.projector = projector
         super.init(projector: { projector(selector1.map($0),
                                           selector2.map($0),
@@ -147,8 +142,7 @@ public class Selector4<State, S1, S2, S3, S4, Value>: Selector<State, Value> whe
     S1: SelectorProtocol, S1.State == State,
     S2: SelectorProtocol, S2.State == State,
     S3: SelectorProtocol, S3.State == State,
-    S4: SelectorProtocol, S4.State == State
-{
+    S4: SelectorProtocol, S4.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value, S4.Value) -> Value
 
@@ -165,8 +159,7 @@ public class Selector4<State, S1, S2, S3, S4, Value>: Selector<State, Value> whe
                 _ selector2: S2,
                 _ selector3: S3,
                 _ selector4: S4,
-                _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value) -> Value)
-    {
+                _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value) -> Value) {
         self.projector = projector
         super.init(projector: { projector(selector1.map($0),
                                           selector2.map($0),
@@ -181,8 +174,7 @@ public class Selector5<State, S1, S2, S3, S4, S5, Value>: Selector<State, Value>
     S2: SelectorProtocol, S2.State == State,
     S3: SelectorProtocol, S3.State == State,
     S4: SelectorProtocol, S4.State == State,
-    S5: SelectorProtocol, S5.State == State
-{
+    S5: SelectorProtocol, S5.State == State {
     /// A pure function which takes the `Value`s from the other `Selector`s and returns a new `Value`.
     public let projector: (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value
 
@@ -201,8 +193,7 @@ public class Selector5<State, S1, S2, S3, S4, S5, Value>: Selector<State, Value>
                 _ selector3: S3,
                 _ selector4: S4,
                 _ selector5: S5,
-                _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value)
-    {
+                _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value) {
         self.projector = projector
         super.init(projector: { projector(selector1.map($0),
                                           selector2.map($0),
@@ -223,8 +214,7 @@ public extension Selector {
      */
     static func with<S1>(_ selector1: S1,
                          projector: @escaping (S1.Value) -> Value)
-        -> Selector1<State, S1, Value>
-    {
+        -> Selector1<State, S1, Value> {
         .init(selector1, projector)
     }
 
@@ -238,8 +228,7 @@ public extension Selector {
      */
     static func with<S1>(_ selector1: S1,
                          keyPath: KeyPath<S1.Value, Value>)
-        -> Selector1<State, S1, Value>
-    {
+        -> Selector1<State, S1, Value> {
         .init(selector1, keyPath: keyPath)
     }
 
@@ -254,8 +243,7 @@ public extension Selector {
     static func with<S1, S2>(_ selector1: S1,
                              _ selector2: S2,
                              projector: @escaping (S1.Value, S2.Value) -> Value)
-        -> Selector2<State, S1, S2, Value>
-    {
+        -> Selector2<State, S1, S2, Value> {
         .init(selector1, selector2, projector)
     }
 
@@ -272,8 +260,7 @@ public extension Selector {
                                  _ selector2: S2,
                                  _ selector3: S3,
                                  projector: @escaping (S1.Value, S2.Value, S3.Value) -> Value)
-        -> Selector3<State, S1, S2, S3, Value>
-    {
+        -> Selector3<State, S1, S2, S3, Value> {
         .init(selector1, selector2, selector3, projector)
     }
 
@@ -292,8 +279,7 @@ public extension Selector {
                                      _ selector3: S3,
                                      _ selector4: S4,
                                      projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value) -> Value)
-        -> Selector4<State, S1, S2, S3, S4, Value>
-    {
+        -> Selector4<State, S1, S2, S3, S4, Value> {
         .init(selector1, selector2, selector3, selector4, projector)
     }
 
@@ -315,8 +301,7 @@ public extension Selector {
                                          _ selector5: S5,
                                          projector: @escaping (S1.Value, S2.Value, S3.Value,
                                                                S4.Value, S5.Value) -> Value)
-        -> Selector5<State, S1, S2, S3, S4, S5, Value>
-    {
+        -> Selector5<State, S1, S2, S3, S4, S5, Value> {
         .init(selector1, selector2, selector3, selector4, selector5, projector)
     }
 }
