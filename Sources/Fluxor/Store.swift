@@ -115,7 +115,7 @@ open class Store<State, Environment>: ObservableObject {
      - Parameter effects: The `Effects` to register
      */
     public func register<E: Effects>(effects: E) where E.Environment == Environment {
-        self.effects[type(of: effects).id] = createCancellables(for: effects.enabledEffects)
+        self.effects[E.id] = createCancellables(for: effects.enabledEffects)
     }
 
     /**
