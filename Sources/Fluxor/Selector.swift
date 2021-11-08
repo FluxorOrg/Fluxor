@@ -76,6 +76,16 @@ public class Selector1<State, S1, Value>: Selector<State, Value> where
         self.projector = projector
         super.init(projector: { projector(selector1.map($0)) })
     }
+
+    /**
+     Creates a `Selector` from a `Selector` and a `projector` function.
+
+     - Parameter selector1: The first `Selector`
+     - Parameter projector: The closure to pass the value from the `Selector` to
+     */
+    public convenience init(_ selector1: S1, keyPath: KeyPath<S1.Value, Value>) {
+        self.init(selector1) { $0[keyPath: keyPath] }
+    }
 }
 
 /// A `Selector` created from two `Selector`s and a `projector` function.
@@ -122,8 +132,8 @@ public class Selector3<State, S1, S2, S3, Value>: Selector<State, Value> where
                 _ projector: @escaping (S1.Value, S2.Value, S3.Value) -> Value) {
         self.projector = projector
         super.init(projector: { projector(selector1.map($0),
-                                    selector2.map($0),
-                                    selector3.map($0)) })
+                                          selector2.map($0),
+                                          selector3.map($0)) })
     }
 }
 
@@ -152,9 +162,9 @@ public class Selector4<State, S1, S2, S3, S4, Value>: Selector<State, Value> whe
                 _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value) -> Value) {
         self.projector = projector
         super.init(projector: { projector(selector1.map($0),
-                                    selector2.map($0),
-                                    selector3.map($0),
-                                    selector4.map($0)) })
+                                          selector2.map($0),
+                                          selector3.map($0),
+                                          selector4.map($0)) })
     }
 }
 
@@ -186,10 +196,10 @@ public class Selector5<State, S1, S2, S3, S4, S5, Value>: Selector<State, Value>
                 _ projector: @escaping (S1.Value, S2.Value, S3.Value, S4.Value, S5.Value) -> Value) {
         self.projector = projector
         super.init(projector: { projector(selector1.map($0),
-                                    selector2.map($0),
-                                    selector3.map($0),
-                                    selector4.map($0),
-                                    selector5.map($0)) })
+                                          selector2.map($0),
+                                          selector3.map($0),
+                                          selector4.map($0),
+                                          selector5.map($0)) })
     }
 }
 
@@ -206,6 +216,20 @@ public extension Selector {
                          projector: @escaping (S1.Value) -> Value)
         -> Selector1<State, S1, Value> {
         .init(selector1, projector)
+    }
+
+    /**
+     Creates a `Selector` from a `Selector` and a `KeyPath`.
+
+     - Parameter selector1: The first `Selector`
+     - Parameter keyPath: The `keyPath` to create the `Selector` from
+     - Parameter keyPath: The `KeyPath` to subscript in the value from the `Selector`
+     - Returns: A `Selector` from the given `Selector` and the `KeyPath`
+     */
+    static func with<S1>(_ selector1: S1,
+                         keyPath: KeyPath<S1.Value, Value>)
+        -> Selector1<State, S1, Value> {
+        .init(selector1, keyPath: keyPath)
     }
 
     /**

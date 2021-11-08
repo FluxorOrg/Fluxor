@@ -21,15 +21,17 @@ class SelectorTests: XCTestCase {
     private let scandalsSelector = Selector(keyPath: \TestState.scandals)
     private let newProductsSelector = Selector(projector: { (state: TestState) in state.newProducts })
 
-    private lazy var fullNameSelector = Selector1(nameSelector) {
+    private lazy var fullNameSelector = Selector.with(nameSelector) {
         "\($0.firstName) \($0.lastName)"
     }
 
-    private lazy var formattedBirthdaySelector = Selector1(birthdaySelector) {
+    private lazy var firstNameSelector = Selector.with(nameSelector, keyPath: \.firstName)
+
+    private lazy var formattedBirthdaySelector = Selector.with(birthdaySelector) {
         "\($0.month) \($0.day), \($0.year)"
     }
 
-    private lazy var formattedAddressSelector = Selector1(addressSelector) {
+    private lazy var formattedAddressSelector = Selector.with(addressSelector) {
         "\($0.address), \($0.city), \($0.country)"
     }
 
@@ -65,11 +67,18 @@ class SelectorTests: XCTestCase {
         XCTAssertEqual(addressSelector.map(state), state.address)
     }
 
-    /// Is it possible to create a `Selector` with 1 `Selector`s and map the state?
-    func testCreateSelector1() {
+    /// Is it possible to create a `Selector` with 1 `Selector`s and map the state with projector?
+    func testCreateSelector1_Projector() {
         XCTAssertEqual(fullNameSelector.map(state), "Tim Cook")
         modifyState()
         XCTAssertEqual(fullNameSelector.map(state), "Steve Jobs")
+    }
+
+    /// Is it possible to create a `Selector` with 1 `Selector`s and map the state with KeyPath?
+    func testCreateSelector1_KeyPath() {
+        XCTAssertEqual(firstNameSelector.map(state), "Tim")
+        modifyState()
+        XCTAssertEqual(firstNameSelector.map(state), "Steve")
     }
 
     /// Is it possible to create a `Selector` with 2 `Selector`s and map the state?
