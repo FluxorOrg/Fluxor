@@ -7,10 +7,10 @@
 import Dispatch
 import Foundation
 #if canImport(Combine)
-import Combine
+    import Combine
 #else
-import OpenCombine
-import OpenCombineDispatch
+    import OpenCombine
+    import OpenCombineDispatch
 #endif
 
 /**
@@ -51,7 +51,7 @@ open class Store<State, Environment>: ObservableObject {
      - Parameter reducers: The `Reducer`s to register
      */
     public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
-        self.state = initialState
+        state = initialState
         self.environment = environment
         reducers.forEach(register(reducer:))
     }
@@ -223,7 +223,7 @@ extension Store: Subscriber {
         return .unlimited
     }
 
-    public func receive(completion: Subscribers.Completion<Never>) {}
+    public func receive(completion _: Subscribers.Completion<Never>) {}
 }
 
 // MARK: - Private
@@ -247,15 +247,15 @@ private extension Store {
      */
     func createCancellable(for effect: Effect<Environment>) -> AnyCancellable {
         switch effect {
-        case .dispatchingOne(let effectCreator):
+        case let .dispatchingOne(effectCreator):
             return effectCreator(actions.eraseToAnyPublisher(), environment)
                 .receive(on: DispatchQueue.main)
                 .sink(receiveValue: dispatch(action:))
-        case .dispatchingMultiple(let effectCreator):
+        case let .dispatchingMultiple(effectCreator):
             return effectCreator(actions.eraseToAnyPublisher(), environment)
                 .receive(on: DispatchQueue.main)
                 .sink { $0.forEach(self.dispatch(action:)) }
-        case .nonDispatching(let effectCreator):
+        case let .nonDispatching(effectCreator):
             return effectCreator(actions.eraseToAnyPublisher(), environment)
         }
     }
@@ -267,8 +267,8 @@ private struct KeyedReducer<State> {
     let reduce: (inout State, Action) -> Void
 
     init<Substate>(keyPath: WritableKeyPath<State, Substate>, reducer: Reducer<Substate>) {
-        self.id = reducer.id
-        self.reduce = { state, action in
+        id = reducer.id
+        reduce = { state, action in
             var substate = state[keyPath: keyPath]
             reducer.reduce(&substate, action)
             state[keyPath: keyPath] = substate
