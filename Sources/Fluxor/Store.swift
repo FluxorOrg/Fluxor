@@ -178,13 +178,7 @@ open class Store<State, Environment>: ObservableObject {
      - Returns: A `Publisher` for the `Value` in the `State`
      */
     open func select<Value>(_ selector: Selector<State, Value>) -> AnyPublisher<Value, Never> {
-        Store.select(selector, statePublisher: $state, getStateHash: { self.stateHash })
-    }
-
-    internal static func select<State, Value>(_ selector: Selector<State, Value>,
-                                              statePublisher: Published<State>.Publisher,
-                                              getStateHash: @escaping () -> UUID) -> AnyPublisher<Value, Never> {
-        statePublisher.map { selector.map($0, stateHash: getStateHash()) }.eraseToAnyPublisher()
+        $state.map { selector.map($0, stateHash: self.stateHash) }.eraseToAnyPublisher()
     }
 
     /**
@@ -194,12 +188,6 @@ open class Store<State, Environment>: ObservableObject {
      - Returns: The current `Value` in the `State`
      */
     open func selectCurrent<Value>(_ selector: Selector<State, Value>) -> Value {
-        Store.selectCurrent(selector, state: state, stateHash: stateHash)
-    }
-
-    internal static func selectCurrent<State, Value>(_ selector: Selector<State, Value>,
-                                                     state: State,
-                                                     stateHash: UUID) -> Value {
         selector.map(state, stateHash: stateHash)
     }
 }
