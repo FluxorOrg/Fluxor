@@ -140,7 +140,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, environment.generateAction)
         XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, environment.unrelatedAction)
         XCTAssertEqual(environment.lastAction, environment.generateAction)
-        
+
         // Given
         store.unregisterEffects(withId: "awesome")
         store.unregisterInterceptors(ofType: TestInterceptor<TestState>.self)
@@ -187,7 +187,7 @@ class StoreTests: XCTestCase {
         XCTAssertEqual(dispatchedActions[0] as! AnonymousAction<Void>, environment.responseAction)
         XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Int>, environment.generateAction)
         XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Void>, environment.unrelatedAction)
-        
+
         // Given
         store.unregisterEffects(withId: "nice")
         store.unregisterInterceptors(ofType: TestInterceptor<TestState>.self)

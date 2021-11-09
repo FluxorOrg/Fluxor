@@ -148,14 +148,14 @@ open class Store<State, Environment>: ObservableObject {
     public func unregisterEffects<E: Effects>(ofType effects: E.Type) where E.Environment == Environment {
         self.effects.removeValue(forKey: effects.id) // An AnyCancellable instance calls cancel() when deinitialized
     }
-    
+
     /**
      Unregisters the `Effect`s registered with the id, so they will no longer receive any actions.
 
      - Parameter id: The identifier used to register the `Effect`s
      */
     public func unregisterEffects(withId id: String) {
-        self.effects.removeValue(forKey: id) // An AnyCancellable instance calls cancel() when deinitialized
+        effects.removeValue(forKey: id) // An AnyCancellable instance calls cancel() when deinitialized
     }
 
     // MARK: - Interceptors
