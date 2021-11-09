@@ -125,7 +125,7 @@ open class Store<State, Environment>: ObservableObject {
      - Parameter id: The identifier for the `Effect`s. Only used to enable unregistering the `Effect`s later
      */
     public func register(effects: [Effect<Environment>], id: String = "*") {
-        effects.forEach { register(effect: $0, id: id) }
+        self.effects[id] = createCancellables(for: effects)
     }
 
     /**
