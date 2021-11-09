@@ -36,8 +36,11 @@ public enum Effect<Environment> {
 public protocol Effects {
     /// The environment set up in the `Store` passed to every `Effect`.
     associatedtype Environment
-    /// The `Effect`s to register on the `Store`. The default implementation takes all the `Effect`s in the type.
-    /// It is possible to implement the property manually to only enable a set of `Effect`s to enable.
+    /**
+     The `Effect`s to register on the `Store`. The default implementation takes all the `Effect`s in the type,
+     
+     It is possible to implement the property manually to only enable a subset of `Effect`s to enable.
+     */
     var enabledEffects: [Effect<Environment>] { get }
     /// The identifier for the `Effects`. The default implementation is just the name of the type.
     static var id: String { get }

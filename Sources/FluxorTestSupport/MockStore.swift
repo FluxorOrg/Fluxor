@@ -14,20 +14,9 @@ import Foundation
     import XCTest
 #endif
 
-public func XCTAssertEqual(_ expression1: @autoclosure () -> EncodableAction,
-                           _ expression2: @autoclosure () -> EncodableAction,
-                           _: @autoclosure () -> String = "", file: StaticString = #filePath, line: UInt = #line)
-{
-    let jsonEncoder = JSONEncoder()
-    guard let action1JsonData = expression1().encode(with: jsonEncoder),
-          let action1Json = String(data: action1JsonData, encoding: .utf8),
-          let action2JsonData = expression2().encode(with: jsonEncoder),
-          let action2Json = String(data: action2JsonData, encoding: .utf8)
-    else {
-        return XCTFail("An error occurred while encoding the action.", file: file, line: line)
-    }
-    guard action1Json == action2Json else {
-        return XCTFail("\"\(action1Json)\" is not equal to \"\(action2Json)\"", file: file, line: line)
+extension AnonymousAction: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
     }
 }
 
