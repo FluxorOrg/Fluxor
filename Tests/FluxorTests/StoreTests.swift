@@ -351,9 +351,3 @@ private struct VoidTestEffects: Effects {
         }
     }
 }
-
-extension AnonymousAction: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id
-    }
-}
