@@ -122,9 +122,10 @@ open class Store<State, Environment>: ObservableObject {
      Registers the given `Effect`s. The `Effect`s will receive all subsequent actions.
 
      - Parameter effects: The array of `Effect`s to register
+     - Parameter id: The identifier for the `Effect`s. Only used to enable unregistering the `Effect`s later
      */
-    public func register(effects: [Effect<Environment>]) {
-        effects.forEach(register(effect:))
+    public func register(effects: [Effect<Environment>], id: String = "*") {
+        effects.forEach { register(effect: $0, id: id) }
     }
 
     /**
@@ -133,9 +134,10 @@ open class Store<State, Environment>: ObservableObject {
      Only `Effect`s registered from a type conforming to `Effects` can be unregistered.
 
      - Parameter effect: The `Effect` to register
+     - Parameter id: The identifier for the `Effect`. Only used to enable unregistering the `Effect` later
      */
-    public func register(effect: Effect<Environment>) {
-        effects["*"] = (effects["*"] ?? []) + [createCancellable(for: effect)]
+    public func register(effect: Effect<Environment>, id: String = "*") {
+        effects[id] = (effects[id] ?? []) + [createCancellable(for: effect)]
     }
 
     /**
@@ -145,6 +147,15 @@ open class Store<State, Environment>: ObservableObject {
      */
     public func unregisterEffects<E: Effects>(ofType effects: E.Type) where E.Environment == Environment {
         self.effects.removeValue(forKey: effects.id) // An AnyCancellable instance calls cancel() when deinitialized
+    }
+    
+    /**
+     Unregisters the `Effect`s registered with the id, so they will no longer receive any actions.
+
+     - Parameter id: The identifier used to register the `Effect`s
+     */
+    public func unregisterEffects(withId id: String) {
+        self.effects.removeValue(forKey: id) // An AnyCancellable instance calls cancel() when deinitialized
     }
 
     // MARK: - Interceptors

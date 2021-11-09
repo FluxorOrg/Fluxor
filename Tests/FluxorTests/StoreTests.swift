@@ -125,20 +125,48 @@ class StoreTests: XCTestCase {
     /// Does the `Effect`s get triggered?
     func testRegisteringEffectsArray() {
         // Given
-        let interceptor = TestInterceptor<TestState>()
-        store.register(effects: TestEffects().enabledEffects)
+        var interceptor = TestInterceptor<TestState>()
+        store.register(effects: TestEffects().enabledEffects, id: "awesome")
         store.register(interceptor: interceptor)
         let firstAction = TestAction()
         // When
         store.dispatch(action: firstAction)
         // Then
         wait(for: [environment.expectation], timeout: 5)
-        let dispatchedActions = interceptor.stateChanges.map(\.action)
+        var dispatchedActions = interceptor.stateChanges.map(\.action)
         XCTAssertEqual(dispatchedActions.count, 4)
         XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
         XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, environment.responseAction)
         XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, environment.generateAction)
         XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, environment.unrelatedAction)
+        XCTAssertEqual(environment.lastAction, environment.generateAction)
+        
+        // Given
+        store.unregisterEffects(withId: "awesome")
+        store.unregisterInterceptors(ofType: TestInterceptor<TestState>.self)
+        interceptor = TestInterceptor<TestState>()
+        store.register(interceptor: interceptor)
+        // When
+        store.dispatch(action: firstAction)
+        // Then
+        XCTAssertThrowsError(try interceptor.waitForActions(expectedNumberOfActions: 3))
+        dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions.count, 1)
+        XCTAssertEqual(dispatchedActions[0] as! TestAction, firstAction)
+
+        // Given
+        environment.resetExpectation()
+        store.register(effects: TestEffects().enabledEffects, id: "awesome")
+        // When
+        store.dispatch(action: firstAction)
+        // Then
+        wait(for: [environment.expectation], timeout: 5)
+        dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions.count, 5)
+        XCTAssertEqual(dispatchedActions[1] as! TestAction, firstAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Void>, environment.responseAction)
+        XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Int>, environment.generateAction)
+        XCTAssertEqual(dispatchedActions[4] as! AnonymousAction<Void>, environment.unrelatedAction)
         XCTAssertEqual(environment.lastAction, environment.generateAction)
     }
 
@@ -146,18 +174,49 @@ class StoreTests: XCTestCase {
     func testRegisteringEffect() throws {
         // Given
         environment.expectation.expectedFulfillmentCount = 1
-        let interceptor = TestInterceptor<TestState>()
-        store.register(effect: TestEffects().anotherTestEffect)
+        var interceptor = TestInterceptor<TestState>()
+        store.register(effect: TestEffects().anotherTestEffect, id: "nice")
         store.register(interceptor: interceptor)
         // When
         store.dispatch(action: environment.responseAction)
         // Then
         try interceptor.waitForActions(expectedNumberOfActions: 3)
         wait(for: [environment.expectation], timeout: 5)
-        let dispatchedActions = interceptor.stateChanges.map(\.action)
+        var dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions.count, 3)
         XCTAssertEqual(dispatchedActions[0] as! AnonymousAction<Void>, environment.responseAction)
         XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Int>, environment.generateAction)
         XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Void>, environment.unrelatedAction)
+        
+        // Given
+        store.unregisterEffects(withId: "nice")
+        store.unregisterInterceptors(ofType: TestInterceptor<TestState>.self)
+        interceptor = TestInterceptor<TestState>()
+        store.register(interceptor: interceptor)
+        // When
+        store.dispatch(action: environment.responseAction)
+        // Then
+        XCTAssertThrowsError(try interceptor.waitForActions(expectedNumberOfActions: 3))
+        dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions.count, 1)
+        XCTAssertEqual(dispatchedActions[0] as! AnonymousAction<Void>, environment.responseAction)
+
+        // Given
+        environment.resetExpectation()
+        environment.expectation.expectedFulfillmentCount = 1
+        store.register(effect: TestEffects().anotherTestEffect, id: "nice")
+        // When
+        store.dispatch(action: environment.responseAction)
+        // Then
+        try interceptor.waitForActions(expectedNumberOfActions: 3)
+        wait(for: [environment.expectation], timeout: 5)
+        dispatchedActions = interceptor.stateChanges.map(\.action)
+        XCTAssertEqual(dispatchedActions.count, 4)
+        XCTAssertEqual(dispatchedActions[0] as! AnonymousAction<Void>, environment.responseAction)
+        XCTAssertEqual(dispatchedActions[1] as! AnonymousAction<Void>, environment.responseAction)
+        XCTAssertEqual(dispatchedActions[2] as! AnonymousAction<Int>, environment.generateAction)
+        XCTAssertEqual(dispatchedActions[3] as! AnonymousAction<Void>, environment.unrelatedAction)
+        XCTAssertNil(environment.lastAction)
     }
 
     /// Does the `Interceptor` receive the right `Action` and modified `State`?
