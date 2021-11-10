@@ -30,7 +30,7 @@ class AnyCodableEquatableTests: XCTestCase {
             AnyCodable(3.14159265358979323846 as Double),
             "string",
             array,
-            dictionary,
+            dictionary
         ]
         // Then
         values.forEach { XCTAssertEqual($0, $0) }
@@ -40,7 +40,8 @@ class AnyCodableEquatableTests: XCTestCase {
     /// Can all nested dictionary and arrays be compared?
     func testNestedEquality() throws {
         // Given
-        let dictionaryLiteral: AnyCodable = ["userInfo": ["things": ["nothing", "something", "anything"]], "userInfo": 42]
+        let dictionaryLiteral: AnyCodable = ["userInfo": ["things": ["nothing", "something", "anything"]],
+                                             "userInfo": 42]
         let dictionary = AnyCodable(["userInfo": ["things": ["nothing", "something", "anything"]]])
         // Then
         XCTAssertEqual(dictionaryLiteral, dictionary)
