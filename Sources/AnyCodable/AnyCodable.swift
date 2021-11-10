@@ -18,9 +18,11 @@ public struct AnyCodable {
     public let value: Any
 
     public init<T>(_ value: T?) {
-        if let dictionary = value as? [String: Any] {
+        if let dictionary = value as? [String: AnyCodable] {
+            self.value = dictionary as [AnyHashable: AnyCodable]
+        } else if let dictionary = value as? [String: Any] {
             self.value = dictionary.mapValues(AnyCodable.init) as [AnyHashable: AnyCodable]
-        } else if let array = value as? [Any] {
+        } else if let array = value as? [Any], !(array is [AnyCodable]) {
             self.value = array.map(AnyCodable.init)
         } else {
             self.value = value ?? ()
