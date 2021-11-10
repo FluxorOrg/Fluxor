@@ -4,15 +4,14 @@
  *  MIT license, see LICENSE file for details
  */
 
-import Fluxor
-import Foundation
 #if canImport(Combine)
     import Combine
-    import XCTest
 #else
     import OpenCombine
-    import XCTest
 #endif
+import Fluxor
+import Foundation
+import XCTest
 
 extension AnonymousAction: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
