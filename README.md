@@ -52,9 +52,8 @@ Fluxor can be installed as a dependency to your project using [Swift Package Man
 
 ### Requirements
 
-- iOS 13.0+ / macOS 10.15+ / tvOS 13.0+
-- Xcode 11.0+
-- Swift 5.2+
+- iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ / Linux
+- Xcode 11.4+ / Swift 5.2+
 
 ## Usage
 As a minimum, an app using Fluxor will need a `Store`, an `Action`, a `Reducer`, a `Selector` and a state.
