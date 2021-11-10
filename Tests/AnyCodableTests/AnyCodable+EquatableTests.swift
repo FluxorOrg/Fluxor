@@ -11,15 +11,38 @@ class AnyCodableEquatableTests: XCTestCase {
     /// Can all simple types be compared?
     func testEquality() throws {
         // Given
-        let array = [1, 2, 3].map(AnyCodable.init)
-        let dictionary = ["a": 1, "b": 2, "c": 3].mapValues(AnyCodable.init)
-        let values = [nil, true,
-                      1 as Int, 2 as Int8, 3 as Int16, 4 as Int32, 5 as Int64,
-                      1 as UInt, 2 as UInt8, 3 as UInt16, 4 as UInt32, 5 as UInt64,
-                      3.14159265358979323846 as Float, 3.14159265358979323846 as Double,
-                      "string", array, dictionary].map(AnyCodable.init)
+        let array: AnyCodable = [1, 2, 3]
+        let dictionary: AnyCodable = ["a": 1, "b": 2, "c": 3]
+        let values: [AnyCodable] = [
+            nil,
+            true,
+            AnyCodable(1 as Int),
+            AnyCodable(2 as Int8),
+            AnyCodable(3 as Int16),
+            AnyCodable(4 as Int32),
+            AnyCodable(5 as Int64),
+            AnyCodable(1 as UInt),
+            AnyCodable(2 as UInt8),
+            AnyCodable(3 as UInt16),
+            AnyCodable(4 as UInt32),
+            AnyCodable(5 as UInt64),
+            AnyCodable(3.14159265358979323846 as Float),
+            AnyCodable(3.14159265358979323846 as Double),
+            "string",
+            array,
+            dictionary,
+        ]
         // Then
         values.forEach { XCTAssertEqual($0, $0) }
         XCTAssertNotEqual(values[3], values[10])
+    }
+
+    /// Can all nested dictionary and arrays be compared?
+    func testNestedEquality() throws {
+        // Given
+        let dictionaryLiteral: AnyCodable = ["userInfo": ["things": ["nothing", "something", "anything"]], "userInfo": 42]
+        let dictionary = AnyCodable(["userInfo": ["things": ["nothing", "something", "anything"]]])
+        // Then
+        XCTAssertEqual(dictionaryLiteral, dictionary)
     }
 }
