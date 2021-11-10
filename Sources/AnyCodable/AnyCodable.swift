@@ -18,7 +18,13 @@ public struct AnyCodable {
     public let value: Any
 
     public init<T>(_ value: T?) {
-        self.value = value ?? ()
+        if let dictionary = value as? [String: Any] {
+            self.value = dictionary.mapValues(AnyCodable.init) as [AnyHashable: AnyCodable]
+        } else if let array = value as? [Any] {
+            self.value = array.map(AnyCodable.init)
+        } else {
+            self.value = value ?? ()
+        }
     }
 }
 
@@ -89,9 +95,9 @@ extension AnyCodable: Decodable {
         } else if let string = try? container.decode(String.self) {
             self.init(string)
         } else if let array = try? container.decode([AnyCodable].self) {
-            self.init(array.map { $0.value })
+            self.init(array)
         } else if let dictionary = try? container.decode([String: AnyCodable].self) {
-            self.init(dictionary.mapValues { $0.value })
+            self.init(dictionary)
         } else {
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Value cannot be decoded")
         }
@@ -132,7 +138,7 @@ extension AnyCodable: Equatable {
             return lhs == rhs
         case let (lhs as String, rhs as String):
             return lhs == rhs
-        case let (lhs as [String: AnyCodable], rhs as [String: AnyCodable]):
+        case let (lhs as [AnyHashable: AnyCodable], rhs as [AnyHashable: AnyCodable]):
             return lhs == rhs
         case let (lhs as [AnyCodable], rhs as [AnyCodable]):
             return lhs == rhs
@@ -163,5 +169,43 @@ extension AnyCodable: CustomDebugStringConvertible {
         default:
             return "AnyCodable(\(description))"
         }
+    }
+}
+
+extension AnyCodable: ExpressibleByNilLiteral {}
+extension AnyCodable: ExpressibleByBooleanLiteral {}
+extension AnyCodable: ExpressibleByIntegerLiteral {}
+extension AnyCodable: ExpressibleByFloatLiteral {}
+extension AnyCodable: ExpressibleByExtendedGraphemeClusterLiteral {}
+extension AnyCodable: ExpressibleByStringLiteral {}
+extension AnyCodable: ExpressibleByArrayLiteral {}
+extension AnyCodable: ExpressibleByDictionaryLiteral {}
+public extension AnyCodable {
+    init(nilLiteral _: ()) {
+        self.init(nil as Any?)
+    }
+
+    init(booleanLiteral value: Bool) {
+        self.init(value)
+    }
+
+    init(integerLiteral value: Int) {
+        self.init(value)
+    }
+
+    init(floatLiteral value: Double) {
+        self.init(value)
+    }
+
+    init(stringLiteral value: String) {
+        self.init(value)
+    }
+
+    init(arrayLiteral elements: Any...) {
+        self.init(elements)
+    }
+
+    init(dictionaryLiteral elements: (AnyHashable, Any)...) {
+        self.init([AnyHashable: Any](elements, uniquingKeysWith: { first, _ in first }))
     }
 }
