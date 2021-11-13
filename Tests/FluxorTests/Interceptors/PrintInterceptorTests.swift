@@ -37,7 +37,7 @@ class PrintInterceptorTests: XCTestCase {
         }
         """)
         XCTAssertEqual(printedStrings[2], """
-        PrintInterceptor<TestState> - action dispatched: AnonymousAction<UnencodablePayload>, data: {
+        PrintInterceptor<TestState> - action dispatched: "Action2", data: {
           "id" : "Action2",
           "payload" : {
             "increment" : 13
@@ -88,7 +88,7 @@ class PrintInterceptorTests: XCTestCase {
         }
         """)
         XCTAssertEqual(printedStrings[2], """
-        PrintInterceptor<TestState> - action dispatched: AnonymousAction<EncodablePayload>, data: {
+        PrintInterceptor<TestState> - action dispatched: "Action2", data: {
           "id" : "Action2",
           "payload" : {
             "increment" : 3
