@@ -14,7 +14,7 @@ jobs:
       - name: Install sourcekitten
         run: brew install sourcekitten
       - name: Generate Documentation for Pages
-        uses: sersoft-gmbh/swifty-docs-action@v1
+        run: ./Documentation/generate_docs.sh
       - name: Add CNAME
         run: echo -n fluxor.dev > docs/CNAME
       - name: Upload to GitHub Pages
