@@ -11,6 +11,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Install sourcekitten
+        run: brew install sourcekitten
       - name: Generate Documentation for Pages
         run: ./Documentation/generate_docs.sh
       - name: Add CNAME
