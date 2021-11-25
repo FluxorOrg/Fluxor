@@ -1,6 +1,7 @@
 <p align="center">
     <br />
-    <img src="https://raw.githubusercontent.com/FluxorOrg/Fluxor/master/Assets/Fluxor-logo.png" width="400" max-width="90%" alt="Fluxor" />
+    <img src="Assets/Fluxor-logo-light.png#gh-light-mode-only" width="400" max-width="90%" alt="Fluxor" />
+    <img src="Assets/Fluxor-logo-dark.png#gh-dark-mode-only" width="400" max-width="90%" alt="Fluxor" />
 </p>
 
 <p align="center">
