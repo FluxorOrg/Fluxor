@@ -3,7 +3,7 @@ name: Docs
 on:
   push:
     branches:
-    - install-sourcekitten
+    - master
 
 jobs:
   pages:
