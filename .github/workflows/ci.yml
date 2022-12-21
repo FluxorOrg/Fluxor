@@ -23,7 +23,7 @@ jobs:
     - name: Export coverage
       run: xcrun llvm-cov export -format="lcov" -instr-profile=.build/x86_64-apple-macosx/debug/codecov/default.profdata -ignore-filename-regex=".build|Tests" .build/x86_64-apple-macosx/debug/FluxorPackageTests.xctest/Contents/MacOS/FluxorPackageTests > coverage.lcov
     - name: Upload coverage
-      uses: paambaati/codeclimate-action@v3
+      uses: paambaati/codeclimate-action@v3.2.0
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
