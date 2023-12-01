@@ -1,1 +1,6 @@
-
+version: 1
+builder:
+  configs:
+  - scheme: Fluxor
+    target: Fluxor
+    documentation_targets: [Fluxor, FluxorTestSupport]
