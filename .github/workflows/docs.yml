@@ -10,7 +10,7 @@ jobs:
     name: Documentation for Pages
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install sourcekitten
         run: brew install sourcekitten
       - name: Generate Documentation for Pages
@@ -18,26 +18,8 @@ jobs:
       - name: Add CNAME
         run: echo -n fluxor.dev > docs/CNAME
       - name: Upload to GitHub Pages
-        uses: crazy-max/ghaction-github-pages@v2
+        uses: crazy-max/ghaction-github-pages@v4
         with:
           build_dir: "docs"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  wiki:
-    name: Documentation for Wiki
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Generate Documentation for Wiki
-        uses: SwiftDocOrg/swift-doc@master
-        with:
-          inputs: "Sources"
-          format: "commonmark"
-          module-name: Fluxor
-          output: "wiki-output"
-      - name: Upload to Wiki
-        uses: SwiftDocOrg/github-wiki-publish-action@v1
-        with:
-          path: "wiki-output"
-        env:
-          GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
