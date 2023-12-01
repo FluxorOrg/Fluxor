@@ -1,0 +1,2463 @@
+[{
+  "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift" : {
+    "key.diagnostic_stage" : "source.diagnostic.stage.swift.parse",
+    "key.length" : 5230,
+    "key.offset" : 0,
+    "key.substructure" : [
+      {
+        "key.accessibility" : "source.lang.swift.accessibility.public",
+        "key.annotated_decl" : "<Declaration>public struct EffectRunner&lt;Environment&gt;<\/Declaration>",
+        "key.attributes" : [
+          {
+            "key.attribute" : "source.decl.attribute.public",
+            "key.length" : 6,
+            "key.offset" : 315
+          }
+        ],
+        "key.bodylength" : 1899,
+        "key.bodyoffset" : 356,
+        "key.column" : 15,
+        "key.decl_lang" : "source.lang.swift",
+        "key.doc.column" : 15,
+        "key.doc.comment" : "The `EffectRunner` can be used to run `Effect`s with a specified `Action`.",
+        "key.doc.declaration" : "public struct EffectRunner<Environment>",
+        "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+        "key.doc.full_as_xml" : "<Class file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift\" line=\"17\" column=\"15\"><Name>EffectRunner<\/Name><USR>s:17FluxorTestSupport12EffectRunnerV<\/USR><Declaration>public struct EffectRunner&lt;Environment&gt;<\/Declaration><CommentParts><Abstract><Para>The <codeVoice>EffectRunner<\/codeVoice> can be used to run <codeVoice>Effect<\/codeVoice>s with a specified <codeVoice>Action<\/codeVoice>.<\/Para><\/Abstract><\/CommentParts><\/Class>",
+        "key.doc.line" : 17,
+        "key.doc.name" : "EffectRunner",
+        "key.doc.type" : "Class",
+        "key.doclength" : 79,
+        "key.docoffset" : 236,
+        "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+        "key.fully_annotated_decl" : "<decl.struct><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>struct<\/syntaxtype.keyword> <decl.name>EffectRunner<\/decl.name>&lt;<decl.generic_type_param usr=\"s:17FluxorTestSupport12EffectRunnerV11Environmentxmfp\"><decl.generic_type_param.name>Environment<\/decl.generic_type_param.name><\/decl.generic_type_param>&gt;<\/decl.struct>",
+        "key.kind" : "source.lang.swift.decl.struct",
+        "key.length" : 1934,
+        "key.line" : 17,
+        "key.modulename" : "FluxorTestSupport",
+        "key.name" : "EffectRunner",
+        "key.namelength" : 12,
+        "key.nameoffset" : 329,
+        "key.offset" : 322,
+        "key.parsed_declaration" : "public struct EffectRunner<Environment>",
+        "key.parsed_scope.end" : 55,
+        "key.parsed_scope.start" : 17,
+        "key.substructure" : [
+          {
+            "key.annotated_decl" : "<Declaration>Environment<\/Declaration>",
+            "key.column" : 28,
+            "key.decl_lang" : "source.lang.swift",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.generic_type_param><decl.generic_type_param.name>Environment<\/decl.generic_type_param.name><\/decl.generic_type_param>",
+            "key.kind" : "source.lang.swift.decl.generic_type_param",
+            "key.length" : 11,
+            "key.line" : 17,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "Environment",
+            "key.namelength" : 11,
+            "key.nameoffset" : 342,
+            "key.offset" : 342,
+            "key.parsed_declaration" : "public struct EffectRunner<Environment",
+            "key.parsed_scope.end" : 17,
+            "key.parsed_scope.start" : 17,
+            "key.typename" : "Environment.Type",
+            "key.typeusr" : "$sxmD",
+            "key.usr" : "s:17FluxorTestSupport12EffectRunnerV11Environmentxmfp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>@discardableResult public static func run(_ effect: <Type usr=\"s:6Fluxor6EffectO\">Effect<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport12EffectRunnerV11Environmentxmfp\">Environment<\/Type>&gt;, with action: <Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>, environment: <Type usr=\"s:17FluxorTestSupport12EffectRunnerV11Environmentxmfp\">Environment<\/Type>, expectedCount: <Type usr=\"s:Si\">Int<\/Type> = 1) throws -&gt; [<Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>]?<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 995
+              },
+              {
+                "key.attribute" : "source.decl.attribute.discardableResult",
+                "key.length" : 18,
+                "key.offset" : 972
+              }
+            ],
+            "key.bodylength" : 1031,
+            "key.bodyoffset" : 1222,
+            "key.column" : 24,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 24,
+            "key.doc.comment" : "Run the `Effect` with the specified `Action` and return the published `Action`s.\n\nThe `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned.\nIf the `Effect` is `.nonDispatching`, the `expectedCount` is ignored.\n\n- Parameter effect: The `Effect` to run\n- Parameter action: The `Action` to send to the `Effect`\n- Parameter environment: The `Environment` to send to the `Effect`\n- Parameter expectedCount: The count of `Action`s to wait for\n- Returns: The `Action`s published by the `Effect` if it is dispatching",
+            "key.doc.declaration" : "public static func run(_ effect: Effect<Environment>, with action: Action, environment: Environment, expectedCount: Int = 1) throws -> [Action]?",
+            "key.doc.discussion" : [
+              {
+                "Para" : "The `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned. If the `Effect` is `.nonDispatching`, the `expectedCount` is ignored."
+              }
+            ],
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift\" line=\"31\" column=\"24\"><Name>run(_:with:environment:expectedCount:)<\/Name><USR>s:17FluxorTestSupport12EffectRunnerV3run_4with11environment13expectedCountSay0A06Action_pGSgAH0D0OyxG_AhI_pxSitKFZ<\/USR><Declaration>public static func run(_ effect: Effect&lt;Environment&gt;, with action: Action, environment: Environment, expectedCount: Int = 1) throws -&gt; [Action]?<\/Declaration><CommentParts><Abstract><Para>Run the <codeVoice>Effect<\/codeVoice> with the specified <codeVoice>Action<\/codeVoice> and return the published <codeVoice>Action<\/codeVoice>s.<\/Para><\/Abstract><Parameters><Parameter><Name>effect<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Effect<\/codeVoice> to run<\/Para><\/Discussion><\/Parameter><Parameter><Name>action<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Action<\/codeVoice> to send to the <codeVoice>Effect<\/codeVoice><\/Para><\/Discussion><\/Parameter><Parameter><Name>environment<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Environment<\/codeVoice> to send to the <codeVoice>Effect<\/codeVoice><\/Para><\/Discussion><\/Parameter><Parameter><Name>expectedCount<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The count of <codeVoice>Action<\/codeVoice>s to wait for<\/Para><\/Discussion><\/Parameter><\/Parameters><ResultDiscussion><Para>The <codeVoice>Action<\/codeVoice>s published by the <codeVoice>Effect<\/codeVoice> if it is dispatching<\/Para><\/ResultDiscussion><Discussion><Para>The <codeVoice>expectedCount<\/codeVoice> defines how many <codeVoice>Action<\/codeVoice>s the <codeVoice>Publisher<\/codeVoice> should publish before they are returned. If the <codeVoice>Effect<\/codeVoice> is <codeVoice>.nonDispatching<\/codeVoice>, the <codeVoice>expectedCount<\/codeVoice> is ignored.<\/Para><\/Discussion><\/CommentParts><\/Function>",
+            "key.doc.line" : 31,
+            "key.doc.name" : "run(_:with:environment:expectedCount:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Effect` to run"
+                  }
+                ],
+                "name" : "effect"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Action` to send to the `Effect`"
+                  }
+                ],
+                "name" : "action"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Environment` to send to the `Effect`"
+                  }
+                ],
+                "name" : "environment"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The count of `Action`s to wait for"
+                  }
+                ],
+                "name" : "expectedCount"
+              }
+            ],
+            "key.doc.result_discussion" : [
+              {
+                "Para" : "The `Action`s published by the `Effect` if it is dispatching"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.doclength" : 606,
+            "key.docoffset" : 361,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.static><syntaxtype.attribute.builtin><syntaxtype.attribute.name>@discardableResult<\/syntaxtype.attribute.name><\/syntaxtype.attribute.builtin> <syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>static<\/syntaxtype.keyword> <syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>run<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>_<\/decl.var.parameter.argument_label> <decl.var.parameter.name>effect<\/decl.var.parameter.name>: <decl.var.parameter.type><ref.enum usr=\"s:6Fluxor6EffectO\">Effect<\/ref.enum>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport12EffectRunnerV11Environmentxmfp\">Environment<\/ref.generic_type_param>&gt;<\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>with<\/decl.var.parameter.argument_label> <decl.var.parameter.name>action<\/decl.var.parameter.name>: <decl.var.parameter.type><ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol><\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>environment<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.generic_type_param usr=\"s:17FluxorTestSupport12EffectRunnerV11Environmentxmfp\">Environment<\/ref.generic_type_param><\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>expectedCount<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.struct usr=\"s:Si\">Int<\/ref.struct><\/decl.var.parameter.type> = 1<\/decl.var.parameter>) <syntaxtype.keyword>throws<\/syntaxtype.keyword> -&gt; <decl.function.returntype>[<ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol>]?<\/decl.function.returntype><\/decl.function.method.static>",
+            "key.kind" : "source.lang.swift.decl.function.method.static",
+            "key.length" : 1252,
+            "key.line" : 31,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "run(_:with:environment:expectedCount:)",
+            "key.namelength" : 186,
+            "key.nameoffset" : 1014,
+            "key.offset" : 1002,
+            "key.parsed_declaration" : "public static func run(_ effect: Effect<Environment>,\n                       with action: Action,\n                       environment: Environment,\n                       expectedCount: Int = 1) throws -> [Action]?",
+            "key.parsed_scope.end" : 54,
+            "key.parsed_scope.start" : 31,
+            "key.related_decls" : [
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport12EffectRunnerVAAytRszlE3run_4with13expectedCountSay0A06Action_pGSgAG0D0OyytG_AgH_pSitKFZ\">run(_:with:expectedCount:)<\/RelatedName>"
+              }
+            ],
+            "key.substructure" : [
+              {
+                "key.annotated_decl" : "<Declaration>let actions: <Type usr=\"s:7Combine18PassthroughSubjectC\">PassthroughSubject<\/Type>&lt;<Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>, <Type usr=\"s:s5NeverO\">Never<\/Type>&gt;<\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>actions<\/decl.name>: <decl.var.type><ref.class usr=\"s:7Combine18PassthroughSubjectC\">PassthroughSubject<\/ref.class>&lt;<ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol>, <ref.enum usr=\"s:s5NeverO\">Never<\/ref.enum>&gt;<\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 49,
+                "key.line" : 35,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "actions",
+                "key.namelength" : 7,
+                "key.nameoffset" : 1235,
+                "key.offset" : 1231,
+                "key.parsed_declaration" : "let actions = PassthroughSubject<Action, Never>()",
+                "key.parsed_scope.end" : 35,
+                "key.parsed_scope.start" : 35,
+                "key.typename" : "PassthroughSubject<Action, Never>",
+                "key.typeusr" : "$s7Combine18PassthroughSubjectCy6Fluxor6Action_ps5NeverOGD",
+                "key.usr" : "s:17FluxorTestSupport12EffectRunnerV3run_4with11environment13expectedCountSay0A06Action_pGSgAH0D0OyxG_AhI_pxSitKFZ7actionsL_7Combine18PassthroughSubjectCyAhI_ps5NeverOGvp"
+              },
+              {
+                "key.annotated_decl" : "<Declaration>let runDispatchingEffect: (_ publisher: <Type usr=\"s:7Combine12AnyPublisherV\">AnyPublisher<\/Type>&lt;[<Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>], <Type usr=\"s:s5NeverO\">Never<\/Type>&gt;) throws -&gt; [<Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>]<\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>runDispatchingEffect<\/decl.name>: <decl.var.type>(<decl.var.parameter>_ <decl.var.parameter.name>publisher<\/decl.var.parameter.name>: <decl.var.parameter.type><ref.struct usr=\"s:7Combine12AnyPublisherV\">AnyPublisher<\/ref.struct>&lt;[<ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol>], <ref.enum usr=\"s:s5NeverO\">Never<\/ref.enum>&gt;<\/decl.var.parameter.type><\/decl.var.parameter>) <syntaxtype.keyword>throws<\/syntaxtype.keyword> -&gt; <decl.function.returntype>[<ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol>]<\/decl.function.returntype><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 312,
+                "key.line" : 36,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "runDispatchingEffect",
+                "key.namelength" : 20,
+                "key.nameoffset" : 1293,
+                "key.offset" : 1289,
+                "key.parsed_declaration" : "let runDispatchingEffect = { (publisher: AnyPublisher<[Action], Never>) throws -> [Action] in\n    let recorder = ActionRecorder(expectedNumberOfActions: expectedCount)\n    publisher.subscribe(recorder)\n    actions.send(action)\n    return try recorder.waitForAllActions()\n}",
+                "key.parsed_scope.end" : 36,
+                "key.parsed_scope.start" : 36,
+                "key.typename" : "(AnyPublisher<[Action], Never>) throws -> [Action]",
+                "key.typeusr" : "$sySay6Fluxor6Action_pG7Combine12AnyPublisherVyACs5NeverOGKcD",
+                "key.usr" : "s:17FluxorTestSupport12EffectRunnerV3run_4with11environment13expectedCountSay0A06Action_pGSgAH0D0OyxG_AhI_pxSitKFZ0f11DispatchingD0L_yAJ7Combine12AnyPublisherVyAJs5NeverOGKcvp"
+              }
+            ],
+            "key.typename" : "<Environment> (EffectRunner<Environment>.Type) -> (Effect<Environment>, Action, Environment, Int) throws -> [Action]?",
+            "key.typeusr" : "$s_4with11environment13expectedCountSay6Fluxor6Action_pGSgAD6EffectOyxG_AdE_pxSitKcD",
+            "key.usr" : "s:17FluxorTestSupport12EffectRunnerV3run_4with11environment13expectedCountSay0A06Action_pGSgAH0D0OyxG_AhI_pxSitKFZ"
+          }
+        ],
+        "key.typename" : "EffectRunner<Environment>.Type",
+        "key.typeusr" : "$s17FluxorTestSupport12EffectRunnerVyxGmD",
+        "key.usr" : "s:17FluxorTestSupport12EffectRunnerV"
+      },
+      {
+        "key.accessibility" : "source.lang.swift.accessibility.public",
+        "key.annotated_decl" : "<Declaration>public struct EffectRunner&lt;Environment&gt;<\/Declaration>",
+        "key.attributes" : [
+          {
+            "key.attribute" : "source.decl.attribute.public",
+            "key.length" : 6,
+            "key.offset" : 2258
+          }
+        ],
+        "key.bodylength" : 819,
+        "key.bodyoffset" : 2315,
+        "key.column" : 15,
+        "key.decl_lang" : "source.lang.swift",
+        "key.doc.column" : 15,
+        "key.doc.declaration" : "public struct EffectRunner<Environment>",
+        "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+        "key.doc.full_as_xml" : "<Class file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift\" line=\"17\" column=\"15\"><Name>EffectRunner<\/Name><USR>s:17FluxorTestSupport12EffectRunnerV<\/USR><Declaration>public struct EffectRunner&lt;Environment&gt;<\/Declaration><CommentParts><Abstract><Para>The <codeVoice>EffectRunner<\/codeVoice> can be used to run <codeVoice>Effect<\/codeVoice>s with a specified <codeVoice>Action<\/codeVoice>.<\/Para><\/Abstract><\/CommentParts><\/Class>",
+        "key.doc.line" : 17,
+        "key.doc.name" : "EffectRunner",
+        "key.doc.type" : "Class",
+        "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+        "key.fully_annotated_decl" : "<decl.struct><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>struct<\/syntaxtype.keyword> <decl.name>EffectRunner<\/decl.name>&lt;<decl.generic_type_param usr=\"s:17FluxorTestSupport12EffectRunnerV11Environmentxmfp\"><decl.generic_type_param.name>Environment<\/decl.generic_type_param.name><\/decl.generic_type_param>&gt;<\/decl.struct>",
+        "key.kind" : "source.lang.swift.decl.extension",
+        "key.length" : 870,
+        "key.line" : 17,
+        "key.modulename" : "FluxorTestSupport",
+        "key.name" : "EffectRunner",
+        "key.namelength" : 12,
+        "key.nameoffset" : 2275,
+        "key.offset" : 2265,
+        "key.parsed_declaration" : "public extension EffectRunner where Environment == Void",
+        "key.parsed_scope.end" : 75,
+        "key.parsed_scope.start" : 57,
+        "key.substructure" : [
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>@discardableResult static func run(_ effect: <Type usr=\"s:6Fluxor6EffectO\">Effect<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport12EffectRunnerVAAytRszlE11Environmentxmfp\">Environment<\/Type>&gt;, with action: <Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>, expectedCount: <Type usr=\"s:Si\">Int<\/Type> = 1) throws -&gt; [<Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>]?<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.discardableResult",
+                "key.length" : 18,
+                "key.offset" : 2859
+              }
+            ],
+            "key.bodylength" : 97,
+            "key.bodyoffset" : 3035,
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 17,
+            "key.doc.comment" : "Run the `Effect` with the specified `Action` and return the published `Action`s.\n\nThe `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned.\nIf the `Effect` is `.nonDispatching`, the `expectedCount` is ignored.\n\n- Parameter effect: The `Effect` to run\n- Parameter action: The `Action` to send to the `Effect`\n- Parameter expectedCount: The count of `Action`s to wait for\n- Returns: The `Action`s published by the `Effect` if it is dispatching",
+            "key.doc.declaration" : "static func run(_ effect: Effect<Environment>, with action: Action, expectedCount: Int = 1) throws -> [Action]?",
+            "key.doc.discussion" : [
+              {
+                "Para" : "The `expectedCount` defines how many `Action`s the `Publisher` should publish before they are returned. If the `Effect` is `.nonDispatching`, the `expectedCount` is ignored."
+              }
+            ],
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift\" line=\"70\" column=\"17\"><Name>run(_:with:expectedCount:)<\/Name><USR>s:17FluxorTestSupport12EffectRunnerVAAytRszlE3run_4with13expectedCountSay0A06Action_pGSgAG0D0OyytG_AgH_pSitKFZ<\/USR><Declaration>static func run(_ effect: Effect&lt;Environment&gt;, with action: Action, expectedCount: Int = 1) throws -&gt; [Action]?<\/Declaration><CommentParts><Abstract><Para>Run the <codeVoice>Effect<\/codeVoice> with the specified <codeVoice>Action<\/codeVoice> and return the published <codeVoice>Action<\/codeVoice>s.<\/Para><\/Abstract><Parameters><Parameter><Name>effect<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Effect<\/codeVoice> to run<\/Para><\/Discussion><\/Parameter><Parameter><Name>action<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Action<\/codeVoice> to send to the <codeVoice>Effect<\/codeVoice><\/Para><\/Discussion><\/Parameter><Parameter><Name>expectedCount<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The count of <codeVoice>Action<\/codeVoice>s to wait for<\/Para><\/Discussion><\/Parameter><\/Parameters><ResultDiscussion><Para>The <codeVoice>Action<\/codeVoice>s published by the <codeVoice>Effect<\/codeVoice> if it is dispatching<\/Para><\/ResultDiscussion><Discussion><Para>The <codeVoice>expectedCount<\/codeVoice> defines how many <codeVoice>Action<\/codeVoice>s the <codeVoice>Publisher<\/codeVoice> should publish before they are returned. If the <codeVoice>Effect<\/codeVoice> is <codeVoice>.nonDispatching<\/codeVoice>, the <codeVoice>expectedCount<\/codeVoice> is ignored.<\/Para><\/Discussion><\/CommentParts><\/Function>",
+            "key.doc.line" : 70,
+            "key.doc.name" : "run(_:with:expectedCount:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Effect` to run"
+                  }
+                ],
+                "name" : "effect"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Action` to send to the `Effect`"
+                  }
+                ],
+                "name" : "action"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The count of `Action`s to wait for"
+                  }
+                ],
+                "name" : "expectedCount"
+              }
+            ],
+            "key.doc.result_discussion" : [
+              {
+                "Para" : "The `Action`s published by the `Effect` if it is dispatching"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.doclength" : 534,
+            "key.docoffset" : 2320,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.static><syntaxtype.attribute.builtin><syntaxtype.attribute.name>@discardableResult<\/syntaxtype.attribute.name><\/syntaxtype.attribute.builtin> <syntaxtype.keyword>static<\/syntaxtype.keyword> <syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>run<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>_<\/decl.var.parameter.argument_label> <decl.var.parameter.name>effect<\/decl.var.parameter.name>: <decl.var.parameter.type><ref.enum usr=\"s:6Fluxor6EffectO\">Effect<\/ref.enum>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport12EffectRunnerVAAytRszlE11Environmentxmfp\">Environment<\/ref.generic_type_param>&gt;<\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>with<\/decl.var.parameter.argument_label> <decl.var.parameter.name>action<\/decl.var.parameter.name>: <decl.var.parameter.type><ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol><\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>expectedCount<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.struct usr=\"s:Si\">Int<\/ref.struct><\/decl.var.parameter.type> = 1<\/decl.var.parameter>) <syntaxtype.keyword>throws<\/syntaxtype.keyword> -&gt; <decl.function.returntype>[<ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol>]?<\/decl.function.returntype><\/decl.function.method.static>",
+            "key.kind" : "source.lang.swift.decl.function.method.static",
+            "key.length" : 251,
+            "key.line" : 70,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "run(_:with:expectedCount:)",
+            "key.namelength" : 119,
+            "key.nameoffset" : 2894,
+            "key.offset" : 2882,
+            "key.parsed_declaration" : "static func run(_ effect: Effect<Environment>,\n                with action: Action,\n                expectedCount: Int = 1) throws -> [Action]?",
+            "key.parsed_scope.end" : 74,
+            "key.parsed_scope.start" : 70,
+            "key.related_decls" : [
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport12EffectRunnerV3run_4with11environment13expectedCountSay0A06Action_pGSgAH0D0OyxG_AhI_pxSitKFZ\">run(_:with:environment:expectedCount:)<\/RelatedName>"
+              }
+            ],
+            "key.substructure" : [
+
+            ],
+            "key.typename" : "<Environment where Environment == ()> (EffectRunner<Environment>.Type) -> (Effect<Environment>, Action, Int) throws -> [Action]?",
+            "key.typeusr" : "$s_4with13expectedCountSay6Fluxor6Action_pGSgAC6EffectOyytG_AcD_pSitKcD",
+            "key.usr" : "s:17FluxorTestSupport12EffectRunnerVAAytRszlE3run_4with13expectedCountSay0A06Action_pGSgAG0D0OyytG_AgH_pSitKFZ"
+          }
+        ],
+        "key.typename" : "EffectRunner<Environment>.Type",
+        "key.typeusr" : "$s17FluxorTestSupport12EffectRunnerVyxGmD",
+        "key.usr" : "s:17FluxorTestSupport12EffectRunnerV"
+      },
+      {
+        "key.accessibility" : "source.lang.swift.accessibility.private",
+        "key.annotated_decl" : "<Declaration>private class ActionRecorder<\/Declaration>",
+        "key.attributes" : [
+          {
+            "key.attribute" : "source.decl.attribute.private",
+            "key.length" : 7,
+            "key.offset" : 3302
+          }
+        ],
+        "key.bodylength" : 1507,
+        "key.bodyoffset" : 3332,
+        "key.column" : 15,
+        "key.decl_lang" : "source.lang.swift",
+        "key.doc.column" : 15,
+        "key.doc.comment" : "The `ActionRecorder` records published `Action`s from a `Publisher`.\n\nInspired by: https:\/\/vojtastavik.com\/2019\/12\/11\/combine-publisher-blocking-recorder\/",
+        "key.doc.declaration" : "private class ActionRecorder",
+        "key.doc.discussion" : [
+          {
+            "Para" : "Inspired by: https:\/\/vojtastavik.com\/2019\/12\/11\/combine-publisher-blocking-recorder\/"
+          }
+        ],
+        "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+        "key.doc.full_as_xml" : "<Class file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift\" line=\"82\" column=\"15\"><Name>ActionRecorder<\/Name><USR>s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC<\/USR><Declaration>private class ActionRecorder<\/Declaration><CommentParts><Abstract><Para>The <codeVoice>ActionRecorder<\/codeVoice> records published <codeVoice>Action<\/codeVoice>s from a <codeVoice>Publisher<\/codeVoice>.<\/Para><\/Abstract><Discussion><Para>Inspired by: https:\/\/vojtastavik.com\/2019\/12\/11\/combine-publisher-blocking-recorder\/<\/Para><\/Discussion><\/CommentParts><\/Class>",
+        "key.doc.line" : 82,
+        "key.doc.name" : "ActionRecorder",
+        "key.doc.type" : "Class",
+        "key.doclength" : 164,
+        "key.docoffset" : 3137,
+        "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+        "key.fully_annotated_decl" : "<decl.class><syntaxtype.keyword>private<\/syntaxtype.keyword> <syntaxtype.keyword>class<\/syntaxtype.keyword> <decl.name>ActionRecorder<\/decl.name><\/decl.class>",
+        "key.kind" : "source.lang.swift.decl.class",
+        "key.length" : 1530,
+        "key.line" : 82,
+        "key.modulename" : "FluxorTestSupport",
+        "key.name" : "ActionRecorder",
+        "key.namelength" : 14,
+        "key.nameoffset" : 3316,
+        "key.offset" : 3310,
+        "key.parsed_declaration" : "private class ActionRecorder",
+        "key.parsed_scope.end" : 118,
+        "key.parsed_scope.start" : 82,
+        "key.substructure" : [
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.internal",
+            "key.annotated_decl" : "<Declaration>typealias <Type usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC\">ActionRecorder<\/Type>.Input = [<Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>]<\/Declaration>",
+            "key.column" : 15,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.declaration" : "associatedtype Input",
+            "key.doc.discussion" : [
+              {
+                "Note" : ""
+              }
+            ],
+            "key.doc.full_as_xml" : "<Other><Name>Input<\/Name><USR>s:7Combine10SubscriberP5InputQa<\/USR><Declaration>associatedtype Input<\/Declaration><CommentParts><Abstract><Para>The kind of values this subscriber receives.<\/Para><\/Abstract><Discussion><Note><Para>This documentation comment was inherited from <codeVoice>Subscriber<\/codeVoice>.<\/Para><\/Note><\/Discussion><\/CommentParts><\/Other>",
+            "key.doc.name" : "Input",
+            "key.doc.type" : "Other",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.typealias><syntaxtype.keyword>typealias<\/syntaxtype.keyword> <ref.class usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC\">ActionRecorder<\/ref.class>.<decl.name>Input<\/decl.name> = [<ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol>]<\/decl.typealias>",
+            "key.kind" : "source.lang.swift.decl.typealias",
+            "key.length" : 26,
+            "key.line" : 83,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "Input",
+            "key.namelength" : 5,
+            "key.nameoffset" : 3347,
+            "key.offset" : 3337,
+            "key.overrides" : [
+              {
+                "key.usr" : "s:7Combine10SubscriberP5InputQa"
+              }
+            ],
+            "key.parsed_declaration" : "typealias Input = [Action]",
+            "key.parsed_scope.end" : 83,
+            "key.parsed_scope.start" : 83,
+            "key.typename" : "[Action].Type",
+            "key.typeusr" : "$sSay6Fluxor6Action_pGmD",
+            "key.usr" : "s:7Combine10SubscriberP5InputQa"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.internal",
+            "key.annotated_decl" : "<Declaration>typealias <Type usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC\">ActionRecorder<\/Type>.Failure = <Type usr=\"s:s5NeverO\">Never<\/Type><\/Declaration>",
+            "key.column" : 15,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.declaration" : "associatedtype Failure : Error",
+            "key.doc.discussion" : [
+              {
+                "Para" : "Use `Never` if this `Subscriber` cannot receive errors."
+              },
+              {
+                "Note" : ""
+              }
+            ],
+            "key.doc.full_as_xml" : "<Other><Name>Failure<\/Name><USR>s:7Combine10SubscriberP7FailureQa<\/USR><Declaration>associatedtype Failure : Error<\/Declaration><CommentParts><Abstract><Para>The kind of errors this subscriber might receive.<\/Para><\/Abstract><Discussion><Para>Use <codeVoice>Never<\/codeVoice> if this <codeVoice>Subscriber<\/codeVoice> cannot receive errors.<\/Para><Note><Para>This documentation comment was inherited from <codeVoice>Subscriber<\/codeVoice>.<\/Para><\/Note><\/Discussion><\/CommentParts><\/Other>",
+            "key.doc.name" : "Failure",
+            "key.doc.type" : "Other",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.typealias><syntaxtype.keyword>typealias<\/syntaxtype.keyword> <ref.class usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC\">ActionRecorder<\/ref.class>.<decl.name>Failure<\/decl.name> = <ref.enum usr=\"s:s5NeverO\">Never<\/ref.enum><\/decl.typealias>",
+            "key.kind" : "source.lang.swift.decl.typealias",
+            "key.length" : 25,
+            "key.line" : 84,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "Failure",
+            "key.namelength" : 7,
+            "key.nameoffset" : 3378,
+            "key.offset" : 3368,
+            "key.overrides" : [
+              {
+                "key.usr" : "s:7Combine10SubscriberP7FailureQa"
+              }
+            ],
+            "key.parsed_declaration" : "typealias Failure = Never",
+            "key.parsed_scope.end" : 84,
+            "key.parsed_scope.start" : 84,
+            "key.typename" : "Never.Type",
+            "key.typeusr" : "$ss5NeverOmD",
+            "key.usr" : "s:7Combine10SubscriberP7FailureQa"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.private",
+            "key.annotated_decl" : "<Declaration>private let expectation: <Type usr=\"c:objc(cs)XCTestExpectation\">XCTestExpectation<\/Type><\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.private",
+                "key.length" : 7,
+                "key.offset" : 3398
+              }
+            ],
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.var.instance><syntaxtype.keyword>private<\/syntaxtype.keyword> <syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>expectation<\/decl.name>: <decl.var.type><ref.class usr=\"c:objc(cs)XCTestExpectation\">XCTestExpectation<\/ref.class><\/decl.var.type><\/decl.var.instance>",
+            "key.kind" : "source.lang.swift.decl.var.instance",
+            "key.length" : 37,
+            "key.line" : 85,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "expectation",
+            "key.namelength" : 11,
+            "key.nameoffset" : 3410,
+            "key.offset" : 3406,
+            "key.parsed_declaration" : "private let expectation = XCTestExpectation()",
+            "key.parsed_scope.end" : 85,
+            "key.parsed_scope.start" : 85,
+            "key.typename" : "XCTestExpectation",
+            "key.typeusr" : "$sSo17XCTestExpectationCD",
+            "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC11expectationSo17XCTestExpectationCvp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.internal",
+            "key.annotated_decl" : "<Declaration>private(set) var actions: [<Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>] { get set }<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.setter_access.private",
+                "key.length" : 12,
+                "key.offset" : 3448
+              }
+            ],
+            "key.bodylength" : 34,
+            "key.bodyoffset" : 3487,
+            "key.column" : 22,
+            "key.decl_lang" : "source.lang.swift",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.var.instance><syntaxtype.keyword>private<\/syntaxtype.keyword>(set) <syntaxtype.keyword>var<\/syntaxtype.keyword> <decl.name>actions<\/decl.name>: <decl.var.type>[<ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol>]<\/decl.var.type> { <syntaxtype.keyword>get<\/syntaxtype.keyword> <syntaxtype.keyword>set<\/syntaxtype.keyword> }<\/decl.var.instance>",
+            "key.kind" : "source.lang.swift.decl.var.instance",
+            "key.length" : 61,
+            "key.line" : 86,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "actions",
+            "key.namelength" : 7,
+            "key.nameoffset" : 3465,
+            "key.offset" : 3461,
+            "key.parsed_declaration" : "private(set) var actions = [Action]()",
+            "key.parsed_scope.end" : 86,
+            "key.parsed_scope.start" : 86,
+            "key.setter_accessibility" : "source.lang.swift.accessibility.private",
+            "key.typename" : "[Action]",
+            "key.typeusr" : "$sSay6Fluxor6Action_pGD",
+            "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC7actionsSay0A00D0_pGvp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.internal",
+            "key.annotated_decl" : "<Declaration>init(expectedNumberOfActions: <Type usr=\"s:Si\">Int<\/Type>)<\/Declaration>",
+            "key.bodylength" : 76,
+            "key.bodyoffset" : 3738,
+            "key.column" : 5,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 5,
+            "key.doc.comment" : "Initializes an `ActionRecorder` with the given `expectedNumberOfActions`.\n\n- Parameter expectedNumberOfActions: The number of `Action`s to wait for",
+            "key.doc.declaration" : "init(expectedNumberOfActions: Int)",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift\" line=\"93\" column=\"5\"><Name>init(expectedNumberOfActions:)<\/Name><USR>s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC23expectedNumberOfActionsADSi_tcfc<\/USR><Declaration>init(expectedNumberOfActions: Int)<\/Declaration><CommentParts><Abstract><Para>Initializes an <codeVoice>ActionRecorder<\/codeVoice> with the given <codeVoice>expectedNumberOfActions<\/codeVoice>.<\/Para><\/Abstract><Parameters><Parameter><Name>expectedNumberOfActions<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The number of <codeVoice>Action<\/codeVoice>s to wait for<\/Para><\/Discussion><\/Parameter><\/Parameters><\/CommentParts><\/Function>",
+            "key.doc.line" : 93,
+            "key.doc.name" : "init(expectedNumberOfActions:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The number of `Action`s to wait for"
+                  }
+                ],
+                "name" : "expectedNumberOfActions"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.doclength" : 169,
+            "key.docoffset" : 3528,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.function.constructor><syntaxtype.keyword>init<\/syntaxtype.keyword>(<decl.var.parameter><decl.var.parameter.argument_label>expectedNumberOfActions<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.struct usr=\"s:Si\">Int<\/ref.struct><\/decl.var.parameter.type><\/decl.var.parameter>)<\/decl.function.constructor>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 113,
+            "key.line" : 93,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "init(expectedNumberOfActions:)",
+            "key.namelength" : 34,
+            "key.nameoffset" : 3702,
+            "key.offset" : 3702,
+            "key.parsed_declaration" : "init(expectedNumberOfActions: Int)",
+            "key.parsed_scope.end" : 95,
+            "key.parsed_scope.start" : 93,
+            "key.substructure" : [
+
+            ],
+            "key.typename" : "(ActionRecorder.Type) -> (Int) -> ActionRecorder",
+            "key.typeusr" : "$s23expectedNumberOfActions17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLCSi_tcD",
+            "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC23expectedNumberOfActionsADSi_tcfc"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.internal",
+            "key.annotated_decl" : "<Declaration>func waitForAllActions(timeout: <Type usr=\"c:@T@NSTimeInterval\">TimeInterval<\/Type> = 1) throws -&gt; [<Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>]<\/Declaration>",
+            "key.bodylength" : 677,
+            "key.bodyoffset" : 4066,
+            "key.column" : 10,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 10,
+            "key.doc.comment" : "Wait for all the expected `Action`s to be published.\n\n- Parameter timeout: The time waiting for the `Action`s\n- Returns: The `Action`s recorded",
+            "key.doc.declaration" : "func waitForAllActions(timeout: TimeInterval = 1) throws -> [Action]",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift\" line=\"103\" column=\"10\"><Name>waitForAllActions(timeout:)<\/Name><USR>s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC17waitForAllActions7timeoutSay0A00D0_pGSd_tKF<\/USR><Declaration>func waitForAllActions(timeout: TimeInterval = 1) throws -&gt; [Action]<\/Declaration><CommentParts><Abstract><Para>Wait for all the expected <codeVoice>Action<\/codeVoice>s to be published.<\/Para><\/Abstract><Parameters><Parameter><Name>timeout<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The time waiting for the <codeVoice>Action<\/codeVoice>s<\/Para><\/Discussion><\/Parameter><\/Parameters><ResultDiscussion><Para>The <codeVoice>Action<\/codeVoice>s recorded<\/Para><\/ResultDiscussion><\/CommentParts><\/Function>",
+            "key.doc.line" : 103,
+            "key.doc.name" : "waitForAllActions(timeout:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The time waiting for the `Action`s"
+                  }
+                ],
+                "name" : "timeout"
+              }
+            ],
+            "key.doc.result_discussion" : [
+              {
+                "Para" : "The `Action`s recorded"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.doclength" : 170,
+            "key.docoffset" : 3821,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>waitForAllActions<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>timeout<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.typealias usr=\"c:@T@NSTimeInterval\">TimeInterval<\/ref.typealias><\/decl.var.parameter.type> = 1<\/decl.var.parameter>) <syntaxtype.keyword>throws<\/syntaxtype.keyword> -&gt; <decl.function.returntype>[<ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol>]<\/decl.function.returntype><\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 748,
+            "key.line" : 103,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "waitForAllActions(timeout:)",
+            "key.namelength" : 44,
+            "key.nameoffset" : 4001,
+            "key.offset" : 3996,
+            "key.parsed_declaration" : "func waitForAllActions(timeout: TimeInterval = 1) throws -> [Action]",
+            "key.parsed_scope.end" : 113,
+            "key.parsed_scope.start" : 103,
+            "key.substructure" : [
+              {
+                "key.annotated_decl" : "<Declaration>let waitResult: <Type usr=\"c:objc(cs)XCTWaiter\">XCTWaiter<\/Type>.<Type usr=\"c:@E@XCTWaiterResult\">Result<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>waitResult<\/decl.name>: <decl.var.type><ref.class usr=\"c:objc(cs)XCTWaiter\">XCTWaiter<\/ref.class>.<ref.enum usr=\"c:@E@XCTWaiterResult\">Result<\/ref.enum><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 71,
+                "key.line" : 105,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "waitResult",
+                "key.namelength" : 10,
+                "key.nameoffset" : 4170,
+                "key.offset" : 4166,
+                "key.parsed_declaration" : "let waitResult = XCTWaiter().wait(for: [expectation], timeout: timeout)",
+                "key.parsed_scope.end" : 105,
+                "key.parsed_scope.start" : 105,
+                "key.typename" : "XCTWaiter.Result",
+                "key.typeusr" : "$sSo15XCTWaiterResultVD",
+                "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC17waitForAllActions7timeoutSay0A00D0_pGSd_tKF0N6ResultL_So09XCTWaiterS0Vvp"
+              },
+              {
+                "key.annotated_decl" : "<Declaration>let valueFormatter: (_ count: <Type usr=\"s:Si\">Int<\/Type>) -&gt; <Type usr=\"s:SS\">String<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>valueFormatter<\/decl.name>: <decl.var.type>(<decl.var.parameter>_ <decl.var.parameter.name>count<\/decl.var.parameter.name>: <decl.var.parameter.type><ref.struct usr=\"s:Si\">Int<\/ref.struct><\/decl.var.parameter.type><\/decl.var.parameter>) -&gt; <decl.function.returntype><ref.struct usr=\"s:SS\">String<\/ref.struct><\/decl.function.returntype><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 84,
+                "key.line" : 108,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "valueFormatter",
+                "key.namelength" : 14,
+                "key.nameoffset" : 4314,
+                "key.offset" : 4310,
+                "key.parsed_declaration" : "let valueFormatter = { (count: Int) in \"\\(count) action\" + (count == 1 ? \"\" : \"s\") }",
+                "key.parsed_scope.end" : 108,
+                "key.parsed_scope.start" : 108,
+                "key.typename" : "(Int) -> String",
+                "key.typeusr" : "$sySSSicD",
+                "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC17waitForAllActions7timeoutSay0A00D0_pGSd_tKF14valueFormatterL_ySSSicvp"
+              },
+              {
+                "key.annotated_decl" : "<Declaration>let formattedExpectedActions: <Type usr=\"s:SS\">String<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>formattedExpectedActions<\/decl.name>: <decl.var.type><ref.struct usr=\"s:SS\">String<\/ref.struct><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 83,
+                "key.line" : 109,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "formattedExpectedActions",
+                "key.namelength" : 24,
+                "key.nameoffset" : 4407,
+                "key.offset" : 4403,
+                "key.parsed_declaration" : "let formattedExpectedActions = valueFormatter(expectation.expectedFulfillmentCount)",
+                "key.parsed_scope.end" : 109,
+                "key.parsed_scope.start" : 109,
+                "key.typename" : "String",
+                "key.typeusr" : "$sSSD",
+                "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC17waitForAllActions7timeoutSay0A00D0_pGSd_tKF017formattedExpectedQ0L_SSvp"
+              },
+              {
+                "key.annotated_decl" : "<Declaration>let formattedActions: <Type usr=\"s:SS\">String<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>formattedActions<\/decl.name>: <decl.var.type><ref.struct usr=\"s:SS\">String<\/ref.struct><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 52,
+                "key.line" : 110,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "formattedActions",
+                "key.namelength" : 16,
+                "key.nameoffset" : 4499,
+                "key.offset" : 4495,
+                "key.parsed_declaration" : "let formattedActions = valueFormatter(actions.count)",
+                "key.parsed_scope.end" : 110,
+                "key.parsed_scope.start" : 110,
+                "key.typename" : "String",
+                "key.typeusr" : "$sSSD",
+                "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC17waitForAllActions7timeoutSay0A00D0_pGSd_tKF09formattedQ0L_SSvp"
+              },
+              {
+                "key.annotated_decl" : "<Declaration>let errorMessage: <Type usr=\"s:SS\">String<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>errorMessage<\/decl.name>: <decl.var.type><ref.struct usr=\"s:SS\">String<\/ref.struct><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 106,
+                "key.line" : 111,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "errorMessage",
+                "key.namelength" : 12,
+                "key.nameoffset" : 4560,
+                "key.offset" : 4556,
+                "key.parsed_declaration" : "let errorMessage = \"Waiting for \\(formattedExpectedActions) timed out. Received only \\(formattedActions).\"",
+                "key.parsed_scope.end" : 111,
+                "key.parsed_scope.start" : 111,
+                "key.typename" : "String",
+                "key.typeusr" : "$sSSD",
+                "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC17waitForAllActions7timeoutSay0A00D0_pGSd_tKF12errorMessageL_SSvp"
+              }
+            ],
+            "key.typename" : "(ActionRecorder) -> (Double) throws -> [Action]",
+            "key.typeusr" : "$s7timeoutSay6Fluxor6Action_pGSd_tKcD",
+            "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC17waitForAllActions7timeoutSay0A00D0_pGSd_tKF"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.internal",
+            "key.annotated_decl" : "<Declaration>enum <Type usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC\">ActionRecorder<\/Type>.RecordingError : <Type usr=\"s:s5ErrorP\">Error<\/Type><\/Declaration>",
+            "key.bodylength" : 59,
+            "key.bodyoffset" : 4778,
+            "key.column" : 10,
+            "key.decl_lang" : "source.lang.swift",
+            "key.elements" : [
+              {
+                "key.kind" : "source.lang.swift.structure.elem.typeref",
+                "key.length" : 5,
+                "key.offset" : 4771
+              }
+            ],
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.enum><syntaxtype.keyword>enum<\/syntaxtype.keyword> <ref.class usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC\">ActionRecorder<\/ref.class>.<decl.name>RecordingError<\/decl.name> : <ref.protocol usr=\"s:s5ErrorP\">Error<\/ref.protocol><\/decl.enum>",
+            "key.inheritedtypes" : [
+              {
+                "key.name" : "Error"
+              }
+            ],
+            "key.kind" : "source.lang.swift.decl.enum",
+            "key.length" : 88,
+            "key.line" : 115,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "RecordingError",
+            "key.namelength" : 14,
+            "key.nameoffset" : 4755,
+            "key.offset" : 4750,
+            "key.parsed_declaration" : "enum RecordingError: Error",
+            "key.parsed_scope.end" : 117,
+            "key.parsed_scope.start" : 115,
+            "key.substructure" : [
+              {
+                "key.kind" : "source.lang.swift.decl.enumcase",
+                "key.length" : 45,
+                "key.offset" : 4787,
+                "key.substructure" : [
+                  {
+                    "key.accessibility" : "source.lang.swift.accessibility.internal",
+                    "key.annotated_decl" : "<Declaration>case expectedCountNotReached(message: <Type usr=\"s:SS\">String<\/Type>)<\/Declaration>",
+                    "key.column" : 14,
+                    "key.decl_lang" : "source.lang.swift",
+                    "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+                    "key.fully_annotated_decl" : "<decl.enumelement><syntaxtype.keyword>case<\/syntaxtype.keyword> <decl.name>expectedCountNotReached<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>message<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.struct usr=\"s:SS\">String<\/ref.struct><\/decl.var.parameter.type><\/decl.var.parameter>)<\/decl.enumelement>",
+                    "key.kind" : "source.lang.swift.decl.enumelement",
+                    "key.length" : 40,
+                    "key.line" : 116,
+                    "key.modulename" : "FluxorTestSupport",
+                    "key.name" : "expectedCountNotReached(message:)",
+                    "key.namelength" : 40,
+                    "key.nameoffset" : 4792,
+                    "key.offset" : 4792,
+                    "key.parsed_declaration" : "case expectedCountNotReached(message: String)",
+                    "key.parsed_scope.end" : 116,
+                    "key.parsed_scope.start" : 116,
+                    "key.substructure" : [
+
+                    ],
+                    "key.typename" : "(ActionRecorder.RecordingError.Type) -> (String) -> ActionRecorder.RecordingError",
+                    "key.typeusr" : "$sy17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC14RecordingErrorOSS_tcAFmcD",
+                    "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC14RecordingErrorO23expectedCountNotReachedyAFSS_tcAFmF"
+                  }
+                ]
+              }
+            ],
+            "key.typename" : "ActionRecorder.RecordingError.Type",
+            "key.typeusr" : "$s17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC14RecordingErrorOmD",
+            "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC14RecordingErrorO"
+          }
+        ],
+        "key.typename" : "ActionRecorder.Type",
+        "key.typeusr" : "$s17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLCmD",
+        "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC"
+      },
+      {
+        "key.annotated_decl" : "<Declaration>private class ActionRecorder<\/Declaration>",
+        "key.bodylength" : 348,
+        "key.bodyoffset" : 4880,
+        "key.column" : 15,
+        "key.decl_lang" : "source.lang.swift",
+        "key.doc.column" : 15,
+        "key.doc.declaration" : "private class ActionRecorder",
+        "key.doc.discussion" : [
+          {
+            "Para" : "Inspired by: https:\/\/vojtastavik.com\/2019\/12\/11\/combine-publisher-blocking-recorder\/"
+          }
+        ],
+        "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+        "key.doc.full_as_xml" : "<Class file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift\" line=\"82\" column=\"15\"><Name>ActionRecorder<\/Name><USR>s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC<\/USR><Declaration>private class ActionRecorder<\/Declaration><CommentParts><Abstract><Para>The <codeVoice>ActionRecorder<\/codeVoice> records published <codeVoice>Action<\/codeVoice>s from a <codeVoice>Publisher<\/codeVoice>.<\/Para><\/Abstract><Discussion><Para>Inspired by: https:\/\/vojtastavik.com\/2019\/12\/11\/combine-publisher-blocking-recorder\/<\/Para><\/Discussion><\/CommentParts><\/Class>",
+        "key.doc.line" : 82,
+        "key.doc.name" : "ActionRecorder",
+        "key.doc.type" : "Class",
+        "key.elements" : [
+          {
+            "key.kind" : "source.lang.swift.structure.elem.typeref",
+            "key.length" : 10,
+            "key.offset" : 4868
+          }
+        ],
+        "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+        "key.fully_annotated_decl" : "<decl.class><syntaxtype.keyword>private<\/syntaxtype.keyword> <syntaxtype.keyword>class<\/syntaxtype.keyword> <decl.name>ActionRecorder<\/decl.name><\/decl.class>",
+        "key.inheritedtypes" : [
+          {
+            "key.name" : "Subscriber"
+          }
+        ],
+        "key.kind" : "source.lang.swift.decl.extension",
+        "key.length" : 387,
+        "key.line" : 82,
+        "key.modulename" : "FluxorTestSupport",
+        "key.name" : "ActionRecorder",
+        "key.namelength" : 14,
+        "key.nameoffset" : 4852,
+        "key.offset" : 4842,
+        "key.parsed_declaration" : "extension ActionRecorder: Subscriber",
+        "key.parsed_scope.end" : 133,
+        "key.parsed_scope.start" : 120,
+        "key.substructure" : [
+          {
+            "key.annotated_decl" : "<Declaration>func receive(subscription: <Type usr=\"s:7Combine12SubscriptionP\">Subscription<\/Type>)<\/Declaration>",
+            "key.bodylength" : 46,
+            "key.bodyoffset" : 4927,
+            "key.column" : 10,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.declaration" : "func receive(subscription: Subscription)",
+            "key.doc.discussion" : [
+              {
+                "Para" : "Use the received `Subscription` to request items from the publisher."
+              },
+              {
+                "Note" : ""
+              }
+            ],
+            "key.doc.full_as_xml" : "<Function><Name>receive(subscription:)<\/Name><USR>s:7Combine10SubscriberP7receive12subscriptionyAA12Subscription_p_tF<\/USR><Declaration>func receive(subscription: Subscription)<\/Declaration><CommentParts><Abstract><Para>Tells the subscriber that it has successfully subscribed to the publisher and may request items.<\/Para><\/Abstract><Parameters><Parameter><Name>subscription<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>A subscription that represents the connection between publisher and subscriber.<\/Para><\/Discussion><\/Parameter><\/Parameters><Discussion><Para>Use the received <codeVoice>Subscription<\/codeVoice> to request items from the publisher.<\/Para><Note><Para>This documentation comment was inherited from <codeVoice>Subscriber<\/codeVoice>.<\/Para><\/Note><\/Discussion><\/CommentParts><\/Function>",
+            "key.doc.name" : "receive(subscription:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "A subscription that represents the connection between publisher and subscriber."
+                  }
+                ],
+                "name" : "subscription"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>receive<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>subscription<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.protocol usr=\"s:7Combine12SubscriptionP\">Subscription<\/ref.protocol><\/decl.var.parameter.type><\/decl.var.parameter>)<\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 89,
+            "key.line" : 121,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "receive(subscription:)",
+            "key.namelength" : 35,
+            "key.nameoffset" : 4890,
+            "key.offset" : 4885,
+            "key.overrides" : [
+              {
+                "key.usr" : "s:7Combine10SubscriberP7receive12subscriptionyAA12Subscription_p_tF"
+              }
+            ],
+            "key.parsed_declaration" : "func receive(subscription: Subscription)",
+            "key.parsed_scope.end" : 123,
+            "key.parsed_scope.start" : 121,
+            "key.related_decls" : [
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC7receivey7Combine11SubscribersO6DemandVSay0A00D0_pGF\">receive(_:)<\/RelatedName>"
+              },
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC7receive10completiony7Combine11SubscribersO10CompletionOy_s5NeverOG_tF\">receive(completion:)<\/RelatedName>"
+              }
+            ],
+            "key.substructure" : [
+
+            ],
+            "key.typename" : "(ActionRecorder) -> (Subscription) -> ()",
+            "key.typeusr" : "$s12subscriptiony7Combine12Subscription_p_tcD",
+            "key.usr" : "s:7Combine10SubscriberP7receive12subscriptionyAA12Subscription_p_tF"
+          },
+          {
+            "key.annotated_decl" : "<Declaration>func receive(_ input: <Type usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC5Inputa\">Input<\/Type>) -&gt; <Type usr=\"s:7Combine11SubscribersO\">Subscribers<\/Type>.<Type usr=\"s:7Combine11SubscribersO6DemandV\">Demand<\/Type><\/Declaration>",
+            "key.bodylength" : 130,
+            "key.bodyoffset" : 5032,
+            "key.column" : 10,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.declaration" : "func receive(_ input: Self.Input) -> Subscribers.Demand",
+            "key.doc.discussion" : [
+              {
+                "Note" : ""
+              }
+            ],
+            "key.doc.full_as_xml" : "<Function><Name>receive(_:)<\/Name><USR>s:7Combine10SubscriberP7receiveyAA11SubscribersO6DemandV5InputQzF<\/USR><Declaration>func receive(_ input: Self.Input) -&gt; Subscribers.Demand<\/Declaration><CommentParts><Abstract><Para>Tells the subscriber that the publisher has produced an element.<\/Para><\/Abstract><Parameters><Parameter><Name>input<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The published element.<\/Para><\/Discussion><\/Parameter><\/Parameters><ResultDiscussion><Para>A <codeVoice>Subscribers.Demand<\/codeVoice> instance indicating how many more elements the subscriber expects to receive.<\/Para><\/ResultDiscussion><Discussion><Note><Para>This documentation comment was inherited from <codeVoice>Subscriber<\/codeVoice>.<\/Para><\/Note><\/Discussion><\/CommentParts><\/Function>",
+            "key.doc.name" : "receive(_:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The published element."
+                  }
+                ],
+                "name" : "input"
+              }
+            ],
+            "key.doc.result_discussion" : [
+              {
+                "Para" : "A `Subscribers.Demand` instance indicating how many more elements the subscriber expects to receive."
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>receive<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>_<\/decl.var.parameter.argument_label> <decl.var.parameter.name>input<\/decl.var.parameter.name>: <decl.var.parameter.type><ref.typealias usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC5Inputa\">Input<\/ref.typealias><\/decl.var.parameter.type><\/decl.var.parameter>) -&gt; <decl.function.returntype><ref.enum usr=\"s:7Combine11SubscribersO\">Subscribers<\/ref.enum>.<ref.struct usr=\"s:7Combine11SubscribersO6DemandV\">Demand<\/ref.struct><\/decl.function.returntype><\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 183,
+            "key.line" : 125,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "receive(_:)",
+            "key.namelength" : 23,
+            "key.nameoffset" : 4985,
+            "key.offset" : 4980,
+            "key.overrides" : [
+              {
+                "key.usr" : "s:7Combine10SubscriberP7receiveyAA11SubscribersO6DemandV5InputQzF"
+              }
+            ],
+            "key.parsed_declaration" : "func receive(_ input: Input) -> Subscribers.Demand",
+            "key.parsed_scope.end" : 130,
+            "key.parsed_scope.start" : 125,
+            "key.related_decls" : [
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC7receive12subscriptiony7Combine12Subscription_p_tF\">receive(subscription:)<\/RelatedName>"
+              },
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC7receive10completiony7Combine11SubscribersO10CompletionOy_s5NeverOG_tF\">receive(completion:)<\/RelatedName>"
+              }
+            ],
+            "key.substructure" : [
+
+            ],
+            "key.typename" : "(ActionRecorder) -> ([Action]) -> Subscribers.Demand",
+            "key.typeusr" : "$sy7Combine11SubscribersO6DemandVSay6Fluxor6Action_pGcD",
+            "key.usr" : "s:7Combine10SubscriberP7receiveyAA11SubscribersO6DemandV5InputQzF"
+          },
+          {
+            "key.annotated_decl" : "<Declaration>func receive(completion: <Type usr=\"s:7Combine11SubscribersO\">Subscribers<\/Type>.<Type usr=\"s:7Combine11SubscribersO10CompletionO\">Completion<\/Type>&lt;<Type usr=\"s:s5NeverO\">Never<\/Type>&gt;)<\/Declaration>",
+            "key.bodylength" : 0,
+            "key.bodyoffset" : 5226,
+            "key.column" : 10,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.declaration" : "func receive(completion: Subscribers.Completion<Self.Failure>)",
+            "key.doc.discussion" : [
+              {
+                "Note" : ""
+              }
+            ],
+            "key.doc.full_as_xml" : "<Function><Name>receive(completion:)<\/Name><USR>s:7Combine10SubscriberP7receive10completionyAA11SubscribersO10CompletionOy_7FailureQzG_tF<\/USR><Declaration>func receive(completion: Subscribers.Completion&lt;Self.Failure&gt;)<\/Declaration><CommentParts><Abstract><Para>Tells the subscriber that the publisher has completed publishing, either normally or with an error.<\/Para><\/Abstract><Parameters><Parameter><Name>completion<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>A <codeVoice>Subscribers\/Completion<\/codeVoice> case indicating whether publishing completed normally or with an error.<\/Para><\/Discussion><\/Parameter><\/Parameters><Discussion><Note><Para>This documentation comment was inherited from <codeVoice>Subscriber<\/codeVoice>.<\/Para><\/Note><\/Discussion><\/CommentParts><\/Function>",
+            "key.doc.name" : "receive(completion:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "A `Subscribers\/Completion` case indicating whether publishing completed normally or with an error."
+                  }
+                ],
+                "name" : "completion"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/EffectRunner.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>receive<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>completion<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.enum usr=\"s:7Combine11SubscribersO\">Subscribers<\/ref.enum>.<ref.enum usr=\"s:7Combine11SubscribersO10CompletionO\">Completion<\/ref.enum>&lt;<ref.enum usr=\"s:s5NeverO\">Never<\/ref.enum>&gt;<\/decl.var.parameter.type><\/decl.var.parameter>)<\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 58,
+            "key.line" : 132,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "receive(completion:)",
+            "key.namelength" : 50,
+            "key.nameoffset" : 5174,
+            "key.offset" : 5169,
+            "key.overrides" : [
+              {
+                "key.usr" : "s:7Combine10SubscriberP7receive10completionyAA11SubscribersO10CompletionOy_7FailureQzG_tF"
+              }
+            ],
+            "key.parsed_declaration" : "func receive(completion: Subscribers.Completion<Never>)",
+            "key.parsed_scope.end" : 132,
+            "key.parsed_scope.start" : 132,
+            "key.related_decls" : [
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC7receive12subscriptiony7Combine12Subscription_p_tF\">receive(subscription:)<\/RelatedName>"
+              },
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC7receivey7Combine11SubscribersO6DemandVSay0A00D0_pGF\">receive(_:)<\/RelatedName>"
+              }
+            ],
+            "key.substructure" : [
+
+            ],
+            "key.typename" : "(ActionRecorder) -> (Subscribers.Completion<Never>) -> ()",
+            "key.typeusr" : "$s10completiony7Combine11SubscribersO10CompletionOy_s5NeverOG_tcD",
+            "key.usr" : "s:7Combine10SubscriberP7receive10completionyAA11SubscribersO10CompletionOy_7FailureQzG_tF"
+          }
+        ],
+        "key.typename" : "ActionRecorder.Type",
+        "key.typeusr" : "$s17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLCmD",
+        "key.usr" : "s:17FluxorTestSupport14ActionRecorder33_2D843C61F3562D9AD97CFFB7DBB0B69FLLC"
+      }
+    ]
+  }
+}, {
+  "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift" : {
+    "key.diagnostic_stage" : "source.diagnostic.stage.swift.parse",
+    "key.length" : 3158,
+    "key.offset" : 0,
+    "key.substructure" : [
+      {
+        "key.annotated_decl" : "<Declaration>struct AnonymousAction&lt;Payload&gt; : <Type usr=\"s:6Fluxor18IdentifiableActionP\">IdentifiableAction<\/Type><\/Declaration>",
+        "key.bodylength" : 91,
+        "key.bodyoffset" : 284,
+        "key.column" : 15,
+        "key.decl_lang" : "source.lang.swift",
+        "key.doc.column" : 15,
+        "key.doc.declaration" : "struct AnonymousAction<Payload> : Fluxor.IdentifiableAction",
+        "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/Fluxor\/Action.swift",
+        "key.doc.full_as_xml" : "<Class file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/Fluxor\/Action.swift\" line=\"107\" column=\"15\"><Name>AnonymousAction<\/Name><USR>s:6Fluxor15AnonymousActionV<\/USR><Declaration>struct AnonymousAction&lt;Payload&gt; : Fluxor.IdentifiableAction<\/Declaration><CommentParts><Abstract><Para>An <codeVoice>Action<\/codeVoice> created from an <codeVoice>ActionTemplate<\/codeVoice>.<\/Para><\/Abstract><\/CommentParts><\/Class>",
+        "key.doc.line" : 107,
+        "key.doc.name" : "AnonymousAction",
+        "key.doc.type" : "Class",
+        "key.elements" : [
+          {
+            "key.kind" : "source.lang.swift.structure.elem.typeref",
+            "key.length" : 9,
+            "key.offset" : 273
+          }
+        ],
+        "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/Fluxor\/Action.swift",
+        "key.fully_annotated_decl" : "<decl.struct><syntaxtype.keyword>struct<\/syntaxtype.keyword> <decl.name>AnonymousAction<\/decl.name>&lt;<decl.generic_type_param usr=\"s:6Fluxor15AnonymousActionV7Payloadxmfp\"><decl.generic_type_param.name>Payload<\/decl.generic_type_param.name><\/decl.generic_type_param>&gt; : <ref.protocol usr=\"s:6Fluxor18IdentifiableActionP\">IdentifiableAction<\/ref.protocol><\/decl.struct>",
+        "key.inheritedtypes" : [
+          {
+            "key.name" : "Equatable"
+          }
+        ],
+        "key.kind" : "source.lang.swift.decl.extension",
+        "key.length" : 130,
+        "key.line" : 107,
+        "key.modulename" : "Fluxor",
+        "key.name" : "AnonymousAction",
+        "key.namelength" : 15,
+        "key.nameoffset" : 256,
+        "key.offset" : 246,
+        "key.parsed_declaration" : "extension AnonymousAction: Equatable",
+        "key.parsed_scope.end" : 20,
+        "key.parsed_scope.start" : 16,
+        "key.substructure" : [
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public static func == (lhs: `Self`, rhs: `Self`) -&gt; <Type usr=\"s:Sb\">Bool<\/Type><\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 289
+              }
+            ],
+            "key.bodylength" : 30,
+            "key.bodyoffset" : 343,
+            "key.column" : 24,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.declaration" : "static func == (lhs: Self, rhs: Self) -> Bool",
+            "key.doc.discussion" : [
+              {
+                "Para" : "Equality is the inverse of inequality. For any values `a` and `b`, `a == b` implies that `a != b` is `false`."
+              },
+              {
+                "Note" : ""
+              }
+            ],
+            "key.doc.full_as_xml" : "<Function><Name>==(_:_:)<\/Name><USR>s:SQ2eeoiySbx_xtFZ<\/USR><Declaration>static func == (lhs: Self, rhs: Self) -&gt; Bool<\/Declaration><CommentParts><Abstract><Para>Returns a Boolean value indicating whether two values are equal.<\/Para><\/Abstract><Parameters><Parameter><Name>lhs<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>A value to compare.<\/Para><\/Discussion><\/Parameter><Parameter><Name>rhs<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>Another value to compare.<\/Para><\/Discussion><\/Parameter><\/Parameters><Discussion><Para>Equality is the inverse of inequality. For any values <codeVoice>a<\/codeVoice> and <codeVoice>b<\/codeVoice>, <codeVoice>a == b<\/codeVoice> implies that <codeVoice>a != b<\/codeVoice> is <codeVoice>false<\/codeVoice>.<\/Para><Note><Para>This documentation comment was inherited from <codeVoice>Equatable<\/codeVoice>.<\/Para><\/Note><\/Discussion><\/CommentParts><\/Function>",
+            "key.doc.name" : "==(_:_:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "A value to compare."
+                  }
+                ],
+                "name" : "lhs"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "Another value to compare."
+                  }
+                ],
+                "name" : "rhs"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.function.operator.infix><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>static<\/syntaxtype.keyword> <syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>== <\/decl.name>(<decl.var.parameter><decl.var.parameter.name>lhs<\/decl.var.parameter.name>: <decl.var.parameter.type>`Self`<\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.name>rhs<\/decl.var.parameter.name>: <decl.var.parameter.type>`Self`<\/decl.var.parameter.type><\/decl.var.parameter>) -&gt; <decl.function.returntype><ref.struct usr=\"s:Sb\">Bool<\/ref.struct><\/decl.function.returntype><\/decl.function.operator.infix>",
+            "key.kind" : "source.lang.swift.decl.function.method.static",
+            "key.length" : 78,
+            "key.line" : 17,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "==(_:_:)",
+            "key.namelength" : 25,
+            "key.nameoffset" : 308,
+            "key.offset" : 296,
+            "key.overrides" : [
+              {
+                "key.usr" : "s:SQ2eeoiySbx_xtFZ"
+              }
+            ],
+            "key.parsed_declaration" : "public static func == (lhs: Self, rhs: Self) -> Bool",
+            "key.parsed_scope.end" : 19,
+            "key.parsed_scope.start" : 17,
+            "key.substructure" : [
+
+            ],
+            "key.typename" : "<Payload> (AnonymousAction<Payload>.Type) -> (AnonymousAction<Payload>, AnonymousAction<Payload>) -> Bool",
+            "key.typeusr" : "$sySb6Fluxor15AnonymousActionVyxG_ADtcD",
+            "key.usr" : "s:SQ2eeoiySbx_xtFZ"
+          }
+        ],
+        "key.typename" : "AnonymousAction<Payload>.Type",
+        "key.typeusr" : "$s6Fluxor15AnonymousActionVyxGmD",
+        "key.usr" : "s:6Fluxor15AnonymousActionV"
+      },
+      {
+        "key.accessibility" : "source.lang.swift.accessibility.public",
+        "key.annotated_decl" : "<Declaration>public class MockStore&lt;State, Environment&gt; : <Type usr=\"s:6Fluxor5StoreC\">Store<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>, <Type usr=\"s:17FluxorTestSupport9MockStoreC11Environmentq_mfp\">Environment<\/Type>&gt;<\/Declaration>",
+        "key.attributes" : [
+          {
+            "key.attribute" : "source.decl.attribute.public",
+            "key.length" : 6,
+            "key.offset" : 574
+          }
+        ],
+        "key.bodylength" : 2511,
+        "key.bodyoffset" : 645,
+        "key.column" : 14,
+        "key.decl_lang" : "source.lang.swift",
+        "key.doc.column" : 14,
+        "key.doc.comment" : "A `MockStore` is intended to be used in unit tests where you want to observe\nwhich `Action`s are dispatched and manipulate the `State` and `Selector`s.",
+        "key.doc.declaration" : "public class MockStore<State, Environment> : Store<State, Environment>",
+        "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+        "key.doc.full_as_xml" : "<Class file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift\" line=\"28\" column=\"14\"><Name>MockStore<\/Name><USR>s:17FluxorTestSupport9MockStoreC<\/USR><Declaration>public class MockStore&lt;State, Environment&gt; : Store&lt;State, Environment&gt;<\/Declaration><CommentParts><Abstract><Para>A <codeVoice>MockStore<\/codeVoice> is intended to be used in unit tests where you want to observe which <codeVoice>Action<\/codeVoice>s are dispatched and manipulate the <codeVoice>State<\/codeVoice> and <codeVoice>Selector<\/codeVoice>s.<\/Para><\/Abstract><\/CommentParts><\/Class>",
+        "key.doc.line" : 28,
+        "key.doc.name" : "MockStore",
+        "key.doc.type" : "Class",
+        "key.doclength" : 161,
+        "key.docoffset" : 412,
+        "key.elements" : [
+          {
+            "key.kind" : "source.lang.swift.structure.elem.typeref",
+            "key.length" : 25,
+            "key.offset" : 618
+          }
+        ],
+        "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+        "key.fully_annotated_decl" : "<decl.class><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>class<\/syntaxtype.keyword> <decl.name>MockStore<\/decl.name>&lt;<decl.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\"><decl.generic_type_param.name>State<\/decl.generic_type_param.name><\/decl.generic_type_param>, <decl.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC11Environmentq_mfp\"><decl.generic_type_param.name>Environment<\/decl.generic_type_param.name><\/decl.generic_type_param>&gt; : <ref.class usr=\"s:6Fluxor5StoreC\">Store<\/ref.class>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param>, <ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC11Environmentq_mfp\">Environment<\/ref.generic_type_param>&gt;<\/decl.class>",
+        "key.inheritedtypes" : [
+          {
+            "key.name" : "Store<State, Environment>"
+          }
+        ],
+        "key.kind" : "source.lang.swift.decl.class",
+        "key.length" : 2576,
+        "key.line" : 28,
+        "key.modulename" : "FluxorTestSupport",
+        "key.name" : "MockStore",
+        "key.namelength" : 9,
+        "key.nameoffset" : 587,
+        "key.offset" : 581,
+        "key.parsed_declaration" : "public class MockStore<State, Environment>: Store<State, Environment>",
+        "key.parsed_scope.end" : 92,
+        "key.parsed_scope.start" : 28,
+        "key.substructure" : [
+          {
+            "key.annotated_decl" : "<Declaration>State<\/Declaration>",
+            "key.column" : 24,
+            "key.decl_lang" : "source.lang.swift",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.generic_type_param><decl.generic_type_param.name>State<\/decl.generic_type_param.name><\/decl.generic_type_param>",
+            "key.kind" : "source.lang.swift.decl.generic_type_param",
+            "key.length" : 5,
+            "key.line" : 28,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "State",
+            "key.namelength" : 5,
+            "key.nameoffset" : 597,
+            "key.offset" : 597,
+            "key.parsed_declaration" : "public class MockStore<State",
+            "key.parsed_scope.end" : 28,
+            "key.parsed_scope.start" : 28,
+            "key.typename" : "State.Type",
+            "key.typeusr" : "$sxmD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC5Statexmfp"
+          },
+          {
+            "key.annotated_decl" : "<Declaration>Environment<\/Declaration>",
+            "key.column" : 31,
+            "key.decl_lang" : "source.lang.swift",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.generic_type_param><decl.generic_type_param.name>Environment<\/decl.generic_type_param.name><\/decl.generic_type_param>",
+            "key.kind" : "source.lang.swift.decl.generic_type_param",
+            "key.length" : 11,
+            "key.line" : 28,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "Environment",
+            "key.namelength" : 11,
+            "key.nameoffset" : 604,
+            "key.offset" : 604,
+            "key.parsed_declaration" : "public class MockStore<State, Environment",
+            "key.parsed_scope.end" : 28,
+            "key.parsed_scope.start" : 28,
+            "key.typename" : "Environment.Type",
+            "key.typeusr" : "$sq_mD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC11Environmentq_mfp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public var stateChanges: [(action: <Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>, oldState: <Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>, newState: <Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>)] { get }<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 713
+              }
+            ],
+            "key.bodylength" : 42,
+            "key.bodyoffset" : 792,
+            "key.column" : 16,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 16,
+            "key.doc.comment" : "All the `Action`s and state changes that has happened.",
+            "key.doc.declaration" : "public var stateChanges: [(action: Action, oldState: State, newState: State)] { get }",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.doc.full_as_xml" : "<Other file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift\" line=\"30\" column=\"16\"><Name>stateChanges<\/Name><USR>s:17FluxorTestSupport9MockStoreC12stateChangesSay0A06Action_p6action_x8oldStatex03newK0tGvp<\/USR><Declaration>public var stateChanges: [(action: Action, oldState: State, newState: State)] { get }<\/Declaration><CommentParts><Abstract><Para>All the <codeVoice>Action<\/codeVoice>s and state changes that has happened.<\/Para><\/Abstract><\/CommentParts><\/Other>",
+            "key.doc.line" : 30,
+            "key.doc.name" : "stateChanges",
+            "key.doc.type" : "Other",
+            "key.doclength" : 59,
+            "key.docoffset" : 650,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.var.instance><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>var<\/syntaxtype.keyword> <decl.name>stateChanges<\/decl.name>: <decl.var.type>[<tuple>(<tuple.element><tuple.element.argument_label>action<\/tuple.element.argument_label>: <tuple.element.type><ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol><\/tuple.element.type><\/tuple.element>, <tuple.element><tuple.element.argument_label>oldState<\/tuple.element.argument_label>: <tuple.element.type><ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param><\/tuple.element.type><\/tuple.element>, <tuple.element><tuple.element.argument_label>newState<\/tuple.element.argument_label>: <tuple.element.type><ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param><\/tuple.element.type><\/tuple.element>)<\/tuple>]<\/decl.var.type> { <syntaxtype.keyword>get<\/syntaxtype.keyword> }<\/decl.var.instance>",
+            "key.kind" : "source.lang.swift.decl.var.instance",
+            "key.length" : 115,
+            "key.line" : 30,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "stateChanges",
+            "key.namelength" : 12,
+            "key.nameoffset" : 724,
+            "key.offset" : 720,
+            "key.parsed_declaration" : "public var stateChanges: [(action: Action, oldState: State, newState: State)]",
+            "key.parsed_scope.end" : 32,
+            "key.parsed_scope.start" : 30,
+            "key.typename" : "[(action: Action, oldState: State, newState: State)]",
+            "key.typeusr" : "$sSay6Fluxor6Action_p6action_x8oldStatex03newE0tGD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC12stateChangesSay0A06Action_p6action_x8oldStatex03newK0tGvp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public var dispatchedActions: [<Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>] { get }<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 893
+              }
+            ],
+            "key.bodylength" : 40,
+            "key.bodyoffset" : 933,
+            "key.column" : 16,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 16,
+            "key.doc.comment" : "All the `Action`s that has been dispatched.",
+            "key.doc.declaration" : "public var dispatchedActions: [Action] { get }",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.doc.full_as_xml" : "<Other file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift\" line=\"35\" column=\"16\"><Name>dispatchedActions<\/Name><USR>s:17FluxorTestSupport9MockStoreC17dispatchedActionsSay0A06Action_pGvp<\/USR><Declaration>public var dispatchedActions: [Action] { get }<\/Declaration><CommentParts><Abstract><Para>All the <codeVoice>Action<\/codeVoice>s that has been dispatched.<\/Para><\/Abstract><\/CommentParts><\/Other>",
+            "key.doc.line" : 35,
+            "key.doc.name" : "dispatchedActions",
+            "key.doc.type" : "Other",
+            "key.doclength" : 48,
+            "key.docoffset" : 841,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.var.instance><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>var<\/syntaxtype.keyword> <decl.name>dispatchedActions<\/decl.name>: <decl.var.type>[<ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol>]<\/decl.var.type> { <syntaxtype.keyword>get<\/syntaxtype.keyword> }<\/decl.var.instance>",
+            "key.kind" : "source.lang.swift.decl.var.instance",
+            "key.length" : 74,
+            "key.line" : 35,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "dispatchedActions",
+            "key.namelength" : 17,
+            "key.nameoffset" : 904,
+            "key.offset" : 900,
+            "key.parsed_declaration" : "public var dispatchedActions: [Action]",
+            "key.parsed_scope.end" : 37,
+            "key.parsed_scope.start" : 35,
+            "key.typename" : "[Action]",
+            "key.typeusr" : "$sSay6Fluxor6Action_pGD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC17dispatchedActionsSay0A06Action_pGvp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.private",
+            "key.annotated_decl" : "<Declaration>private let setState: <Type usr=\"s:6Fluxor14ActionTemplateV\">ActionTemplate<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>&gt;<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.private",
+                "key.length" : 7,
+                "key.offset" : 980
+              }
+            ],
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.var.instance><syntaxtype.keyword>private<\/syntaxtype.keyword> <syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>setState<\/decl.name>: <decl.var.type><ref.struct usr=\"s:6Fluxor14ActionTemplateV\">ActionTemplate<\/ref.struct>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param>&gt;<\/decl.var.type><\/decl.var.instance>",
+            "key.kind" : "source.lang.swift.decl.var.instance",
+            "key.length" : 71,
+            "key.line" : 39,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "setState",
+            "key.namelength" : 8,
+            "key.nameoffset" : 992,
+            "key.offset" : 988,
+            "key.parsed_declaration" : "private let setState = ActionTemplate(id: \"Set State\", payloadType: State.self)",
+            "key.parsed_scope.end" : 39,
+            "key.parsed_scope.start" : 39,
+            "key.related_decls" : [
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport9MockStoreC8setState03newG0yx_tF\">setState(newState:)<\/RelatedName>"
+              }
+            ],
+            "key.typename" : "ActionTemplate<State>",
+            "key.typeusr" : "$s6Fluxor14ActionTemplateVyxGD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC8setState33_CAB8EEC5CC36FEEFB4B80C1F11319CD9LL0A014ActionTemplateVyxGvp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.private",
+            "key.annotated_decl" : "<Declaration>private var overridenSelectorValues: [<Type usr=\"s:10Foundation4UUIDV\">UUID<\/Type> : Any]<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.private",
+                "key.length" : 7,
+                "key.offset" : 1064
+              }
+            ],
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.var.instance><syntaxtype.keyword>private<\/syntaxtype.keyword> <syntaxtype.keyword>var<\/syntaxtype.keyword> <decl.name>overridenSelectorValues<\/decl.name>: <decl.var.type>[<ref.struct usr=\"s:10Foundation4UUIDV\">UUID<\/ref.struct> : <syntaxtype.keyword>Any<\/syntaxtype.keyword>]<\/decl.var.type><\/decl.var.instance>",
+            "key.kind" : "source.lang.swift.decl.var.instance",
+            "key.length" : 43,
+            "key.line" : 40,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "overridenSelectorValues",
+            "key.namelength" : 23,
+            "key.nameoffset" : 1076,
+            "key.offset" : 1072,
+            "key.parsed_declaration" : "private var overridenSelectorValues = [UUID: Any]()",
+            "key.parsed_scope.end" : 40,
+            "key.parsed_scope.start" : 40,
+            "key.setter_accessibility" : "source.lang.swift.accessibility.private",
+            "key.typename" : "[UUID : Any]",
+            "key.typeusr" : "$sSDy10Foundation4UUIDVypGD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC23overridenSelectorValues33_CAB8EEC5CC36FEEFB4B80C1F11319CD9LLSDy10Foundation4UUIDVypGvp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.private",
+            "key.annotated_decl" : "<Declaration>private let testInterceptor: <Type usr=\"s:17FluxorTestSupport0B11InterceptorC\">TestInterceptor<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>&gt;<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.private",
+                "key.length" : 7,
+                "key.offset" : 1120
+              }
+            ],
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.var.instance><syntaxtype.keyword>private<\/syntaxtype.keyword> <syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>testInterceptor<\/decl.name>: <decl.var.type><ref.class usr=\"s:17FluxorTestSupport0B11InterceptorC\">TestInterceptor<\/ref.class>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param>&gt;<\/decl.var.type><\/decl.var.instance>",
+            "key.kind" : "source.lang.swift.decl.var.instance",
+            "key.length" : 46,
+            "key.line" : 41,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "testInterceptor",
+            "key.namelength" : 15,
+            "key.nameoffset" : 1132,
+            "key.offset" : 1128,
+            "key.parsed_declaration" : "private let testInterceptor = TestInterceptor<State>()",
+            "key.parsed_scope.end" : 41,
+            "key.parsed_scope.start" : 41,
+            "key.typename" : "TestInterceptor<State>",
+            "key.typeusr" : "$s17FluxorTestSupport0B11InterceptorCyxGD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC15testInterceptor33_CAB8EEC5CC36FEEFB4B80C1F11319CD9LLAA0bG0CyxGvp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>override public init(initialState: <Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>, environment: <Type usr=\"s:17FluxorTestSupport9MockStoreC11Environmentq_mfp\">Environment<\/Type>, reducers: [<Type usr=\"s:6Fluxor7ReducerV\">Reducer<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>&gt;] = [])<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 1437
+              },
+              {
+                "key.attribute" : "source.decl.attribute.override",
+                "key.length" : 8,
+                "key.offset" : 1428
+              }
+            ],
+            "key.bodylength" : 259,
+            "key.bodyoffset" : 1530,
+            "key.column" : 21,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 21,
+            "key.doc.comment" : "Initializes the `MockStore` with an initial `State`.\n\n- Parameter initialState: The initial `State` for the `Store`\n- Parameter reducers: The `Reducer`s to register\n- Parameter effects: The `Effect`s to register",
+            "key.doc.declaration" : "override public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = [])",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift\" line=\"50\" column=\"21\"><Name>init(initialState:environment:reducers:)<\/Name><USR>s:17FluxorTestSupport9MockStoreC12initialState11environment8reducersACyxq_Gx_q_Say0A07ReducerVyxGGtcfc<\/USR><Declaration>override public init(initialState: State, environment: Environment, reducers: [Reducer&lt;State&gt;] = [])<\/Declaration><CommentParts><Abstract><Para>Initializes the <codeVoice>MockStore<\/codeVoice> with an initial <codeVoice>State<\/codeVoice>.<\/Para><\/Abstract><Parameters><Parameter><Name>initialState<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The initial <codeVoice>State<\/codeVoice> for the <codeVoice>Store<\/codeVoice><\/Para><\/Discussion><\/Parameter><Parameter><Name>reducers<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Reducer<\/codeVoice>s to register<\/Para><\/Discussion><\/Parameter><Parameter><Name>effects<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Effect<\/codeVoice>s to register<\/Para><\/Discussion><\/Parameter><\/Parameters><\/CommentParts><\/Function>",
+            "key.doc.line" : 50,
+            "key.doc.name" : "init(initialState:environment:reducers:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The initial `State` for the `Store`"
+                  }
+                ],
+                "name" : "initialState"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Reducer`s to register"
+                  }
+                ],
+                "name" : "reducers"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Effect`s to register"
+                  }
+                ],
+                "name" : "effects"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.doclength" : 243,
+            "key.docoffset" : 1180,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.function.constructor><syntaxtype.keyword>override<\/syntaxtype.keyword> <syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>init<\/syntaxtype.keyword>(<decl.var.parameter><decl.var.parameter.argument_label>initialState<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param><\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>environment<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC11Environmentq_mfp\">Environment<\/ref.generic_type_param><\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>reducers<\/decl.var.parameter.argument_label>: <decl.var.parameter.type>[<ref.struct usr=\"s:6Fluxor7ReducerV\">Reducer<\/ref.struct>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param>&gt;]<\/decl.var.parameter.type> = []<\/decl.var.parameter>)<\/decl.function.constructor>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 346,
+            "key.line" : 50,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "init(initialState:environment:reducers:)",
+            "key.namelength" : 84,
+            "key.nameoffset" : 1444,
+            "key.offset" : 1444,
+            "key.overrides" : [
+              {
+                "key.usr" : "s:6Fluxor5StoreC12initialState11environment8reducersACyxq_Gx_q_SayAA7ReducerVyxGGtcfc"
+              }
+            ],
+            "key.parsed_declaration" : "override public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = [])",
+            "key.parsed_scope.end" : 54,
+            "key.parsed_scope.start" : 50,
+            "key.related_decls" : [
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:6Fluxor5StoreCAAytRs_rlE12initialState8reducersACyxytGx_SayAA7ReducerVyxGGtcfc\">init(initialState:reducers:)<\/RelatedName>"
+              }
+            ],
+            "key.substructure" : [
+              {
+                "key.annotated_decl" : "<Declaration>let reducers: [<Type usr=\"s:6Fluxor7ReducerV\">Reducer<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>&gt;]<\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>reducers<\/decl.name>: <decl.var.type>[<ref.struct usr=\"s:6Fluxor7ReducerV\">Reducer<\/ref.struct>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param>&gt;]<\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 99,
+                "key.line" : 51,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "reducers",
+                "key.namelength" : 8,
+                "key.nameoffset" : 1543,
+                "key.offset" : 1539,
+                "key.parsed_declaration" : "let reducers = reducers + [Reducer(ReduceOn(setState) { state, action in state = action.payload })]",
+                "key.parsed_scope.end" : 51,
+                "key.parsed_scope.start" : 51,
+                "key.typename" : "[Reducer<State>]",
+                "key.typeusr" : "$sSay6Fluxor7ReducerVyxGGD",
+                "key.usr" : "s:17FluxorTestSupport9MockStoreC12initialState11environment8reducersACyxq_Gx_q_Say0A07ReducerVyxGGtcfcAFL0_ALvp"
+              }
+            ],
+            "key.typename" : "<State, Environment> (MockStore<State, Environment>.Type) -> (State, Environment, [Reducer<State>]) -> MockStore<State, Environment>",
+            "key.typeusr" : "$s12initialState11environment8reducers17FluxorTestSupport9MockStoreCyxq_Gx_q_Say0E07ReducerVyxGGtcD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC12initialState11environment8reducersACyxq_Gx_q_Say0A07ReducerVyxGGtcfc"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public func setState(newState: <Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>)<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 1918
+              }
+            ],
+            "key.bodylength" : 59,
+            "key.bodyoffset" : 1957,
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 17,
+            "key.doc.comment" : "Sets a new `State` on the `Store`.\n\n- Parameter newState: The new `State` to set on the `Store`",
+            "key.doc.declaration" : "public func setState(newState: State)",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift\" line=\"61\" column=\"17\"><Name>setState(newState:)<\/Name><USR>s:17FluxorTestSupport9MockStoreC8setState03newG0yx_tF<\/USR><Declaration>public func setState(newState: State)<\/Declaration><CommentParts><Abstract><Para>Sets a new <codeVoice>State<\/codeVoice> on the <codeVoice>Store<\/codeVoice>.<\/Para><\/Abstract><Parameters><Parameter><Name>newState<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The new <codeVoice>State<\/codeVoice> to set on the <codeVoice>Store<\/codeVoice><\/Para><\/Discussion><\/Parameter><\/Parameters><\/CommentParts><\/Function>",
+            "key.doc.line" : 61,
+            "key.doc.name" : "setState(newState:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The new `State` to set on the `Store`"
+                  }
+                ],
+                "name" : "newState"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.doclength" : 117,
+            "key.docoffset" : 1796,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>setState<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>newState<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param><\/decl.var.parameter.type><\/decl.var.parameter>)<\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 92,
+            "key.line" : 61,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "setState(newState:)",
+            "key.namelength" : 25,
+            "key.nameoffset" : 1930,
+            "key.offset" : 1925,
+            "key.parsed_declaration" : "public func setState(newState: State)",
+            "key.parsed_scope.end" : 63,
+            "key.parsed_scope.start" : 61,
+            "key.related_decls" : [
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport9MockStoreC8setState33_CAB8EEC5CC36FEEFB4B80C1F11319CD9LL0A014ActionTemplateVyxGvp\">setState<\/RelatedName>"
+              }
+            ],
+            "key.substructure" : [
+
+            ],
+            "key.typename" : "<State, Environment> (MockStore<State, Environment>) -> (State) -> ()",
+            "key.typeusr" : "$s8newStateyx_tcD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC8setState03newG0yx_tF"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public func overrideSelector&lt;Value&gt;(_ selector: Fluxor.<Type usr=\"s:6Fluxor8SelectorC\">Selector<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>, <Type usr=\"s:17FluxorTestSupport9MockStoreC16overrideSelector_5valuey0A00G0Cyxqd__G_qd__tlF5ValueL_qd__mfp\">Value<\/Type>&gt;, value: <Type usr=\"s:17FluxorTestSupport9MockStoreC16overrideSelector_5valuey0A00G0Cyxqd__G_qd__tlF5ValueL_qd__mfp\">Value<\/Type>)<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 2339
+              }
+            ],
+            "key.bodylength" : 58,
+            "key.bodyoffset" : 2433,
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 17,
+            "key.doc.comment" : "Overrides the `Selector` with a 'default' value.\n\nWhen a `Selector` is overriden it will always give the same value when used to select from this `MockStore`.\n\n- Parameter selector: The `Selector` to override\n- Parameter value: The value the `Selector` should give when selecting",
+            "key.doc.declaration" : "public func overrideSelector<Value>(_ selector: Fluxor.Selector<State, Value>, value: Value)",
+            "key.doc.discussion" : [
+              {
+                "Para" : "When a `Selector` is overriden it will always give the same value when used to select from this `MockStore`."
+              }
+            ],
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift\" line=\"73\" column=\"17\"><Name>overrideSelector(_:value:)<\/Name><USR>s:17FluxorTestSupport9MockStoreC16overrideSelector_5valuey0A00G0Cyxqd__G_qd__tlF<\/USR><Declaration>public func overrideSelector&lt;Value&gt;(_ selector: Fluxor.Selector&lt;State, Value&gt;, value: Value)<\/Declaration><CommentParts><Abstract><Para>Overrides the <codeVoice>Selector<\/codeVoice> with a ‘default’ value.<\/Para><\/Abstract><Parameters><Parameter><Name>selector<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Selector<\/codeVoice> to override<\/Para><\/Discussion><\/Parameter><Parameter><Name>value<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The value the <codeVoice>Selector<\/codeVoice> should give when selecting<\/Para><\/Discussion><\/Parameter><\/Parameters><Discussion><Para>When a <codeVoice>Selector<\/codeVoice> is overriden it will always give the same value when used to select from this <codeVoice>MockStore<\/codeVoice>.<\/Para><\/Discussion><\/CommentParts><\/Function>",
+            "key.doc.line" : 73,
+            "key.doc.name" : "overrideSelector(_:value:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Selector` to override"
+                  }
+                ],
+                "name" : "selector"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The value the `Selector` should give when selecting"
+                  }
+                ],
+                "name" : "value"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.doclength" : 311,
+            "key.docoffset" : 2023,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>overrideSelector<\/decl.name>&lt;<decl.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC16overrideSelector_5valuey0A00G0Cyxqd__G_qd__tlF5ValueL_qd__mfp\"><decl.generic_type_param.name>Value<\/decl.generic_type_param.name><\/decl.generic_type_param>&gt;(<decl.var.parameter><decl.var.parameter.argument_label>_<\/decl.var.parameter.argument_label> <decl.var.parameter.name>selector<\/decl.var.parameter.name>: <decl.var.parameter.type>Fluxor.<ref.class usr=\"s:6Fluxor8SelectorC\">Selector<\/ref.class>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param>, <ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC16overrideSelector_5valuey0A00G0Cyxqd__G_qd__tlF5ValueL_qd__mfp\">Value<\/ref.generic_type_param>&gt;<\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>value<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC16overrideSelector_5valuey0A00G0Cyxqd__G_qd__tlF5ValueL_qd__mfp\">Value<\/ref.generic_type_param><\/decl.var.parameter.type><\/decl.var.parameter>)<\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 146,
+            "key.line" : 73,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "overrideSelector(_:value:)",
+            "key.namelength" : 80,
+            "key.nameoffset" : 2351,
+            "key.offset" : 2346,
+            "key.parsed_declaration" : "public func overrideSelector<Value>(_ selector: Fluxor.Selector<State, Value>, value: Value)",
+            "key.parsed_scope.end" : 75,
+            "key.parsed_scope.start" : 73,
+            "key.substructure" : [
+              {
+                "key.annotated_decl" : "<Declaration>Value<\/Declaration>",
+                "key.column" : 34,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+                "key.fully_annotated_decl" : "<decl.generic_type_param><decl.generic_type_param.name>Value<\/decl.generic_type_param.name><\/decl.generic_type_param>",
+                "key.kind" : "source.lang.swift.decl.generic_type_param",
+                "key.length" : 5,
+                "key.line" : 73,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "Value",
+                "key.namelength" : 5,
+                "key.nameoffset" : 2368,
+                "key.offset" : 2368,
+                "key.parsed_declaration" : "public func overrideSelector<Value",
+                "key.parsed_scope.end" : 73,
+                "key.parsed_scope.start" : 73,
+                "key.typename" : "Value.Type",
+                "key.typeusr" : "$sqd__mD",
+                "key.usr" : "s:17FluxorTestSupport9MockStoreC16overrideSelector_5valuey0A00G0Cyxqd__G_qd__tlF5ValueL_qd__mfp"
+              }
+            ],
+            "key.typename" : "<State, Environment, Value> (MockStore<State, Environment>) -> (Selector<State, Value>, Value) -> ()",
+            "key.typeusr" : "$s_5valuey6Fluxor8SelectorCyxqd__G_qd__tcluD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC16overrideSelector_5valuey0A00G0Cyxqd__G_qd__tlF"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public func resetOverriddenSelectors()<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 2574
+              }
+            ],
+            "key.bodylength" : 49,
+            "key.bodyoffset" : 2614,
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 17,
+            "key.doc.comment" : "Resets all overridden `Selector`s on this `MockStore`.",
+            "key.doc.declaration" : "public func resetOverriddenSelectors()",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift\" line=\"80\" column=\"17\"><Name>resetOverriddenSelectors()<\/Name><USR>s:17FluxorTestSupport9MockStoreC24resetOverriddenSelectorsyyF<\/USR><Declaration>public func resetOverriddenSelectors()<\/Declaration><CommentParts><Abstract><Para>Resets all overridden <codeVoice>Selector<\/codeVoice>s on this <codeVoice>MockStore<\/codeVoice>.<\/Para><\/Abstract><\/CommentParts><\/Function>",
+            "key.doc.line" : 80,
+            "key.doc.name" : "resetOverriddenSelectors()",
+            "key.doc.type" : "Function",
+            "key.doclength" : 71,
+            "key.docoffset" : 2498,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>resetOverriddenSelectors<\/decl.name>()<\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 83,
+            "key.line" : 80,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "resetOverriddenSelectors()",
+            "key.namelength" : 26,
+            "key.nameoffset" : 2586,
+            "key.offset" : 2581,
+            "key.parsed_declaration" : "public func resetOverriddenSelectors()",
+            "key.parsed_scope.end" : 82,
+            "key.parsed_scope.start" : 80,
+            "key.substructure" : [
+
+            ],
+            "key.typename" : "<State, Environment> (MockStore<State, Environment>) -> () -> ()",
+            "key.typeusr" : "$syycD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC24resetOverriddenSelectorsyyF"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>override public func select&lt;Value&gt;(_ selector: Fluxor.<Type usr=\"s:6Fluxor8SelectorC\">Selector<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>, <Type usr=\"s:17FluxorTestSupport9MockStoreC6selecty7Combine12AnyPublisherVyqd__s5NeverOG0A08SelectorCyxqd__GlF5ValueL_qd__mfp\">Value<\/Type>&gt;) -&gt; <Type usr=\"s:7Combine12AnyPublisherV\">AnyPublisher<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport9MockStoreC6selecty7Combine12AnyPublisherVyqd__s5NeverOG0A08SelectorCyxqd__GlF5ValueL_qd__mfp\">Value<\/Type>, <Type usr=\"s:s5NeverO\">Never<\/Type>&gt;<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 2679
+              },
+              {
+                "key.attribute" : "source.decl.attribute.override",
+                "key.length" : 8,
+                "key.offset" : 2670
+              }
+            ],
+            "key.bodylength" : 180,
+            "key.bodyoffset" : 2779,
+            "key.column" : 26,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 26,
+            "key.doc.declaration" : "override public func select<Value>(_ selector: Fluxor.Selector<State, Value>) -> AnyPublisher<Value, Never>",
+            "key.doc.discussion" : [
+              {
+                "Note" : ""
+              }
+            ],
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift\" line=\"84\" column=\"26\"><Name>select(_:)<\/Name><USR>s:17FluxorTestSupport9MockStoreC6selecty7Combine12AnyPublisherVyqd__s5NeverOG0A08SelectorCyxqd__GlF<\/USR><Declaration>override public func select&lt;Value&gt;(_ selector: Fluxor.Selector&lt;State, Value&gt;) -&gt; AnyPublisher&lt;Value, Never&gt;<\/Declaration><CommentParts><Abstract><Para>Creates a <codeVoice>Publisher<\/codeVoice> for a <codeVoice>Selector<\/codeVoice>.<\/Para><\/Abstract><Parameters><Parameter><Name>selector<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Selector<\/codeVoice> to use when getting the value in the <codeVoice>State<\/codeVoice><\/Para><\/Discussion><\/Parameter><\/Parameters><ResultDiscussion><Para>A <codeVoice>Publisher<\/codeVoice> for the <codeVoice>Value<\/codeVoice> in the <codeVoice>State<\/codeVoice><\/Para><\/ResultDiscussion><Discussion><Note><Para>This documentation comment was inherited from <codeVoice>Store<\/codeVoice>.<\/Para><\/Note><\/Discussion><\/CommentParts><\/Function>",
+            "key.doc.line" : 84,
+            "key.doc.name" : "select(_:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Selector` to use when getting the value in the `State`"
+                  }
+                ],
+                "name" : "selector"
+              }
+            ],
+            "key.doc.result_discussion" : [
+              {
+                "Para" : "A `Publisher` for the `Value` in the `State`"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>override<\/syntaxtype.keyword> <syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>select<\/decl.name>&lt;<decl.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC6selecty7Combine12AnyPublisherVyqd__s5NeverOG0A08SelectorCyxqd__GlF5ValueL_qd__mfp\"><decl.generic_type_param.name>Value<\/decl.generic_type_param.name><\/decl.generic_type_param>&gt;(<decl.var.parameter><decl.var.parameter.argument_label>_<\/decl.var.parameter.argument_label> <decl.var.parameter.name>selector<\/decl.var.parameter.name>: <decl.var.parameter.type>Fluxor.<ref.class usr=\"s:6Fluxor8SelectorC\">Selector<\/ref.class>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param>, <ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC6selecty7Combine12AnyPublisherVyqd__s5NeverOG0A08SelectorCyxqd__GlF5ValueL_qd__mfp\">Value<\/ref.generic_type_param>&gt;<\/decl.var.parameter.type><\/decl.var.parameter>) -&gt; <decl.function.returntype><ref.struct usr=\"s:7Combine12AnyPublisherV\">AnyPublisher<\/ref.struct>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC6selecty7Combine12AnyPublisherVyqd__s5NeverOG0A08SelectorCyxqd__GlF5ValueL_qd__mfp\">Value<\/ref.generic_type_param>, <ref.enum usr=\"s:s5NeverO\">Never<\/ref.enum>&gt;<\/decl.function.returntype><\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 274,
+            "key.line" : 84,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "select(_:)",
+            "key.namelength" : 56,
+            "key.nameoffset" : 2691,
+            "key.offset" : 2686,
+            "key.overrides" : [
+              {
+                "key.usr" : "s:6Fluxor5StoreC6selecty7Combine12AnyPublisherVyqd__s5NeverOGAA8SelectorCyxqd__GlF"
+              }
+            ],
+            "key.parsed_declaration" : "override public func select<Value>(_ selector: Fluxor.Selector<State, Value>) -> AnyPublisher<Value, Never>",
+            "key.parsed_scope.end" : 87,
+            "key.parsed_scope.start" : 84,
+            "key.substructure" : [
+              {
+                "key.annotated_decl" : "<Declaration>Value<\/Declaration>",
+                "key.column" : 33,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+                "key.fully_annotated_decl" : "<decl.generic_type_param><decl.generic_type_param.name>Value<\/decl.generic_type_param.name><\/decl.generic_type_param>",
+                "key.kind" : "source.lang.swift.decl.generic_type_param",
+                "key.length" : 5,
+                "key.line" : 84,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "Value",
+                "key.namelength" : 5,
+                "key.nameoffset" : 2698,
+                "key.offset" : 2698,
+                "key.parsed_declaration" : "override public func select<Value",
+                "key.parsed_scope.end" : 84,
+                "key.parsed_scope.start" : 84,
+                "key.typename" : "Value.Type",
+                "key.typeusr" : "$sqd__mD",
+                "key.usr" : "s:17FluxorTestSupport9MockStoreC6selecty7Combine12AnyPublisherVyqd__s5NeverOG0A08SelectorCyxqd__GlF5ValueL_qd__mfp"
+              }
+            ],
+            "key.typename" : "<State, Environment, Value> (MockStore<State, Environment>) -> (Selector<State, Value>) -> AnyPublisher<Value, Never>",
+            "key.typeusr" : "$sy7Combine12AnyPublisherVyqd__s5NeverOG6Fluxor8SelectorCyxqd__GcluD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC6selecty7Combine12AnyPublisherVyqd__s5NeverOG0A08SelectorCyxqd__GlF"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>override public func selectCurrent&lt;Value&gt;(_ selector: Fluxor.<Type usr=\"s:6Fluxor8SelectorC\">Selector<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/Type>, <Type usr=\"s:17FluxorTestSupport9MockStoreC13selectCurrentyqd__0A08SelectorCyxqd__GlF5ValueL_qd__mfp\">Value<\/Type>&gt;) -&gt; <Type usr=\"s:17FluxorTestSupport9MockStoreC13selectCurrentyqd__0A08SelectorCyxqd__GlF5ValueL_qd__mfp\">Value<\/Type><\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 2975
+              },
+              {
+                "key.attribute" : "source.decl.attribute.override",
+                "key.length" : 8,
+                "key.offset" : 2966
+              }
+            ],
+            "key.bodylength" : 93,
+            "key.bodyoffset" : 3061,
+            "key.column" : 26,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 26,
+            "key.doc.declaration" : "override public func selectCurrent<Value>(_ selector: Fluxor.Selector<State, Value>) -> Value",
+            "key.doc.discussion" : [
+              {
+                "Note" : ""
+              }
+            ],
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift\" line=\"89\" column=\"26\"><Name>selectCurrent(_:)<\/Name><USR>s:17FluxorTestSupport9MockStoreC13selectCurrentyqd__0A08SelectorCyxqd__GlF<\/USR><Declaration>override public func selectCurrent&lt;Value&gt;(_ selector: Fluxor.Selector&lt;State, Value&gt;) -&gt; Value<\/Declaration><CommentParts><Abstract><Para>Gets the current value in the <codeVoice>State<\/codeVoice> for a <codeVoice>Selector<\/codeVoice>.<\/Para><\/Abstract><Parameters><Parameter><Name>selector<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Selector<\/codeVoice> to use when getting the value in the <codeVoice>State<\/codeVoice><\/Para><\/Discussion><\/Parameter><\/Parameters><ResultDiscussion><Para>The current <codeVoice>Value<\/codeVoice> in the <codeVoice>State<\/codeVoice><\/Para><\/ResultDiscussion><Discussion><Note><Para>This documentation comment was inherited from <codeVoice>Store<\/codeVoice>.<\/Para><\/Note><\/Discussion><\/CommentParts><\/Function>",
+            "key.doc.line" : 89,
+            "key.doc.name" : "selectCurrent(_:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Selector` to use when getting the value in the `State`"
+                  }
+                ],
+                "name" : "selector"
+              }
+            ],
+            "key.doc.result_discussion" : [
+              {
+                "Para" : "The current `Value` in the `State`"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>override<\/syntaxtype.keyword> <syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>selectCurrent<\/decl.name>&lt;<decl.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC13selectCurrentyqd__0A08SelectorCyxqd__GlF5ValueL_qd__mfp\"><decl.generic_type_param.name>Value<\/decl.generic_type_param.name><\/decl.generic_type_param>&gt;(<decl.var.parameter><decl.var.parameter.argument_label>_<\/decl.var.parameter.argument_label> <decl.var.parameter.name>selector<\/decl.var.parameter.name>: <decl.var.parameter.type>Fluxor.<ref.class usr=\"s:6Fluxor8SelectorC\">Selector<\/ref.class>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC5Statexmfp\">State<\/ref.generic_type_param>, <ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC13selectCurrentyqd__0A08SelectorCyxqd__GlF5ValueL_qd__mfp\">Value<\/ref.generic_type_param>&gt;<\/decl.var.parameter.type><\/decl.var.parameter>) -&gt; <decl.function.returntype><ref.generic_type_param usr=\"s:17FluxorTestSupport9MockStoreC13selectCurrentyqd__0A08SelectorCyxqd__GlF5ValueL_qd__mfp\">Value<\/ref.generic_type_param><\/decl.function.returntype><\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 173,
+            "key.line" : 89,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "selectCurrent(_:)",
+            "key.namelength" : 63,
+            "key.nameoffset" : 2987,
+            "key.offset" : 2982,
+            "key.overrides" : [
+              {
+                "key.usr" : "s:6Fluxor5StoreC13selectCurrentyqd__AA8SelectorCyxqd__GlF"
+              }
+            ],
+            "key.parsed_declaration" : "override public func selectCurrent<Value>(_ selector: Fluxor.Selector<State, Value>) -> Value",
+            "key.parsed_scope.end" : 91,
+            "key.parsed_scope.start" : 89,
+            "key.substructure" : [
+              {
+                "key.annotated_decl" : "<Declaration>Value<\/Declaration>",
+                "key.column" : 40,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/MockStore.swift",
+                "key.fully_annotated_decl" : "<decl.generic_type_param><decl.generic_type_param.name>Value<\/decl.generic_type_param.name><\/decl.generic_type_param>",
+                "key.kind" : "source.lang.swift.decl.generic_type_param",
+                "key.length" : 5,
+                "key.line" : 89,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "Value",
+                "key.namelength" : 5,
+                "key.nameoffset" : 3001,
+                "key.offset" : 3001,
+                "key.parsed_declaration" : "override public func selectCurrent<Value",
+                "key.parsed_scope.end" : 89,
+                "key.parsed_scope.start" : 89,
+                "key.typename" : "Value.Type",
+                "key.typeusr" : "$sqd__mD",
+                "key.usr" : "s:17FluxorTestSupport9MockStoreC13selectCurrentyqd__0A08SelectorCyxqd__GlF5ValueL_qd__mfp"
+              }
+            ],
+            "key.typename" : "<State, Environment, Value> (MockStore<State, Environment>) -> (Selector<State, Value>) -> Value",
+            "key.typeusr" : "$syqd__6Fluxor8SelectorCyxqd__GcluD",
+            "key.usr" : "s:17FluxorTestSupport9MockStoreC13selectCurrentyqd__0A08SelectorCyxqd__GlF"
+          }
+        ],
+        "key.typename" : "MockStore<State, Environment>.Type",
+        "key.typeusr" : "$s17FluxorTestSupport9MockStoreCyxq_GmD",
+        "key.usr" : "s:17FluxorTestSupport9MockStoreC"
+      }
+    ]
+  }
+}, {
+  "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift" : {
+    "key.diagnostic_stage" : "source.diagnostic.stage.swift.parse",
+    "key.length" : 2289,
+    "key.offset" : 0,
+    "key.substructure" : [
+      {
+        "key.accessibility" : "source.lang.swift.accessibility.public",
+        "key.annotated_decl" : "<Declaration>public class TestInterceptor&lt;State&gt; : <Type usr=\"s:6Fluxor11InterceptorP\">Interceptor<\/Type><\/Declaration>",
+        "key.attributes" : [
+          {
+            "key.attribute" : "source.decl.attribute.public",
+            "key.length" : 6,
+            "key.offset" : 272
+          }
+        ],
+        "key.bodylength" : 1965,
+        "key.bodyoffset" : 322,
+        "key.column" : 14,
+        "key.decl_lang" : "source.lang.swift",
+        "key.doc.column" : 14,
+        "key.doc.comment" : "An `Interceptor` to use in unit tests, to assert specific `Action`s are dispatched.",
+        "key.doc.declaration" : "public class TestInterceptor<State> : Interceptor",
+        "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+        "key.doc.full_as_xml" : "<Class file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift\" line=\"13\" column=\"14\"><Name>TestInterceptor<\/Name><USR>s:17FluxorTestSupport0B11InterceptorC<\/USR><Declaration>public class TestInterceptor&lt;State&gt; : Interceptor<\/Declaration><CommentParts><Abstract><Para>An <codeVoice>Interceptor<\/codeVoice> to use in unit tests, to assert specific <codeVoice>Action<\/codeVoice>s are dispatched.<\/Para><\/Abstract><\/CommentParts><\/Class>",
+        "key.doc.line" : 13,
+        "key.doc.name" : "TestInterceptor",
+        "key.doc.type" : "Class",
+        "key.doclength" : 88,
+        "key.docoffset" : 184,
+        "key.elements" : [
+          {
+            "key.kind" : "source.lang.swift.structure.elem.typeref",
+            "key.length" : 11,
+            "key.offset" : 309
+          }
+        ],
+        "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+        "key.fully_annotated_decl" : "<decl.class><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>class<\/syntaxtype.keyword> <decl.name>TestInterceptor<\/decl.name>&lt;<decl.generic_type_param usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\"><decl.generic_type_param.name>State<\/decl.generic_type_param.name><\/decl.generic_type_param>&gt; : <ref.protocol usr=\"s:6Fluxor11InterceptorP\">Interceptor<\/ref.protocol><\/decl.class>",
+        "key.inheritedtypes" : [
+          {
+            "key.name" : "Interceptor"
+          }
+        ],
+        "key.kind" : "source.lang.swift.decl.class",
+        "key.length" : 2009,
+        "key.line" : 13,
+        "key.modulename" : "FluxorTestSupport",
+        "key.name" : "TestInterceptor",
+        "key.namelength" : 15,
+        "key.nameoffset" : 285,
+        "key.offset" : 279,
+        "key.parsed_declaration" : "public class TestInterceptor<State>: Interceptor",
+        "key.parsed_scope.end" : 56,
+        "key.parsed_scope.start" : 13,
+        "key.substructure" : [
+          {
+            "key.annotated_decl" : "<Declaration>State<\/Declaration>",
+            "key.column" : 30,
+            "key.decl_lang" : "source.lang.swift",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.fully_annotated_decl" : "<decl.generic_type_param><decl.generic_type_param.name>State<\/decl.generic_type_param.name><\/decl.generic_type_param>",
+            "key.kind" : "source.lang.swift.decl.generic_type_param",
+            "key.length" : 5,
+            "key.line" : 13,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "State",
+            "key.namelength" : 5,
+            "key.nameoffset" : 301,
+            "key.offset" : 301,
+            "key.parsed_declaration" : "public class TestInterceptor<State",
+            "key.parsed_scope.end" : 13,
+            "key.parsed_scope.start" : 13,
+            "key.related_decls" : [
+              {
+                "key.annotated_decl" : "<RelatedName usr=\"s:17FluxorTestSupport0B11InterceptorC5Statea\">State<\/RelatedName>"
+              }
+            ],
+            "key.typename" : "State.Type",
+            "key.typeusr" : "$sxmD",
+            "key.usr" : "s:17FluxorTestSupport0B11InterceptorC5Statexmfp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public private(set) var stateChanges: [(action: <Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>, oldState: <Type usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\">State<\/Type>, newState: <Type usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\">State<\/Type>)] { get set }<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.setter_access.private",
+                "key.length" : 12,
+                "key.offset" : 388
+              },
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 381
+              }
+            ],
+            "key.bodylength" : 47,
+            "key.bodyoffset" : 478,
+            "key.column" : 29,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 29,
+            "key.doc.comment" : "A list of `Action`s and `State`s intercepted.",
+            "key.doc.declaration" : "public private(set) var stateChanges: [(action: Action, oldState: State, newState: State)] { get set }",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.doc.full_as_xml" : "<Other file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift\" line=\"15\" column=\"29\"><Name>stateChanges<\/Name><USR>s:17FluxorTestSupport0B11InterceptorC12stateChangesSay0A06Action_p6action_x8oldStatex03newJ0tGvp<\/USR><Declaration>public private(set) var stateChanges: [(action: Action, oldState: State, newState: State)] { get set }<\/Declaration><CommentParts><Abstract><Para>A list of <codeVoice>Action<\/codeVoice>s and <codeVoice>State<\/codeVoice>s intercepted.<\/Para><\/Abstract><\/CommentParts><\/Other>",
+            "key.doc.line" : 15,
+            "key.doc.name" : "stateChanges",
+            "key.doc.type" : "Other",
+            "key.doclength" : 50,
+            "key.docoffset" : 327,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.fully_annotated_decl" : "<decl.var.instance><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>private<\/syntaxtype.keyword>(set) <syntaxtype.keyword>var<\/syntaxtype.keyword> <decl.name>stateChanges<\/decl.name>: <decl.var.type>[<tuple>(<tuple.element><tuple.element.argument_label>action<\/tuple.element.argument_label>: <tuple.element.type><ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol><\/tuple.element.type><\/tuple.element>, <tuple.element><tuple.element.argument_label>oldState<\/tuple.element.argument_label>: <tuple.element.type><ref.generic_type_param usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\">State<\/ref.generic_type_param><\/tuple.element.type><\/tuple.element>, <tuple.element><tuple.element.argument_label>newState<\/tuple.element.argument_label>: <tuple.element.type><ref.generic_type_param usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\">State<\/ref.generic_type_param><\/tuple.element.type><\/tuple.element>)<\/tuple>]<\/decl.var.type> { <syntaxtype.keyword>get<\/syntaxtype.keyword> <syntaxtype.keyword>set<\/syntaxtype.keyword> }<\/decl.var.instance>",
+            "key.kind" : "source.lang.swift.decl.var.instance",
+            "key.length" : 125,
+            "key.line" : 15,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "stateChanges",
+            "key.namelength" : 12,
+            "key.nameoffset" : 405,
+            "key.offset" : 401,
+            "key.parsed_declaration" : "public private(set) var stateChanges: [(action: Action, oldState: State, newState: State)] = []",
+            "key.parsed_scope.end" : 17,
+            "key.parsed_scope.start" : 15,
+            "key.setter_accessibility" : "source.lang.swift.accessibility.private",
+            "key.typename" : "[(action: Action, oldState: State, newState: State)]",
+            "key.typeusr" : "$sSay6Fluxor6Action_p6action_x8oldStatex03newE0tGD",
+            "key.usr" : "s:17FluxorTestSupport0B11InterceptorC12stateChangesSay0A06Action_p6action_x8oldStatex03newJ0tGvp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.private",
+            "key.annotated_decl" : "<Declaration>private var expectation: <Type usr=\"c:objc(cs)XCTestExpectation\">XCTestExpectation<\/Type>?<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.private",
+                "key.length" : 7,
+                "key.offset" : 532
+              }
+            ],
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.fully_annotated_decl" : "<decl.var.instance><syntaxtype.keyword>private<\/syntaxtype.keyword> <syntaxtype.keyword>var<\/syntaxtype.keyword> <decl.name>expectation<\/decl.name>: <decl.var.type><ref.class usr=\"c:objc(cs)XCTestExpectation\">XCTestExpectation<\/ref.class>?<\/decl.var.type><\/decl.var.instance>",
+            "key.kind" : "source.lang.swift.decl.var.instance",
+            "key.length" : 35,
+            "key.line" : 19,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "expectation",
+            "key.namelength" : 11,
+            "key.nameoffset" : 544,
+            "key.offset" : 540,
+            "key.parsed_declaration" : "private var expectation: XCTestExpectation?",
+            "key.parsed_scope.end" : 19,
+            "key.parsed_scope.start" : 19,
+            "key.setter_accessibility" : "source.lang.swift.accessibility.private",
+            "key.typename" : "XCTestExpectation?",
+            "key.typeusr" : "$sSo17XCTestExpectationCSgD",
+            "key.usr" : "s:17FluxorTestSupport0B11InterceptorC11expectation33_6FCDCA8E1CD74F2310F1E3C3B17DB9DFLLSo17XCTestExpectationCSgvp"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public init()<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 624
+              }
+            ],
+            "key.bodylength" : 0,
+            "key.bodyoffset" : 639,
+            "key.column" : 12,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 12,
+            "key.doc.comment" : "Initializes the `TestInterceptor`.",
+            "key.doc.declaration" : "public init()",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift\" line=\"22\" column=\"12\"><Name>init()<\/Name><USR>s:17FluxorTestSupport0B11InterceptorCACyxGycfc<\/USR><Declaration>public init()<\/Declaration><CommentParts><Abstract><Para>Initializes the <codeVoice>TestInterceptor<\/codeVoice>.<\/Para><\/Abstract><\/CommentParts><\/Function>",
+            "key.doc.line" : 22,
+            "key.doc.name" : "init()",
+            "key.doc.type" : "Function",
+            "key.doclength" : 39,
+            "key.docoffset" : 581,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.fully_annotated_decl" : "<decl.function.constructor><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>init<\/syntaxtype.keyword>()<\/decl.function.constructor>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 9,
+            "key.line" : 22,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "init()",
+            "key.namelength" : 6,
+            "key.nameoffset" : 631,
+            "key.offset" : 631,
+            "key.parsed_declaration" : "public init()",
+            "key.parsed_scope.end" : 22,
+            "key.parsed_scope.start" : 22,
+            "key.typename" : "<State> (TestInterceptor<State>.Type) -> () -> TestInterceptor<State>",
+            "key.typeusr" : "$s17FluxorTestSupport0B11InterceptorCyxGycD",
+            "key.usr" : "s:17FluxorTestSupport0B11InterceptorCACyxGycfc"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public func actionDispatched(action: <Type usr=\"s:6Fluxor6ActionP\">Action<\/Type>, oldState: <Type usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\">State<\/Type>, newState: <Type usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\">State<\/Type>)<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 646
+              }
+            ],
+            "key.bodylength" : 63,
+            "key.bodyoffset" : 726,
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 10,
+            "key.doc.declaration" : "func actionDispatched(action: Fluxor.Action, oldState: Self.State, newState: Self.State)",
+            "key.doc.discussion" : [
+              {
+                "Note" : ""
+              }
+            ],
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/Fluxor\/Interceptor.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/Fluxor\/Interceptor.swift\" line=\"18\" column=\"10\"><Name>actionDispatched(action:oldState:newState:)<\/Name><USR>s:6Fluxor11InterceptorP16actionDispatched0C08oldState03newF0yAA6Action_p_0F0QzAJtF<\/USR><Declaration>func actionDispatched(action: Fluxor.Action, oldState: Self.State, newState: Self.State)<\/Declaration><CommentParts><Abstract><Para>The function called when an <codeVoice>Action<\/codeVoice> is dispatched on a <codeVoice>Store<\/codeVoice>.<\/Para><\/Abstract><Parameters><Parameter><Name>action<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>Action<\/codeVoice> dispatched<\/Para><\/Discussion><\/Parameter><Parameter><Name>oldState<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>State<\/codeVoice> before the <codeVoice>Action<\/codeVoice> was dispatched<\/Para><\/Discussion><\/Parameter><Parameter><Name>newState<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The <codeVoice>State<\/codeVoice> after the <codeVoice>Action<\/codeVoice> was dispatched<\/Para><\/Discussion><\/Parameter><\/Parameters><Discussion><Note><Para>This documentation comment was inherited from <codeVoice>Interceptor<\/codeVoice>.<\/Para><\/Note><\/Discussion><\/CommentParts><\/Function>",
+            "key.doc.line" : 18,
+            "key.doc.name" : "actionDispatched(action:oldState:newState:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `Action` dispatched"
+                  }
+                ],
+                "name" : "action"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `State` before the `Action` was dispatched"
+                  }
+                ],
+                "name" : "oldState"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The `State` after the `Action` was dispatched"
+                  }
+                ],
+                "name" : "newState"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>actionDispatched<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>action<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.protocol usr=\"s:6Fluxor6ActionP\">Action<\/ref.protocol><\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>oldState<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.generic_type_param usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\">State<\/ref.generic_type_param><\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>newState<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.generic_type_param usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\">State<\/ref.generic_type_param><\/decl.var.parameter.type><\/decl.var.parameter>)<\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 137,
+            "key.line" : 24,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "actionDispatched(action:oldState:newState:)",
+            "key.namelength" : 66,
+            "key.nameoffset" : 658,
+            "key.offset" : 653,
+            "key.overrides" : [
+              {
+                "key.usr" : "s:6Fluxor11InterceptorP16actionDispatched0C08oldState03newF0yAA6Action_p_0F0QzAJtF"
+              }
+            ],
+            "key.parsed_declaration" : "public func actionDispatched(action: Action, oldState: State, newState: State)",
+            "key.parsed_scope.end" : 26,
+            "key.parsed_scope.start" : 24,
+            "key.substructure" : [
+
+            ],
+            "key.typename" : "<State> (TestInterceptor<State>) -> (Action, State, State) -> ()",
+            "key.typeusr" : "$s6action8oldState03newC0y6Fluxor6Action_p_xxtcD",
+            "key.usr" : "s:6Fluxor11InterceptorP16actionDispatched0C08oldState03newF0yAA6Action_p_0F0QzAJtF"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public func waitForActions(expectedNumberOfActions: <Type usr=\"s:Si\">Int<\/Type>, timeout: <Type usr=\"c:@T@NSTimeInterval\">TimeInterval<\/Type> = 1) throws<\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 1128
+              }
+            ],
+            "key.bodylength" : 834,
+            "key.bodyoffset" : 1220,
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 17,
+            "key.doc.comment" : "Waits for the expected number of `Action`s to be intercepted.\nIf the expected number of `Action`s are not intercepted before the timout an error is thrown.\n\n- Parameter expectedNumberOfActions: The number of `Action`s to wait for\n- Parameter timeout: The waiting time before failing (in seconds)",
+            "key.doc.declaration" : "public func waitForActions(expectedNumberOfActions: Int, timeout: TimeInterval = 1) throws",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.doc.full_as_xml" : "<Function file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift\" line=\"35\" column=\"17\"><Name>waitForActions(expectedNumberOfActions:timeout:)<\/Name><USR>s:17FluxorTestSupport0B11InterceptorC14waitForActions016expectedNumberOfG07timeoutySi_SdtKF<\/USR><Declaration>public func waitForActions(expectedNumberOfActions: Int, timeout: TimeInterval = 1) throws<\/Declaration><CommentParts><Abstract><Para>Waits for the expected number of <codeVoice>Action<\/codeVoice>s to be intercepted. If the expected number of <codeVoice>Action<\/codeVoice>s are not intercepted before the timout an error is thrown.<\/Para><\/Abstract><Parameters><Parameter><Name>expectedNumberOfActions<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The number of <codeVoice>Action<\/codeVoice>s to wait for<\/Para><\/Discussion><\/Parameter><Parameter><Name>timeout<\/Name><Direction isExplicit=\"0\">in<\/Direction><Discussion><Para>The waiting time before failing (in seconds)<\/Para><\/Discussion><\/Parameter><\/Parameters><\/CommentParts><\/Function>",
+            "key.doc.line" : 35,
+            "key.doc.name" : "waitForActions(expectedNumberOfActions:timeout:)",
+            "key.doc.parameters" : [
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The number of `Action`s to wait for"
+                  }
+                ],
+                "name" : "expectedNumberOfActions"
+              },
+              {
+                "discussion" : [
+                  {
+                    "Para" : "The waiting time before failing (in seconds)"
+                  }
+                ],
+                "name" : "timeout"
+              }
+            ],
+            "key.doc.type" : "Function",
+            "key.doclength" : 327,
+            "key.docoffset" : 796,
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.fully_annotated_decl" : "<decl.function.method.instance><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>func<\/syntaxtype.keyword> <decl.name>waitForActions<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>expectedNumberOfActions<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.struct usr=\"s:Si\">Int<\/ref.struct><\/decl.var.parameter.type><\/decl.var.parameter>, <decl.var.parameter><decl.var.parameter.argument_label>timeout<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.typealias usr=\"c:@T@NSTimeInterval\">TimeInterval<\/ref.typealias><\/decl.var.parameter.type> = 1<\/decl.var.parameter>) <syntaxtype.keyword>throws<\/syntaxtype.keyword><\/decl.function.method.instance>",
+            "key.kind" : "source.lang.swift.decl.function.method.instance",
+            "key.length" : 920,
+            "key.line" : 35,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "waitForActions(expectedNumberOfActions:timeout:)",
+            "key.namelength" : 71,
+            "key.nameoffset" : 1140,
+            "key.offset" : 1135,
+            "key.parsed_declaration" : "public func waitForActions(expectedNumberOfActions: Int, timeout: TimeInterval = 1) throws",
+            "key.parsed_scope.end" : 49,
+            "key.parsed_scope.start" : 35,
+            "key.substructure" : [
+              {
+                "key.annotated_decl" : "<Declaration>let expectation: <Type usr=\"c:objc(cs)XCTestExpectation\">XCTestExpectation<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>expectation<\/decl.name>: <decl.var.type><ref.class usr=\"c:objc(cs)XCTestExpectation\">XCTestExpectation<\/ref.class><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 37,
+                "key.line" : 38,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "expectation",
+                "key.namelength" : 11,
+                "key.nameoffset" : 1309,
+                "key.offset" : 1305,
+                "key.parsed_declaration" : "let expectation = XCTestExpectation()",
+                "key.parsed_scope.end" : 38,
+                "key.parsed_scope.start" : 38,
+                "key.typename" : "XCTestExpectation",
+                "key.typeusr" : "$sSo17XCTestExpectationCD",
+                "key.usr" : "s:17FluxorTestSupport0B11InterceptorC14waitForActions016expectedNumberOfG07timeoutySi_SdtKF11expectationL_So17XCTestExpectationCvp"
+              },
+              {
+                "key.annotated_decl" : "<Declaration>let waitResult: <Type usr=\"c:objc(cs)XCTWaiter\">XCTWaiter<\/Type>.<Type usr=\"c:@E@XCTWaiterResult\">Result<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>waitResult<\/decl.name>: <decl.var.type><ref.class usr=\"c:objc(cs)XCTWaiter\">XCTWaiter<\/ref.class>.<ref.enum usr=\"c:@E@XCTWaiterResult\">Result<\/ref.enum><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 71,
+                "key.line" : 41,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "waitResult",
+                "key.namelength" : 10,
+                "key.nameoffset" : 1486,
+                "key.offset" : 1482,
+                "key.parsed_declaration" : "let waitResult = XCTWaiter().wait(for: [expectation], timeout: timeout)",
+                "key.parsed_scope.end" : 41,
+                "key.parsed_scope.start" : 41,
+                "key.typename" : "XCTWaiter.Result",
+                "key.typeusr" : "$sSo15XCTWaiterResultVD",
+                "key.usr" : "s:17FluxorTestSupport0B11InterceptorC14waitForActions016expectedNumberOfG07timeoutySi_SdtKF0E6ResultL_So09XCTWaiterL0Vvp"
+              },
+              {
+                "key.annotated_decl" : "<Declaration>let valueFormatter: (_ count: <Type usr=\"s:Si\">Int<\/Type>) -&gt; <Type usr=\"s:SS\">String<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>valueFormatter<\/decl.name>: <decl.var.type>(<decl.var.parameter>_ <decl.var.parameter.name>count<\/decl.var.parameter.name>: <decl.var.parameter.type><ref.struct usr=\"s:Si\">Int<\/ref.struct><\/decl.var.parameter.type><\/decl.var.parameter>) -&gt; <decl.function.returntype><ref.struct usr=\"s:SS\">String<\/ref.struct><\/decl.function.returntype><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 84,
+                "key.line" : 44,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "valueFormatter",
+                "key.namelength" : 14,
+                "key.nameoffset" : 1622,
+                "key.offset" : 1618,
+                "key.parsed_declaration" : "let valueFormatter = { (count: Int) in \"\\(count) action\" + (count == 1 ? \"\" : \"s\") }",
+                "key.parsed_scope.end" : 44,
+                "key.parsed_scope.start" : 44,
+                "key.typename" : "(Int) -> String",
+                "key.typeusr" : "$sySSSicD",
+                "key.usr" : "s:17FluxorTestSupport0B11InterceptorC14waitForActions016expectedNumberOfG07timeoutySi_SdtKF14valueFormatterL_ySSSicvp"
+              },
+              {
+                "key.annotated_decl" : "<Declaration>let formattedExpectedActions: <Type usr=\"s:SS\">String<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>formattedExpectedActions<\/decl.name>: <decl.var.type><ref.struct usr=\"s:SS\">String<\/ref.struct><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 83,
+                "key.line" : 45,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "formattedExpectedActions",
+                "key.namelength" : 24,
+                "key.nameoffset" : 1715,
+                "key.offset" : 1711,
+                "key.parsed_declaration" : "let formattedExpectedActions = valueFormatter(expectation.expectedFulfillmentCount)",
+                "key.parsed_scope.end" : 45,
+                "key.parsed_scope.start" : 45,
+                "key.typename" : "String",
+                "key.typeusr" : "$sSSD",
+                "key.usr" : "s:17FluxorTestSupport0B11InterceptorC14waitForActions016expectedNumberOfG07timeoutySi_SdtKF017formattedExpectedG0L_SSvp"
+              },
+              {
+                "key.annotated_decl" : "<Declaration>let formattedActions: <Type usr=\"s:SS\">String<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>formattedActions<\/decl.name>: <decl.var.type><ref.struct usr=\"s:SS\">String<\/ref.struct><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 57,
+                "key.line" : 46,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "formattedActions",
+                "key.namelength" : 16,
+                "key.nameoffset" : 1807,
+                "key.offset" : 1803,
+                "key.parsed_declaration" : "let formattedActions = valueFormatter(stateChanges.count)",
+                "key.parsed_scope.end" : 46,
+                "key.parsed_scope.start" : 46,
+                "key.typename" : "String",
+                "key.typeusr" : "$sSSD",
+                "key.usr" : "s:17FluxorTestSupport0B11InterceptorC14waitForActions016expectedNumberOfG07timeoutySi_SdtKF09formattedG0L_SSvp"
+              },
+              {
+                "key.annotated_decl" : "<Declaration>let errorMessage: <Type usr=\"s:SS\">String<\/Type><\/Declaration>",
+                "key.column" : 13,
+                "key.decl_lang" : "source.lang.swift",
+                "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+                "key.fully_annotated_decl" : "<decl.var.local><syntaxtype.keyword>let<\/syntaxtype.keyword> <decl.name>errorMessage<\/decl.name>: <decl.var.type><ref.struct usr=\"s:SS\">String<\/ref.struct><\/decl.var.type><\/decl.var.local>",
+                "key.kind" : "source.lang.swift.decl.var.local",
+                "key.length" : 106,
+                "key.line" : 47,
+                "key.modulename" : "FluxorTestSupport",
+                "key.name" : "errorMessage",
+                "key.namelength" : 12,
+                "key.nameoffset" : 1873,
+                "key.offset" : 1869,
+                "key.parsed_declaration" : "let errorMessage = \"Waiting for \\(formattedExpectedActions) timed out. Received only \\(formattedActions).\"",
+                "key.parsed_scope.end" : 47,
+                "key.parsed_scope.start" : 47,
+                "key.typename" : "String",
+                "key.typeusr" : "$sSSD",
+                "key.usr" : "s:17FluxorTestSupport0B11InterceptorC14waitForActions016expectedNumberOfG07timeoutySi_SdtKF12errorMessageL_SSvp"
+              }
+            ],
+            "key.typename" : "<State> (TestInterceptor<State>) -> (Int, Double) throws -> ()",
+            "key.typeusr" : "$s23expectedNumberOfActions7timeoutySi_SdtKcD",
+            "key.usr" : "s:17FluxorTestSupport0B11InterceptorC14waitForActions016expectedNumberOfG07timeoutySi_SdtKF"
+          },
+          {
+            "key.accessibility" : "source.lang.swift.accessibility.public",
+            "key.annotated_decl" : "<Declaration>public enum <Type usr=\"s:17FluxorTestSupport0B11InterceptorC\">TestInterceptor<\/Type>&lt;<Type usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\">State<\/Type>&gt;.WaitingError : <Type usr=\"s:s5ErrorP\">Error<\/Type><\/Declaration>",
+            "key.attributes" : [
+              {
+                "key.attribute" : "source.decl.attribute.public",
+                "key.length" : 6,
+                "key.offset" : 2110
+              }
+            ],
+            "key.bodylength" : 142,
+            "key.bodyoffset" : 2143,
+            "key.column" : 17,
+            "key.decl_lang" : "source.lang.swift",
+            "key.doc.column" : 17,
+            "key.doc.comment" : "Errors waiting for intercepted `Action`s",
+            "key.doc.declaration" : "public enum FluxorTestSupport.TestInterceptor<State>.WaitingError : Error",
+            "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.doc.full_as_xml" : "<Other file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift\" line=\"52\" column=\"17\"><Name>WaitingError<\/Name><USR>s:17FluxorTestSupport0B11InterceptorC12WaitingErrorO<\/USR><Declaration>public enum FluxorTestSupport.TestInterceptor&lt;State&gt;.WaitingError : Error<\/Declaration><CommentParts><Abstract><Para>Errors waiting for intercepted <codeVoice>Action<\/codeVoice>s<\/Para><\/Abstract><\/CommentParts><\/Other>",
+            "key.doc.line" : 52,
+            "key.doc.name" : "WaitingError",
+            "key.doc.type" : "Other",
+            "key.doclength" : 45,
+            "key.docoffset" : 2061,
+            "key.elements" : [
+              {
+                "key.kind" : "source.lang.swift.structure.elem.typeref",
+                "key.length" : 5,
+                "key.offset" : 2136
+              }
+            ],
+            "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+            "key.fully_annotated_decl" : "<decl.enum><syntaxtype.keyword>public<\/syntaxtype.keyword> <syntaxtype.keyword>enum<\/syntaxtype.keyword> <ref.class usr=\"s:17FluxorTestSupport0B11InterceptorC\">TestInterceptor<\/ref.class>&lt;<ref.generic_type_param usr=\"s:17FluxorTestSupport0B11InterceptorC5Statexmfp\">State<\/ref.generic_type_param>&gt;.<decl.name>WaitingError<\/decl.name> : <ref.protocol usr=\"s:s5ErrorP\">Error<\/ref.protocol><\/decl.enum>",
+            "key.inheritedtypes" : [
+              {
+                "key.name" : "Error"
+              }
+            ],
+            "key.kind" : "source.lang.swift.decl.enum",
+            "key.length" : 169,
+            "key.line" : 52,
+            "key.modulename" : "FluxorTestSupport",
+            "key.name" : "WaitingError",
+            "key.namelength" : 12,
+            "key.nameoffset" : 2122,
+            "key.offset" : 2117,
+            "key.parsed_declaration" : "public enum WaitingError: Error",
+            "key.parsed_scope.end" : 55,
+            "key.parsed_scope.start" : 52,
+            "key.substructure" : [
+              {
+                "key.kind" : "source.lang.swift.decl.enumcase",
+                "key.length" : 45,
+                "key.offset" : 2235,
+                "key.substructure" : [
+                  {
+                    "key.accessibility" : "source.lang.swift.accessibility.public",
+                    "key.annotated_decl" : "<Declaration>case expectedCountNotReached(message: <Type usr=\"s:SS\">String<\/Type>)<\/Declaration>",
+                    "key.column" : 14,
+                    "key.decl_lang" : "source.lang.swift",
+                    "key.doc.column" : 14,
+                    "key.doc.comment" : "The `TestInterceptor` didn't receive the expected number of `Action`s.",
+                    "key.doc.declaration" : "",
+                    "key.doc.file" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+                    "key.doc.full_as_xml" : "<Other file=\"\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift\" line=\"54\" column=\"14\"><Name>expectedCountNotReached(message:)<\/Name><USR>s:17FluxorTestSupport0B11InterceptorC12WaitingErrorO23expectedCountNotReachedyAEyx_GSS_tcAGmlF<\/USR><Declaration><\/Declaration><CommentParts><Abstract><Para>The <codeVoice>TestInterceptor<\/codeVoice> didn’t receive the expected number of <codeVoice>Action<\/codeVoice>s.<\/Para><\/Abstract><\/CommentParts><\/Other>",
+                    "key.doc.line" : 54,
+                    "key.doc.name" : "expectedCountNotReached(message:)",
+                    "key.doc.type" : "Other",
+                    "key.doclength" : 75,
+                    "key.docoffset" : 2152,
+                    "key.filepath" : "\/Users\/runner\/work\/Fluxor\/Fluxor\/Sources\/FluxorTestSupport\/TestInterceptor.swift",
+                    "key.fully_annotated_decl" : "<decl.enumelement><syntaxtype.keyword>case<\/syntaxtype.keyword> <decl.name>expectedCountNotReached<\/decl.name>(<decl.var.parameter><decl.var.parameter.argument_label>message<\/decl.var.parameter.argument_label>: <decl.var.parameter.type><ref.struct usr=\"s:SS\">String<\/ref.struct><\/decl.var.parameter.type><\/decl.var.parameter>)<\/decl.enumelement>",
+                    "key.kind" : "source.lang.swift.decl.enumelement",
+                    "key.length" : 40,
+                    "key.line" : 54,
+                    "key.modulename" : "FluxorTestSupport",
+                    "key.name" : "expectedCountNotReached(message:)",
+                    "key.namelength" : 40,
+                    "key.nameoffset" : 2240,
+                    "key.offset" : 2240,
+                    "key.parsed_declaration" : "case expectedCountNotReached(message: String)",
+                    "key.parsed_scope.end" : 54,
+                    "key.parsed_scope.start" : 54,
+                    "key.substructure" : [
+
+                    ],
+                    "key.typename" : "<State> (TestInterceptor<State>.WaitingError.Type) -> (String) -> TestInterceptor<State>.WaitingError",
+                    "key.typeusr" : "$sy17FluxorTestSupport0B11InterceptorC12WaitingErrorOyx_GSS_tcAFmcluD",
+                    "key.usr" : "s:17FluxorTestSupport0B11InterceptorC12WaitingErrorO23expectedCountNotReachedyAEyx_GSS_tcAGmlF"
+                  }
+                ]
+              }
+            ],
+            "key.typename" : "TestInterceptor<State>.WaitingError.Type",
+            "key.typeusr" : "$s17FluxorTestSupport0B11InterceptorC12WaitingErrorOyx_GmD",
+            "key.usr" : "s:17FluxorTestSupport0B11InterceptorC12WaitingErrorO"
+          }
+        ],
+        "key.typename" : "TestInterceptor<State>.Type",
+        "key.typeusr" : "$s17FluxorTestSupport0B11InterceptorCyxGmD",
+        "key.usr" : "s:17FluxorTestSupport0B11InterceptorC"
+      }
+    ]
+  }
+}]
