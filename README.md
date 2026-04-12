@@ -167,12 +167,17 @@ struct CounterView: View {
 
 For writable projections, use `@FluxorBinding` or `store.scope(...)` when a feature needs a focused observable projection that works with `@Bindable`.
 
+`@FluxorProjection` is available when the projection itself should be sourced from the environment store and then bound through `@Bindable`.
+
 ### Macros
 `FluxorMacros` adds authoring helpers while keeping the generated code explicit:
 
 * `@FluxorAction("Load Todos")`
 * `@FluxorSelector`
 * `@FluxorEffects`
+
+## Migration
+If you are upgrading from the old Combine based API, start with [Migrating to Async Fluxor](Documentation/Guides/Migrating%20to%20Async%20Fluxor.md).
 
 ### Intercepting actions and changes
 If read-only access to all `Action`s dispatched and state changes is needed, an `Interceptor` can be used. `Interceptor` is just a protocol, and when registered in the `Store`, instances of types conforming to this protocol will receive a callback everytime an `Action` is dispatched.

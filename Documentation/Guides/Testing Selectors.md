@@ -1,43 +1,22 @@
 # Testing `Selector`s
 
-In Fluxor `Selector`s are projectors of `State`.  `Selector`s can be created by a `KeyPath`, by a closure or based on up to 5 other `Selector`s.
-When a `Selector` is based on other `Selector`s, the projector takes the `Value`s from the others as parameters.
-
-## Testing basic `Selector`s
-
-The `Selector`'s `map` function takes the `State` and returns a `Value`.
+`Selector`s are state projectors. They can be tested by mapping a known state value directly.
 
 ```swift
-struct Selectors {
-    static let getNameState = Selector(keyPath: \AppState.name)
+import Fluxor
+import XCTest
+
+private enum Selectors {
+    static let name = Selector<AppState, NameState>(\.name)
 }
 
-class SelectorsTests: XCTestCase {
-    func testGetNameState() {
-        // Given
+final class SelectorsTests: XCTestCase {
+    func testNameSelector() {
         let state = AppState(name: NameState(firstName: "Tim", lastName: "Cook"))
-        // Then
-        XCTAssertEqual(Selectors.getNameState.map(state), state.name)
+
+        XCTAssertEqual(Selectors.name.map(state), state.name)
     }
 }
 ```
 
-## Testing `Selector`s based on `Selector`s
-
-If a `Selector` is based on the `Value`s from other `Selector`s, it will also have a `projector` property.
-The `projector` can be used in tests, to easily test the `Selector` without creating the full `State` instance.
-
-```swift
-extension Selectors {
-    static let congratulations = Selector.with(getFullName, getBirthday) { fullName, birthday in
-        "Congratulations \(fullName)! Today is \(birthday.month) \(birthday.day) - your birthday!"
-    }
-}
-
-class SelectorsTests: XCTestCase {
-    func testCongratulations() {
-        XCTAssertEqual(Selectors.congratulations.projector("Tim Cook", Birthday(month: "November", day: "1")),
-                       "Congratulations Tim Cook! Today is November 1 - your birthday!")
-    }
-}
-```
+Memoized selectors created with `Selector.combine(...)` should be tested through observable behavior, not by reproducing the caching logic. A good test asserts that a projection closure is only re evaluated when one of its selected inputs changes.

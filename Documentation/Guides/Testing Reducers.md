@@ -1,31 +1,34 @@
 # Testing `Reducer`s
 
-In Fluxor `Reducer`s are basically pure functions which takes an instance of `State` and an `Action`, and returns a new `State`.
-This means that given the same parameters, the `Reducer` will always return the same output.
+`Reducer`s synchronously mutate state in place. That makes them straightforward to test in isolation.
 
 ```swift
-let appReducer = Reducer<CounterState>(
+import Fluxor
+import XCTest
+
+private let appReducer = Reducer<CounterState>(
     ReduceOn(IncrementAction.self) { state, action in
         state.counter += action.value
     }
 )
 
-class ReducersTests: XCTestCase {
+final class ReducersTests: XCTestCase {
     func testIncrementAction() {
-        // Given
         var state = CounterState(counter: 0)
-        // When
-        appReducer.reduce(&state, IncrementAction(value: 1))
-        // Then
+
+        appReducer.reduce(&state, action: IncrementAction(value: 1))
+
         XCTAssertEqual(state.counter, 1)
     }
 }
 
-struct CounterState {
+private struct CounterState {
     var counter: Int
 }
 
-struct IncrementAction: Action {
+private struct IncrementAction: Action {
     let value: Int
 }
 ```
+
+If the store composes multiple reducers, prefer testing the combined store behavior separately from the individual reducer mutations.

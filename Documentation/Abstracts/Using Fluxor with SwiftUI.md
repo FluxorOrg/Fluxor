@@ -1,73 +1,95 @@
-Fluxor is based on Combine and is therefore ideal to use with SwiftUI. When SwiftUI can be imported, some extra types and extension for `Store` will be available.
+Fluxor integrates with SwiftUI through the `FluxorSwiftUI` package.
 
-## Observing a value in the `Store`
+The modern integration is based on `@State`, `@Environment`, `@Bindable`, and focused property wrappers instead of `ObservableObject`, `@StateObject`, or `@EnvironmentObject`.
 
-When you want to observe a value in the `Store`, the `StoreValue` property wrapper can be used. Just wrap the property in the `@StoreValue` property wrapper by specifying the `Store` and `Selector` used to select the value. 
+## Injecting the `Store`
 
-```swift
-import Fluxor
-import SwiftUI
-
-struct DrawView: View {
-    @StoreValue(Current.store, Selectors.canClear) private var canClear: Bool
-    
-    var body: some View {
-        Button(action: { ... }, label: { Text("Clear") })
-            .disabled(!canClear)
-    }
-}
-```
-
-## Binding to a value in the `Store`
-
-The `Store` is extended with functions to create [`Bindings`](https://developer.apple.com/documentation/swiftui/binding) to a value in the `State` and use an `ActionTemplate` to update the value through the `Store`. The [`Binding`](https://developer.apple.com/documentation/swiftui/binding) can be used like any other bindings in SwiftUI. When the value in the [`Binding`](https://developer.apple.com/documentation/swiftui/binding) is changed an `Action` will be dispatched on the `Store` based on the specified `ActionTemplate`.
+Own the `Store` at the root of the view tree with `@State` and inject it through the environment.
 
 ```swift
 import Fluxor
+import FluxorSwiftUI
 import SwiftUI
 
-struct GreetingView: View {
-    @EnvironmentObject var store: Store<AppState, AppEnvironment>
-    
-    var body: some View {
-        TextField("Greeting", text: store.binding(get: Selectors.getGreeting, send: Actions.setGreeting))
-    }
-}
-```
-
-## Binding to a value which can be enabled and disabled
-
-When the [`Binding`](https://developer.apple.com/documentation/swiftui/binding) has a `Bool` value, it can be created with a `ActionTemplate` for enabling the value (making it `true`) and another one for disabling the value (making it `false`).
-
-```swift
-import Fluxor
-import SwiftUI
-
-struct DrawView: View {
-    @EnvironmentObject var store: Store<AppState, AppEnvironment>
-
-    var body: some View {
-        Button(action: { store.dispatch(action: Actions.askToClear()) }, label: { Text("Clear") })
-            .actionSheet(isPresented: store.binding(get: Selectors.isClearOptionsVisible,
-                                                    enable: Actions.askToClear,
-                                                    disable: Actions.cancelClear)) {
-                clearActionSheet
-            }
-    }
-
-    private var clearActionSheet: ActionSheet {
-        .init(
-            title: Text("Clear"),
-            message: Text("Are you sure you want to clear?"),
-            buttons: [
-                .destructive(Text("Yes, clear")) {
-                    store.dispatch(action: Actions.clear())
-                },
-                .cancel(Text("Cancel")) {
-                    store.dispatch(action: Actions.cancelClear())
+struct RootView: View {
+    @State private var store = Store(
+        initialState: AppState(),
+        reducers: [
+            Reducer(
+                ReduceOn(SetName.self) { state, action in
+                    state.name = action.name
                 }
-            ]
-        )
+            )
+        ]
+    )
+
+    var body: some View {
+        FeatureView()
+            .environment(store)
     }
 }
 ```
+
+Child views read the store with `@Environment`.
+
+```swift
+struct FeatureView: View {
+    @Environment(Store<AppState, Void>.self) private var store
+
+    var body: some View {
+        Button("Reset") {
+            store.send(SetName(name: ""))
+        }
+    }
+}
+```
+
+## Selecting values
+
+`@FluxorSelect` reads a value from the store and only updates when the selected value changes.
+
+```swift
+struct GreetingView: View {
+    @FluxorSelect<AppState, Void, String>(Selectors.name) private var name: String
+
+    var body: some View {
+        Text(name)
+    }
+}
+```
+
+## Creating bindings
+
+Use `@FluxorBinding` when a SwiftUI control should both read from the store and dispatch an action when edited.
+
+```swift
+struct EditGreetingView: View {
+    @FluxorBinding<AppState, Void, String>(Selectors.name, send: { SetName(name: $0) })
+    private var name: String
+
+    var body: some View {
+        TextField("Name", text: $name)
+    }
+}
+```
+
+`store.binding(get:send:)` is still available as a small interop helper when a `Binding` is needed directly.
+
+## Focused projections and `@Bindable`
+
+For more advanced forms, use `@FluxorProjection` to create a focused observable projection from the environment store, then bind through `@Bindable`.
+
+```swift
+struct ProfileForm: View {
+    @FluxorProjection<AppState, Void, String>(Selectors.name, send: { SetName(name: $0) })
+    private var nameProjection: StoreProjection<AppState, Void, String>
+
+    var body: some View {
+        @Bindable var nameProjection = nameProjection
+
+        return TextField("Name", text: $nameProjection.value)
+    }
+}
+```
+
+This keeps the view focused on the feature state it edits instead of binding against the entire store.
