@@ -1,92 +1,71 @@
 /*
  * FluxorTestSupport
- *  Copyright (c) Morten Bjerg Gregersen 2020
+ *  Copyright (c) Morten Bjerg Gregersen 2026
  *  MIT license, see LICENSE file for details
  */
 
-#if canImport(Combine)
-    import Combine
-#else
-    import OpenCombine
-#endif
-import Fluxor
 import Foundation
-import XCTest
+import Fluxor
 
-extension AnonymousAction: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id
-    }
-}
+@MainActor
+public final class MockStore<State: Sendable, Environment: Sendable> {
+    public var state: State { store.state }
+    public var stateChanges: [TestInterceptor<State>.StateChange] { interceptor.stateChanges }
+    public var dispatchedActions: [any Action] { stateChanges.map(\.action) }
 
-// swiftlint:disable large_tuple
+    public let store: Store<State, Environment>
 
-/**
- A `MockStore` is intended to be used in unit tests where you want to observe
- which `Action`s are dispatched and manipulate the `State` and `Selector`s.
- */
-public class MockStore<State, Environment>: Store<State, Environment> {
-    /// All the `Action`s and state changes that has happened.
-    public var stateChanges: [(action: Action, oldState: State, newState: State)] {
-        testInterceptor.stateChanges
+    private var overriddenSelectorValues = [UUID: Any]()
+    private let interceptor = TestInterceptor<State>()
+
+    public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
+        store = Store(initialState: initialState, environment: environment, reducers: reducers)
+        store.register(interceptor: interceptor)
     }
 
-    /// All the `Action`s that has been dispatched.
-    public var dispatchedActions: [Action] {
-        stateChanges.map(\.action)
+    public convenience init(initialState: State, reducers: [Reducer<State>] = []) where Environment == Void {
+        self.init(initialState: initialState, environment: (), reducers: reducers)
     }
 
-    private let setState = ActionTemplate(id: "Set State", payloadType: State.self)
-    private var overridenSelectorValues = [UUID: Any]()
-    private let testInterceptor = TestInterceptor<State>()
-
-    /**
-     Initializes the `MockStore` with an initial `State`.
-
-     - Parameter initialState: The initial `State` for the `Store`
-     - Parameter reducers: The `Reducer`s to register
-     - Parameter effects: The `Effect`s to register
-     */
-    override public init(initialState: State, environment: Environment, reducers: [Reducer<State>] = []) {
-        let reducers = reducers + [Reducer(ReduceOn(setState) { state, action in state = action.payload })]
-        super.init(initialState: initialState, environment: environment, reducers: reducers)
-        super.register(interceptor: testInterceptor)
+    public func send(_ action: some Action) {
+        store.send(action)
     }
 
-    /**
-     Sets a new `State` on the `Store`.
-
-     - Parameter newState: The new `State` to set on the `Store`
-     */
-    public func setState(newState: State) {
-        dispatch(action: setState(payload: newState))
+    public func current<Value>(_ selector: Fluxor.Selector<State, Value>) -> Value {
+        if let overriddenValue = overriddenSelectorValues[selector.id] as? Value {
+            overriddenValue
+        } else {
+            store.current(selector)
+        }
     }
 
-    /**
-     Overrides the `Selector` with a 'default' value.
+    public func select<Value: Sendable>(_ selector: Fluxor.Selector<State, Value>) -> AsyncStream<Value> {
+        if let overriddenValue = overriddenSelectorValues[selector.id] as? Value {
+            let states = store.states()
+            return AsyncStream(bufferingPolicy: .bufferingNewest(1)) { continuation in
+                let task = Task { @MainActor in
+                    continuation.yield(overriddenValue)
+                    var iterator = states.makeAsyncIterator()
+                    _ = await iterator.next()
+                    while !Task.isCancelled, await iterator.next() != nil {
+                        continuation.yield(overriddenValue)
+                    }
+                    continuation.finish()
+                }
+                continuation.onTermination = { _ in
+                    task.cancel()
+                }
+            }
+        }
 
-     When a `Selector` is overriden it will always give the same value when used to select from this `MockStore`.
+        return store.select(selector)
+    }
 
-     - Parameter selector: The `Selector` to override
-     - Parameter value: The value the `Selector` should give when selecting
-     */
     public func overrideSelector<Value>(_ selector: Fluxor.Selector<State, Value>, value: Value) {
-        overridenSelectorValues[selector.id] = value
+        overriddenSelectorValues[selector.id] = value
     }
 
-    /**
-     Resets all overridden `Selector`s on this `MockStore`.
-     */
     public func resetOverriddenSelectors() {
-        overridenSelectorValues.removeAll()
-    }
-
-    override public func select<Value>(_ selector: Fluxor.Selector<State, Value>) -> AnyPublisher<Value, Never> {
-        guard let value = overridenSelectorValues[selector.id] as? Value else { return super.select(selector) }
-        return $state.map { _ in value }.eraseToAnyPublisher()
-    }
-
-    override public func selectCurrent<Value>(_ selector: Fluxor.Selector<State, Value>) -> Value {
-        overridenSelectorValues[selector.id] as? Value ?? super.selectCurrent(selector)
+        overriddenSelectorValues.removeAll()
     }
 }

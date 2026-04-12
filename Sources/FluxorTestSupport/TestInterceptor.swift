@@ -1,56 +1,43 @@
 /*
  * FluxorTestSupport
- *  Copyright (c) Morten Bjerg Gregersen 2020
+ *  Copyright (c) Morten Bjerg Gregersen 2026
  *  MIT license, see LICENSE file for details
  */
 
 import Fluxor
-import XCTest
+import Foundation
 
-// swiftlint:disable large_tuple
+@MainActor
+public final class TestInterceptor<State>: Interceptor {
+    public typealias StateChange = (action: any Action, oldState: State, newState: State)
 
-/// An `Interceptor` to use in unit tests, to assert specific `Action`s are dispatched.
-public class TestInterceptor<State>: Interceptor {
-    /// A list of `Action`s and `State`s intercepted.
-    public private(set) var stateChanges: [(action: Action, oldState: State, newState: State)] = [] {
-        didSet { expectation?.fulfill() }
-    }
+    public private(set) var stateChanges = [StateChange]()
 
-    private var expectation: XCTestExpectation?
-
-    /// Initializes the `TestInterceptor`.
     public init() {}
 
-    public func actionDispatched(action: Action, oldState: State, newState: State) {
+    public func actionDispatched(action: any Action, oldState: State, newState: State) {
         stateChanges.append((action, oldState, newState))
     }
 
-    /**
-     Waits for the expected number of `Action`s to be intercepted.
-     If the expected number of `Action`s are not intercepted before the timout an error is thrown.
+    public func waitForActions(
+        expectedNumberOfActions: Int,
+        timeout: Duration = .seconds(1),
+        pollInterval: Duration = .milliseconds(10)
+    ) async throws {
+        let clock = ContinuousClock()
+        let deadline = clock.now + timeout
 
-     - Parameter expectedNumberOfActions: The number of `Action`s to wait for
-     - Parameter timeout: The waiting time before failing (in seconds)
-     */
-    public func waitForActions(expectedNumberOfActions: Int, timeout: TimeInterval = 1) throws {
-        guard stateChanges.count < expectedNumberOfActions else { return }
-
-        let expectation = XCTestExpectation()
-        expectation.expectedFulfillmentCount = expectedNumberOfActions - stateChanges.count
-        self.expectation = expectation
-        let waitResult = XCTWaiter().wait(for: [expectation], timeout: timeout)
-        guard waitResult != .completed else { return }
-
-        let valueFormatter = { (count: Int) in "\(count) action" + (count == 1 ? "" : "s") }
-        let formattedExpectedActions = valueFormatter(expectation.expectedFulfillmentCount)
-        let formattedActions = valueFormatter(stateChanges.count)
-        let errorMessage = "Waiting for \(formattedExpectedActions) timed out. Received only \(formattedActions)."
-        throw WaitingError.expectedCountNotReached(message: errorMessage)
+        while stateChanges.count < expectedNumberOfActions {
+            guard clock.now < deadline else {
+                throw WaitingError.expectedCountNotReached(
+                    message: "Timed out waiting for \(expectedNumberOfActions) actions. Received only \(stateChanges.count)."
+                )
+            }
+            try await Task.sleep(for: pollInterval)
+        }
     }
 
-    /// Errors waiting for intercepted `Action`s
-    public enum WaitingError: Error {
-        /// The `TestInterceptor` didn't receive the expected number of `Action`s.
+    public enum WaitingError: Error, Equatable {
         case expectedCountNotReached(message: String)
     }
 }
