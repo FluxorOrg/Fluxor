@@ -89,4 +89,67 @@ final class FluxorMacrosTests: XCTestCase {
         throw XCTSkip("Macro tests only run on the host platform.")
         #endif
     }
+
+    func testFluxorSelectorRequiresStaticStoredProperty() throws {
+        #if canImport(FluxorMacrosImplementation)
+        assertMacroExpansion(
+            """
+            struct Selectors {
+                @FluxorSelector
+                let count = \\AppState.count
+            }
+            """,
+            expandedSource: """
+            struct Selectors {
+                let count = \\AppState.count
+            }
+            """,
+            diagnostics: [
+                DiagnosticSpec(
+                    message: "@FluxorSelector requires a static stored property with an initializer.",
+                    line: 2,
+                    column: 5
+                )
+            ],
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("Macro tests only run on the host platform.")
+        #endif
+    }
+
+    func testFluxorEffectsWarnsWhenNoEffectsAreFound() throws {
+        #if canImport(FluxorMacrosImplementation)
+        assertMacroExpansion(
+            """
+            @FluxorEffects
+            struct FeatureEffects: Effects {
+                typealias State = AppState
+                typealias Environment = AppEnvironment
+            }
+            """,
+            expandedSource: """
+            struct FeatureEffects: Effects {
+                typealias State = AppState
+                typealias Environment = AppEnvironment
+
+                public var effects: [Effect<State, Environment>] {
+                    []
+                }
+            }
+            """,
+            diagnostics: [
+                DiagnosticSpec(
+                    message: "@FluxorEffects did not find any effect members to include.",
+                    line: 1,
+                    column: 1,
+                    severity: .warning
+                )
+            ],
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("Macro tests only run on the host platform.")
+        #endif
+    }
 }
