@@ -16,6 +16,16 @@ jobs:
       CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
     steps:
     - uses: actions/checkout@v6
+    - name: Select Xcode 26
+      run: |
+        DEVELOPER_DIR="$(find /Applications -maxdepth 1 -type d -name 'Xcode_26*.app' | sort -V | tail -n 1)/Contents/Developer"
+        test -d "${DEVELOPER_DIR}"
+        echo "DEVELOPER_DIR=${DEVELOPER_DIR}" >> "${GITHUB_ENV}"
+        sudo xcode-select -s "${DEVELOPER_DIR}"
+    - name: Print Xcode & Swift version
+      run: |
+        xcodebuild -version
+        swift --version
     - name: Build
       run: swift build -v
     - name: Test
