@@ -12,6 +12,8 @@ jobs:
   build-apple:
     name: Build and Test (Apple platforms)
     runs-on: macos-latest
+    env:
+      CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
     steps:
     - uses: actions/checkout@v6
     - name: Build
@@ -35,10 +37,10 @@ jobs:
           -ignore-filename-regex=".build|Tests" \
           "${TEST_BINARY}" > coverage.lcov
     - name: Upload coverage
-      if: ${{ secrets.CC_TEST_REPORTER_ID != '' }}
+      if: ${{ env.CC_TEST_REPORTER_ID != '' }}
       uses: paambaati/codeclimate-action@v9.0.0
       env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        CC_TEST_REPORTER_ID: ${{ env.CC_TEST_REPORTER_ID }}
       with:
         coverageLocations: coverage.lcov:lcov
         debug: true
