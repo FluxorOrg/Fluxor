@@ -1,49 +1,108 @@
-// swift-tools-version:5.2
+// swift-tools-version: 6.2
 
+import CompilerPluginSupport
 import PackageDescription
 
 var products: [Product] = [
     .library(
         name: "Fluxor",
-        targets: ["Fluxor"]),
+        targets: ["Fluxor"]
+    ),
+    .library(
+        name: "FluxorMacros",
+        targets: ["FluxorMacros"]
+    ),
     .library(
         name: "FluxorTestSupport",
-        targets: ["FluxorTestSupport"]),
+        targets: ["FluxorTestSupport"]
+    ),
 ]
 
-var dependencies: [Package.Dependency] = []
-var fluxorTargetDependencies: [Target.Dependency] = ["AnyCodable"]
-#if !canImport(Combine)
-dependencies.append(.package(url: "https://github.com/OpenCombine/OpenCombine.git", from: "0.12.0"))
-fluxorTargetDependencies.append(contentsOf: [
-    "OpenCombine",
-    .product(name: "OpenCombineDispatch", package: "OpenCombine"),
-])
+#if !os(Linux)
+products.insert(
+    .library(
+        name: "FluxorSwiftUI",
+        targets: ["FluxorSwiftUI"]
+    ),
+    at: 1
+)
+#endif
+
+var targets: [Target] = [
+    .target(name: "AnyCodable"),
+    .testTarget(
+        name: "AnyCodableTests",
+        dependencies: ["AnyCodable"]
+    ),
+    .target(name: "Fluxor"),
+    .macro(
+        name: "FluxorMacrosImplementation",
+        dependencies: [
+            .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+            .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+            .product(name: "SwiftSyntax", package: "swift-syntax"),
+            .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
+            .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+        ]
+    ),
+    .target(
+        name: "FluxorMacros",
+        dependencies: ["FluxorMacrosImplementation"]
+    ),
+    .target(
+        name: "FluxorTestSupport",
+        dependencies: ["Fluxor"]
+    ),
+    .testTarget(
+        name: "FluxorTests",
+        dependencies: [
+            "Fluxor",
+            "FluxorTestSupport",
+        ]
+    ),
+    .testTarget(
+        name: "FluxorMacrosTests",
+        dependencies: [
+            "FluxorMacrosImplementation",
+            .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+        ]
+    ),
+]
+
+#if !os(Linux)
+targets.insert(
+    .target(
+        name: "FluxorSwiftUI",
+        dependencies: ["Fluxor"]
+    ),
+    at: 3
+)
+
+targets.append(
+    .testTarget(
+        name: "FluxorSwiftUITests",
+        dependencies: [
+            "Fluxor",
+            "FluxorSwiftUI",
+            "FluxorTestSupport",
+        ]
+    )
+)
 #endif
 
 let package = Package(
     name: "Fluxor",
     platforms: [
-        .macOS(.v10_15),
-        .iOS(.v13),
-        .tvOS(.v13),
-        .watchOS(.v6),
+        .macOS(.v14),
+        .iOS(.v17),
+        .tvOS(.v17),
+        .watchOS(.v10),
+        .macCatalyst(.v17),
     ],
     products: products,
-    dependencies: dependencies,
-    targets: [
-        .target(
-            name: "AnyCodable"),
-        .testTarget(
-            name: "AnyCodableTests",
-            dependencies: ["AnyCodable"]),
-        .target(
-            name: "Fluxor",
-            dependencies: fluxorTargetDependencies),
-        .testTarget(
-            name: "FluxorTests",
-            dependencies: ["Fluxor", "FluxorTestSupport"]),
-        .target(
-            name: "FluxorTestSupport",
-            dependencies: ["Fluxor"]),
-    ])
+    dependencies: [
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "603.0.0-latest"),
+    ],
+    targets: targets,
+    swiftLanguageModes: [.v6]
+)

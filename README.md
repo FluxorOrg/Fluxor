@@ -6,7 +6,7 @@
 
 <p align="center">
     <b>Unidirectional Data Flow in Swift - inspired by <a href="https://redux.js.org">Redux</a> and <a href="https://ngrx.io">NgRx</a>.</b><br />
-    Based on <a href="https://developer.apple.com/documentation/combine">Combine</a> - ideal for use with <a href="https://developer.apple.com/documentation/swiftui">SwiftUI</a>.<br />
+    Async first state management for Swift and SwiftUI.<br />
     <br />
     <a href="https://swiftpackageindex.com/FluxorOrg/Fluxor">
         <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FFluxorOrg%2FFluxor%2Fbadge%3Ftype%3Dswift-versions" alt="Swift version" />
@@ -38,12 +38,12 @@ With Fluxor, data flows in only one direction, there is only one *Single Source 
 ## How does it work?
 Fluxor is made up from the following types:
 
-* `Store` contains an immutable state (the **Single Source of Truth**).
+* `Store` contains the state (the **Single Source of Truth**).
 * `Action`s are dispatched on the **Store** to update the state.
-* `Reducer`s gives the **Store** a new state based on the **Actions** dispatched.
+* `Reducer`s synchronously mutate the state based on dispatched **Action** values.
 * `Selector`s selects (and eventually transform) part(s) of the state to use (eg. in views).
-* `Effect`s gets triggered by **Actions**, and can perform async task which in turn can dispatch new **Actions**.
-* `Interceptor`s intercepts every dispatched **Action** and state change for easier debugging.
+* `Effect`s react to **Action** values, perform async work, and can dispatch follow up **Action** values.
+* `Interceptor`s intercept every dispatched **Action** and state change for easier debugging.
 
 ![](https://raw.githubusercontent.com/FluxorOrg/Fluxor/master/Assets/Diagram.png)
 
@@ -51,75 +51,133 @@ Fluxor is made up from the following types:
 
 Fluxor can be installed as a dependency to your project using [Swift Package Manager](https://swift.org/package-manager), by simply adding `https://github.com/FluxorOrg/Fluxor.git`.
 
+The package exposes four products:
+
+* `Fluxor` for the core store, reducers, selectors, effects, and interceptors.
+* `FluxorSwiftUI` for `SwiftUI` integration.
+* `FluxorMacros` for action, selector, and effects macros.
+* `FluxorTestSupport` for testing helpers.
+
 ### Requirements
 
-- iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ / Linux
-- Xcode 11.4+ / Swift 5.2+
+* `Fluxor`: Swift 6.2+, Apple platforms and Linux.
+* `FluxorSwiftUI`: iOS 17+, macOS 14+, tvOS 17+, watchOS 10+, macCatalyst 17+.
 
 ## Usage
 As a minimum, an app using Fluxor will need a `Store`, an `Action`, a `Reducer`, a `Selector` and a state.
 
-Here is a setup where firing the `IncrementAction` (1) will increment the `counter` (2) in `AppState` (3), and when selecting with the `counterSelector` (4) on the `Store` will publish the `counter` everytime the state changes (5).
+Here is a setup where firing `IncrementAction` updates `AppState`, and selecting with `counterSelector` gives both synchronous access through `current(_:)` and async observation through `select(_:)`.
 
 ```swift
-import Combine
 import Fluxor
-import Foundation
 
-// 3
-struct AppState {
-    var counter: Int
+struct AppState: Sendable {
+    var counter = 0
 }
 
-// 1
 struct IncrementAction: Action {
     let increment: Int
 }
 
-// 4
-let counterSelector = Selector(keyPath: \AppState.counter)
+enum Selectors {
+    static let counter = Selector(\AppState.counter)
+}
 
 let store = Store(initialState: AppState(counter: 0))
+
 store.register(reducer: Reducer(
     ReduceOn(IncrementAction.self) { state, action in
-        state.counter += action.increment // 2
+        state.counter += action.increment
     }
 ))
 
-let cancellable = store.select(counterSelector).sink {
-    print("Current count: \($0)") // 5
-}
+store.send(IncrementAction(increment: 42))
+print(store.current(Selectors.counter))
 
-store.dispatch(action: IncrementAction(increment: 42))
-// Will print out "Current count: 42"
-```
-
-### Side Effects
-The above example is a simple use case, where an `Action` is dispatched and the state is updated by a `Reducer`. In cases where something should happen when an `Action` is dispatched (eg. fetching data from the internet or some system service), Fluxor provides `Effects`.
-
-`Effects` are registered in the `Store` and will receive all `Action`s dispatched. An `Effect` will in most cases be a `Publisher` mapped from the dispatched `Action` - the mapped `Action` will be dispatched on the `Store`.
-
-Alternatively an `Effect` can also be a `Cancellable` when it don't need to have an `Action` dispatched.
-
-```swift
-import Combine
-import Fluxor
-import Foundation
-
-class TodosEffects: Effects {
-    typealias Environment = AppEnvironment
-
-    let fetchTodos = Effect<Environment>.dispatchingOne { actions, environment in
-        actions.ofType(FetchTodosAction.self)
-            .flatMap { _ in
-                environment.todoService.fetchTodos()
-                    .map { DidFetchTodosAction(todos: $0) }
-                    .catch { _ in Just(DidFailFetchingTodosAction(error: "An error occurred.")) }
-            }
-            .eraseToAnyPublisher()
+Task {
+    for await count in store.select(Selectors.counter) {
+        print("Current count: \(count)")
     }
 }
 ```
+
+### Side Effects
+When an action should trigger async work, register an `Effect`. Effects are typed, async, and cancellable. Each effect gets an `EffectContext` with access to the current state, the environment, and `send(_:)`.
+
+```swift
+import Fluxor
+
+struct TodosEffects: Effects {
+    typealias State = TodosState
+    typealias Environment = AppEnvironment
+
+    let fetchTodos = Effect<State, Environment>.on(FetchTodosAction.self) { _, context in
+        do {
+            let todos = try await context.environment.todoService.fetchTodos()
+            context.send(DidFetchTodosAction(todos: todos))
+        } catch {
+            context.send(DidFailFetchingTodosAction(error: "An error occurred."))
+        }
+    }
+}
+
+store.register(effects: TodosEffects())
+```
+
+### SwiftUI
+Use `FluxorSwiftUI` when integrating with SwiftUI and Observation. Root views should own the store with `@State`, inject it into the environment, and read it from child views with `@Environment`.
+
+```swift
+import Fluxor
+import FluxorSwiftUI
+import SwiftUI
+
+struct RootView: View {
+    @State private var store = Store(
+        initialState: AppState(),
+        reducers: [
+            Reducer(
+                ReduceOn(IncrementAction.self) { state, action in
+                    state.counter += action.increment
+                }
+            )
+        ]
+    )
+
+    var body: some View {
+        CounterView()
+            .environment(store)
+    }
+}
+
+struct CounterView: View {
+    @Environment(Store<AppState, Void>.self) private var store
+    @FluxorSelect<AppState, Void, Int>(Selectors.counter) private var counter: Int
+
+    var body: some View {
+        VStack {
+            Text("\\(counter)")
+            Button("Increment") {
+                store.send(IncrementAction(increment: 1))
+            }
+        }
+    }
+}
+```
+
+For writable projections, use `@FluxorBinding` or `store.scope(...)` when a feature needs a focused observable projection that works with `@Bindable`.
+
+`@FluxorProjection` is available when the projection itself should be sourced from the environment store and then bound through `@Bindable`.
+
+### Macros
+`FluxorMacros` adds authoring helpers while keeping the generated code explicit:
+
+* `@FluxorAction("Load Todos")`
+* `@FluxorSelector`
+* `@FluxorEffects`
+
+## Migration
+If you are upgrading from the old Combine based API, start with [Migrating to Async Fluxor](Documentation/Guides/Migrating%20to%20Async%20Fluxor.md).
 
 ### Intercepting actions and changes
 If read-only access to all `Action`s dispatched and state changes is needed, an `Interceptor` can be used. `Interceptor` is just a protocol, and when registered in the `Store`, instances of types conforming to this protocol will receive a callback everytime an `Action` is dispatched.
@@ -127,13 +185,13 @@ If read-only access to all `Action`s dispatched and state changes is needed, an 
 Fluxor comes with two implementations of `Interceptor`:
 
 * `PrintInterceptor` for printing `Action`s and state changes to the log.
-* `TestInterceptor` to help assert that specific `Action`s was dispatched in unit tests.
+* `TestInterceptor` in `FluxorTestSupport` to help assert which actions were dispatched in tests.
 
 ## Packages for using it with SwiftUI and testing
 Fluxor comes with packages, to make it easier to use it with SwiftUI and for testing apps using Fluxor.
 
-* [More info on how to use it with SwiftUI](https://fluxor.dev/Using%20Fluxor%20with%20SwiftUI.html)
-* [More info on how to test apps using Fluxor](https://fluxor.dev/Test%20Support.html)
+* `FluxorSwiftUI`
+* `FluxorTestSupport`
 
 ## Debugging with FluxorExplorer
 Fluxor has a companion app, [**FluxorExplorer**](https://github.com/FluxorOrg/FluxorExplorer), which helps when debugging apps using Fluxor. FluxorExplorer lets you look through the dispatched `Action`s and state changes, to debug the data flow of the app.

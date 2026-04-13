@@ -90,6 +90,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FluxorMacros"
+               BuildableName = "FluxorMacros"
+               BlueprintName = "FluxorMacros"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -120,6 +134,26 @@
                BlueprintIdentifier = "AnyCodableTests"
                BuildableName = "AnyCodableTests"
                BlueprintName = "AnyCodableTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FluxorMacrosTests"
+               BuildableName = "FluxorMacrosTests"
+               BlueprintName = "FluxorMacrosTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FluxorSwiftUITests"
+               BuildableName = "FluxorSwiftUITests"
+               BlueprintName = "FluxorSwiftUITests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

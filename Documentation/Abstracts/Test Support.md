@@ -1,95 +1,76 @@
-Every part of an application using Fluxor is highly testable. The separation of the `Action` (instructions), `Selector` (reading), `Reducer` (mutating) and `Effect` (asynchronous) make each part decoupled, testable and easier to grasp.
+Fluxor ships with a separate package, `FluxorTestSupport`, for testing views, reducers, selectors, and async effects.
 
-But to help out when testing components using Fluxor or asynchronous `Effect`s, Fluxor comes with a separate package (**FluxorTestSupport**) with a `MockStore`, `TestInterceptor` and an `EffectRunner` to make `Effect`s run syncronously.
+`FluxorTestSupport` should only be linked in test targets.
 
-FluxorTestSupport should only be linked in unit testing targets.
+The package currently provides:
 
-## Mocking out the `Store`
+* `MockStore` for stateful tests that need a real `Store` surface.
+* `TestInterceptor` for capturing dispatched actions and state transitions.
+* `EffectRunner` for running async effects with a controlled initial state.
 
-The `MockStore` can be used to mock the `Store` being used.
+## `MockStore`
 
-### Setting a specific `State`
-
-With `MockStore` it is possible, from a test, to set a specific `State` to help test a specific scenario.
+`MockStore` wraps a real `Store`, keeps track of dispatched actions, and can override selectors for targeted scenarios.
 
 ```swift
+import Fluxor
 import FluxorTestSupport
 import XCTest
 
-class GreetingView: XCTestCase {
-    func testGreeting() {
-        let mockStore = MockStore(initialState: AppState())
-        let view = GreetingView(store: mockStore)
-        XCTAssert(...)
-        mockStore.setState(AppState(greeting: "Hi Bob!"))
-        XCTAssert(...)
+@MainActor
+final class GreetingViewTests: XCTestCase {
+    func testGreetingUsesSelectorOverride() async {
+        let store = MockStore(initialState: AppState())
+        store.overrideSelector(Selectors.name, value: "Hi Bob")
+
+        XCTAssertEqual(store.current(Selectors.name), "Hi Bob")
     }
 }
 ```
 
-### Overriding `Selectors`
+## `TestInterceptor`
 
-The `MockStore` can be used to override `Selector`s so that they always return a specific value.
-
-```swift
-import FluxorTestSupport
-import XCTest
-
-class GreetingViewTests: XCTestCase {
-    func testGreeting() {
-        let greeting = "Hi Bob!"
-        let mockStore = MockStore(initialState: AppState(greeting: "Hi Steve!"))
-        mockStore.overrideSelector(Selectors.getGreeting, value: greeting)
-        let view = GreetingView(store: mockStore)
-        XCTAssertEqual(view.greeting, greeting)
-    }
-}
-```
-
-## Intercepting state changes
-
-**NOTE:** This is built into the `MockStore`.
-
-The `TestInterceptor` can be registered on the `Store`. When registered it gets all `Action`s dispatched and state changes. Everything it intercepts gets saved in an array in the order received. This can be used to assert which `Action`s are dispatched in a test.
+`TestInterceptor` captures state changes in dispatch order. This is useful when a reducer and one or more effects should emit a specific sequence of actions.
 
 ```swift
-import FluxorTestSupport
-import XCTest
-
-class GreetingViewTests: XCTestCase {
-    func testGreeting() {
-        let testInterceptor = TestInterceptor<AppState>()
+@MainActor
+final class StoreTests: XCTestCase {
+    func testLoadFlow() async throws {
+        let interceptor = TestInterceptor<AppState>()
         let store = Store(initialState: AppState())
-        store.register(interceptor: self.testInterceptor)
-        let view = GreetingView(store: store)
-        XCTAssertEqual(testInteceptor.stateChanges.count, 0)
-        view.updateGreeting()
-        XCTAssertEqual(testInteceptor.stateChanges.count, 1)
+        store.register(interceptor: interceptor)
+
+        store.send(LoadTodos())
+
+        try await interceptor.waitForActions(expectedNumberOfActions: 1)
+        XCTAssertTrue(interceptor.stateChanges[0].action is LoadTodos)
     }
 }
 ```
 
-The `MockStore` uses this internally behind the `stateChanges` property.
+## `EffectRunner`
 
-## Running an `Effect`
-
-An `Effect` is inherently asynchronous, so in order to test it in a synchronous test, without a lot of boilerplate code, FluxorTestSupport comes with an `EffectRunner` that executes the `Effect` with a specific `Action` and `Environment`. It is possible to run both `.dispatchingOne`,` .dispatchingMultiple` and `.nonDispatching`, but the result will be different.
-
-When running `.dispatchingOne` and` .dispatchingMultiple`, it is possible to specify the expected number of dispatched `Action`s and the dispatched `Action`s will also be returned.
-
-When running `.nonDispatching`, nothing is awaited and nothing is returned.
+`EffectRunner` runs an `Effect` by wiring it into a temporary store and returning the follow up actions it dispatches.
 
 ```swift
+import Fluxor
 import FluxorTestSupport
 import XCTest
 
-class SettingsEffectsTests: XCTestCase {
-    func testSetBackground() {
-        let effects = SettingsEffects()
-        let action = Actions.setBackgroundColor(payload: .red)
-        let result = try EffectRunner.run(effects.setBackgroundColor, with: action)!
-        XCTAssertEqual(result.count, 1)
-        XCTAssertEqual(result[0], Actions.hideColorPicker())
+@MainActor
+final class TodosEffectsTests: XCTestCase {
+    func testFetchTodosDispatchesLoadedAction() async throws {
+        let effect = Effect<AppState, Void>.on(FetchTodos.self) { _, context in
+            context.send(DidFetchTodos(count: 3))
+        }
+
+        let actions = try await EffectRunner.run(
+            effect,
+            with: FetchTodos(),
+            initialState: AppState()
+        )
+
+        XCTAssertEqual((actions.first as? DidFetchTodos)?.count, 3)
     }
 }
 ```

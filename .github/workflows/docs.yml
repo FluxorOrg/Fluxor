@@ -5,21 +5,51 @@ on:
     branches:
     - master
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
-  pages:
-    name: Documentation for Pages
+  build:
+    name: Build documentation
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+      - name: Select Xcode 26
+        run: |
+          DEVELOPER_DIR="$(find /Applications -maxdepth 1 -type d -name 'Xcode_26*.app' | sort -V | tail -n 1)/Contents/Developer"
+          test -d "${DEVELOPER_DIR}"
+          echo "DEVELOPER_DIR=${DEVELOPER_DIR}" >> "${GITHUB_ENV}"
+          sudo xcode-select -s "${DEVELOPER_DIR}"
+      - name: Print Xcode & Swift version
+        run: |
+          xcodebuild -version
+          swift --version
+      - uses: actions/configure-pages@v5
       - name: Install sourcekitten
         run: brew install sourcekitten
       - name: Generate Documentation for Pages
         run: ./Documentation/generate_docs.sh
       - name: Add CNAME
         run: echo -n fluxor.dev > docs/CNAME
-      - name: Upload to GitHub Pages
-        uses: crazy-max/ghaction-github-pages@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
         with:
-          build_dir: "docs"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: docs
+
+  deploy:
+    name: Deploy documentation
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

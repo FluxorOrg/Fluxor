@@ -59,8 +59,8 @@ class AnyCodableEncodableTests: XCTestCase {
             "value" : 42
           },
           "date" : 1585778827,
-          "double" : 3.1415926535897931,
-          "float" : 3.1415927410125732,
+          "double" : 3.141592653589793,
+          "float" : 3.1415927,
           "integer" : 1,
           "nested" : {
             "a" : "alpha",
@@ -92,7 +92,7 @@ class AnyCodableEncodableTests: XCTestCase {
           "custom" : {
             "value" : 42
           },
-          "date" : 1585778827.0,
+          "date" : 1585778827,
           "double" : 3.141592653589793,
           "float" : 3.1415927,
           "integer" : 1,

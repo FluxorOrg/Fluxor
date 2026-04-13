@@ -11,30 +11,54 @@ on:
 jobs:
   build-apple:
     name: Build and Test (Apple platforms)
-    runs-on: macos-12
+    runs-on: macos-latest
     env:
-        DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+      CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
+    - name: Select Xcode 26
+      run: |
+        DEVELOPER_DIR="$(find /Applications -maxdepth 1 -type d -name 'Xcode_26*.app' | sort -V | tail -n 1)/Contents/Developer"
+        test -d "${DEVELOPER_DIR}"
+        echo "DEVELOPER_DIR=${DEVELOPER_DIR}" >> "${GITHUB_ENV}"
+        sudo xcode-select -s "${DEVELOPER_DIR}"
+    - name: Print Xcode & Swift version
+      run: |
+        xcodebuild -version
+        swift --version
     - name: Build
       run: swift build -v
     - name: Test
       run: swift test -v --enable-code-coverage
     - name: Export coverage
-      run: xcrun llvm-cov export -format="lcov" -instr-profile=.build/x86_64-apple-macosx/debug/codecov/default.profdata -ignore-filename-regex=".build|Tests" .build/x86_64-apple-macosx/debug/FluxorPackageTests.xctest/Contents/MacOS/FluxorPackageTests > coverage.lcov
+      run: |
+        BUILD_PATH="$(swift build --show-bin-path)"
+        PROFILE_PATH="${BUILD_PATH}/codecov/default.profdata"
+        TEST_BINARY="$(find "${BUILD_PATH}" -type f -perm -111 -path '*.xctest/Contents/MacOS/*' | head -n 1)"
+
+        if [ -z "${TEST_BINARY}" ]; then
+          echo "Unable to locate the SwiftPM test bundle executable."
+          exit 1
+        fi
+
+        xcrun llvm-cov export \
+          -format="lcov" \
+          -instr-profile="${PROFILE_PATH}" \
+          -ignore-filename-regex=".build|Tests" \
+          "${TEST_BINARY}" > coverage.lcov
     - name: Upload coverage
-      uses: paambaati/codeclimate-action@v3.2.0
+      if: ${{ env.CC_TEST_REPORTER_ID != '' }}
+      uses: paambaati/codeclimate-action@v9.0.0
       env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        CC_TEST_REPORTER_ID: ${{ env.CC_TEST_REPORTER_ID }}
       with:
-        coverageCommand: ls
         coverageLocations: coverage.lcov:lcov
         debug: true
   build-linux:
     name: Build and Test (Linux)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
     - name: Build
       run: swift build -v
     - name: Test
